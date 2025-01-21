@@ -1,6 +1,6 @@
 namespace HouseholdResponsibilityAppServer
 {
-    public class WeatherForecast
+    public class Hello
     {
         public DateOnly Date { get; set; }
 

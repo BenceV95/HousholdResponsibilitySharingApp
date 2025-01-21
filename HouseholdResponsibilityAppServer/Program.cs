@@ -7,6 +7,15 @@ namespace HouseholdResponsibilityAppServer
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000") // Allow the frontend domain
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -22,6 +31,8 @@ namespace HouseholdResponsibilityAppServer
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors();
 
             app.UseHttpsRedirection();
 
