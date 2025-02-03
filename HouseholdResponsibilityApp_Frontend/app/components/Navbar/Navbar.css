@@ -1,0 +1,17 @@
+.heading {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    border-bottom: solid white 2px;
+    margin-bottom: 1rem;
+    background-color: #343434;
+}
+
+.navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+
+}
