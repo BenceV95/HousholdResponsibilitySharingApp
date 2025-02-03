@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
 {
-    public class HouseholdTaskService
+    public class HouseholdTaskService : IHouseholdTaskService
     {
         private readonly IUserService _userService;
         private readonly IGroupService _groupService;
