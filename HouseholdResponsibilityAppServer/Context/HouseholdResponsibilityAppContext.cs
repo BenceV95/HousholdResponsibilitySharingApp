@@ -9,7 +9,7 @@ namespace HouseholdResponsibilityAppServer.Context
         public DbSet<HouseholdTask> Tasks { get; set; }
         public DbSet<ScheduledTask> ScheduledTasks { get; set; }
         public DbSet<History> Histories { get; set; }
-        public DbSet<Group> Groups { get; set; }
+        public DbSet<HouseholdGroup> Groups { get; set; }
         public DbSet<Household> Households { get; set; }
         public DbSet<Review> Reviews { get; set; }
 
