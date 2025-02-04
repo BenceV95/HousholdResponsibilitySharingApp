@@ -1,4 +1,4 @@
-﻿namespace HouseholdResponsibilityAppServer.Models.ScheduledTask
+﻿namespace HouseholdResponsibilityAppServer.Models.ScheduledTasks
 {
     public enum Repeat
     {

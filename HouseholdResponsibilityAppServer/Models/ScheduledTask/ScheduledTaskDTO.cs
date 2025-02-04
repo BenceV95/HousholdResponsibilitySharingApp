@@ -1,6 +1,6 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Task;
 
-namespace HouseholdResponsibilityAppServer.Models.ScheduledTask
+namespace HouseholdResponsibilityAppServer.Models.ScheduledTasks
 {
     public class ScheduledTaskDTO
     {

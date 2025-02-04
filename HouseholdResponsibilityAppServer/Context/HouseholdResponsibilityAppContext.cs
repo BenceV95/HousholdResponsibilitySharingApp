@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using HouseholdResponsibilityAppServer.Models.Task;
 using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
+using HouseholdResponsibilityAppServer.Models.Histories;
 
 namespace HouseholdResponsibilityAppServer.Context
 {
