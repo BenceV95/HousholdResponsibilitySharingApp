@@ -49,7 +49,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.Histories
             var existingHistory = await _dbContext.Histories.FindAsync(history.HistoryId);
             if (existingHistory == null)
             {
-                throw new KeyNotFoundException($"Couldn't find history entry in the db to update!");
+                throw new KeyNotFoundException("Couldn't find history entry in the db to update!");
             }
 
             existingHistory.Action = history.Action;

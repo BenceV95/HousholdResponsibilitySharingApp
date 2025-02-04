@@ -10,6 +10,6 @@ namespace HouseholdResponsibilityAppServer.Repositories.Histories
         public Task DeleteHistoryByIdAsync(int historyId);
         public Task<History> GetByIdAsync(int historyId);
         //not sure if this will be needed
-        public Task<History> UpdateHistoryAsync(HouseholdTask householdTask);
+        public Task<History> UpdateHistoryAsync(History householdTask);
     }
 }
