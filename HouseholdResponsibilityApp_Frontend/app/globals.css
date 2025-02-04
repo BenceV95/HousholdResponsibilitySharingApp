@@ -46,7 +46,8 @@ a {
 
 main {
   flex: 1;
-  margin-top: 5rem; /* Why is this happening? main does not take NAV,HEADING into consideration??? */
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 /* Bootstrap like buttons */

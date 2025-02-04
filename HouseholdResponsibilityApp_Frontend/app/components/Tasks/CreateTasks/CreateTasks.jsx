@@ -3,23 +3,18 @@ import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { apiFetch,apiPut } from '../../../(utils)/api';
 import './CreateTasks.css';
+import uuidv4 from '../../../(utils)/uuidv4';
 
 const CreateTasks = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [message, setMessage] = useState('');
 
-    function uuidv4() {
-        return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
-            (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
-        );
-    }
+    
 
     const onSubmit = async (data) => {
-        const idGen = uuidv4();
-        console.log(idGen);
 
         const taskData = {
-            [idGen]: {
+            [uuidv4()]: {
                 title: data.title,
                 description: data.description,
                 created_by: data.created_by,

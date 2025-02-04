@@ -1,5 +1,5 @@
 .footer {
-    position: fixed;
+    position: relative;
     bottom: 0;
     border-top: solid white 2px;
     width: 100%;

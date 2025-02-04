@@ -7,4 +7,23 @@
     border: solid white 2px;
     border-radius: 10px;
     padding: 1rem;
+    min-height: 80dvh;
+}
+
+.taskButtons {
+    display: flex;
+    align-self: center;
+    gap: 1rem;
+    border: solid white 2px;
+    border-radius: 10px;
+    padding: 1rem;
+    width: fit-content;
+}
+
+.taskAction {
+    margin-top: 2rem;
+    border: solid white 2px; /* border is here for testing purposes */
+    border-radius: 10px;
+    padding: 1rem;
+    
 }

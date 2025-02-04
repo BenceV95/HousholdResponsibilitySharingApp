@@ -1,3 +1,32 @@
-.getData {
+.getTasks {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: solid white 2px;
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.getDataButton {
+    display: flex;
+    justify-content: center;
+    padding: 0.2rem;
+    border-bottom: solid white 2px;
+    width: 100%;
+}
+
+.display {
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.taskData {
+    background-color: #424242;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 1rem;
+    min-width: fit-content;
 }
