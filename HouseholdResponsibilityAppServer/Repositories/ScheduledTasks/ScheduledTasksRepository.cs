@@ -51,10 +51,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
             }
 
             existingTask.EventDate = scheduledTask.EventDate;
-            existingTask.Daily = scheduledTask.Daily;
-            existingTask.Weekly = scheduledTask.Weekly;
-            existingTask.Monthly = scheduledTask.Monthly;
-            existingTask.NoRepeat = scheduledTask.NoRepeat;
+            existingTask.Repeat = scheduledTask.Repeat;
             existingTask.DayOfWeek = scheduledTask.DayOfWeek;
             existingTask.DayOfMonth = scheduledTask.DayOfMonth;
             existingTask.AssignedTo = scheduledTask.AssignedTo;

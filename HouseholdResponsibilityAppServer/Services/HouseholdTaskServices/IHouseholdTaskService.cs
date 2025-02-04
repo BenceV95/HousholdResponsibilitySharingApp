@@ -5,7 +5,6 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
     public interface IHouseholdTaskService
     {
 
-
         public Task<HouseholdTaskDTO> AddTaskAsync(CreateHouseholdTaskRequest taskCreateRequest);
         public Task<IEnumerable<HouseholdTaskDTO>> GetallTasksAsync();
 
