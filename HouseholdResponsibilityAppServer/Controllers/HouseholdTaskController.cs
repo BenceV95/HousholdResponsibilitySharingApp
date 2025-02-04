@@ -1,4 +1,4 @@
-﻿using HouseholdResponsibilityAppServer.Models.HouseholdTask;
+﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
 using HouseholdResponsibilityAppServer.Services.HouseholdTaskServices;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;

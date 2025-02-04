@@ -1,4 +1,4 @@
-﻿using HouseholdResponsibilityAppServer.Models.HouseholdTask;
+﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
 using HouseholdResponsibilityAppServer.Models.Task;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdTasks;
 using Microsoft.AspNetCore.Http.HttpResults;

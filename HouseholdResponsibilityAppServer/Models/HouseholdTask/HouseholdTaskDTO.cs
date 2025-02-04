@@ -1,4 +1,4 @@
-﻿namespace HouseholdResponsibilityAppServer.Models.HouseholdTask
+﻿namespace HouseholdResponsibilityAppServer.Models.HouseholdTasks
 {
     public class HouseholdTaskDTO
     {
