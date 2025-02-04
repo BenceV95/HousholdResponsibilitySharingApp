@@ -53,55 +53,52 @@ namespace HouseholdResponsibilityAppServer.Context
                 // Primary Key
                 entity.HasKey(st => st.ScheduledTaskId);
 
-                // Foreign Keys
+                // Foreign Key: HouseholdTask (One ScheduledTask belongs to one HouseholdTask)
                 entity.HasOne(st => st.HouseholdTask)
-                    .WithMany()
-                    .HasForeignKey(st => st.ScheduledTaskId)
-                    .OnDelete(DeleteBehavior.Cascade); // If task is deleted, delete scheduled task
+                    .WithMany() // Assuming HouseholdTask does not have a ScheduledTask collection
+                    .HasForeignKey("HouseholdTaskId") // Explicitly define the foreign key column
+                    .OnDelete(DeleteBehavior.Cascade); // If HouseholdTask is deleted, delete the ScheduledTask
 
+                // Foreign Key: CreatedBy (User who created the task)
                 entity.HasOne(st => st.CreatedBy)
-                    .WithMany()
-                    .HasForeignKey(st => st.CreatedBy)
-                    .OnDelete(DeleteBehavior.Restrict); // Prevent deletion if referenced user exists
+                    .WithMany() // Assuming User does not have a ScheduledTask collection
+                    .HasForeignKey("CreatedById") // Define foreign key column
+                    .OnDelete(DeleteBehavior.Restrict); // Prevent deletion of User if they created tasks
 
+                // Foreign Key: AssignedTo (User assigned to the task)
                 entity.HasOne(st => st.AssignedTo)
-                    .WithMany()
-                    .HasForeignKey(st => st.AssignedTo)
-                    .OnDelete(DeleteBehavior.SetNull); // If assigned user is deleted, set to NULL
+                    .WithMany() // Assuming User does not have a ScheduledTask collection
+                    .HasForeignKey("AssignedToId") // Define foreign key column
+                    .OnDelete(DeleteBehavior.SetNull); // If assigned user is deleted, set AssignedTo to NULL
 
-                // Default Values
+                entity.Property(st => st.Repeat)
+                    .HasConversion<string>() // Stores enum as string (e.g., "Daily", "Weekly")
+                    .IsRequired();
+
+                // EventDate (Required)
+                entity.Property(st => st.EventDate)
+                    .IsRequired();
+
+                // CreatedAt (Set default value to current time)
                 entity.Property(st => st.CreatedAt)
-                    .HasDefaultValueSql("NOW()");
+                    .HasDefaultValueSql("NOW()")
+                    .IsRequired();
 
-                entity.Property(st => st.Daily)
-                    .HasDefaultValue(false);
-
-                entity.Property(st => st.Weekly)
-                    .HasDefaultValue(false);
-
-                entity.Property(st => st.Monthly)
-                    .HasDefaultValue(false);
-
-                entity.Property(st => st.NoRepeat)
-                    .HasDefaultValue(false);
-
-                // Ensure NoRepeat Requires EventDate
-                entity.HasCheckConstraint("CHK_NoRepeat_EventDate", "no_repeat = FALSE OR event_date IS NOT NULL");
-
-                // Optional Fields
+                // DayOfWeek (Optional, should be between 0 and 6 if set)
                 entity.Property(st => st.DayOfWeek)
-                    .IsRequired(false);
+                    .HasColumnType("int")
+                    .HasDefaultValue(null); // Optional
 
+                // DayOfMonth (Optional, should be between 1 and 31 if set)
                 entity.Property(st => st.DayOfMonth)
-                    .IsRequired(false);
+                    .HasColumnType("int")
+                    .HasDefaultValue(null); // Optional
 
-                entity.Property(st => st.SpecificTime)
-                    .IsRequired(false);
+                // AtSpecificTime (Boolean flag)
+                entity.Property(st => st.AtSpecificTime)
+                    .HasDefaultValue(false)
+                    .IsRequired();
             });
-
-
-
-
 
 
         }

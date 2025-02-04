@@ -1,4 +1,5 @@
 ﻿
+using HouseholdResponsibilityAppServer.Models.ScheduledTask;
 using HouseholdResponsibilityAppServer.Models.Task;
 using System.Diagnostics.Eventing.Reader;
 
@@ -10,17 +11,13 @@ namespace HouseholdResponsibilityAppServer.Models.ScheduledTasks
         public HouseholdTask HouseholdTask { get; set; }
         public User CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
-        //note: this seems overkill, we should use an enum
-        public bool Daily { get; set; }
-        public bool Weekly { get; set; }
-        public bool Monthly { get; set; }
-        public bool NoRepeat { get; set; }
-        //-------------------------------
+        public Repeat Repeat { get; set; }
         public DateTime EventDate { get; set; }
+        //not sure what these are used for
         public int DayOfWeek { get; set; }
         public int DayOfMonth { get; set; }
-        //maybe we could get this date from the event date, since that is DateTime...
-        public DateTime SpecificTime { get; set; }
+        //-----------------------------------------
+        public bool AtSpecificTime { get; set; } //if true, we can get the time from the EventDate
         //for sprint 1 it can be only assigned to 1 person
         public User AssignedTo { get; set; }
 
