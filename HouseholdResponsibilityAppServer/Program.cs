@@ -1,4 +1,9 @@
 
+using HouseholdResponsibilityAppServer.Data;
+using HouseholdResponsibilityAppServer.Repositories;
+using HouseholdResponsibilityAppServer.Services;
+using Microsoft.EntityFrameworkCore;
+
 namespace HouseholdResponsibilityAppServer
 {
     public class Program
@@ -22,6 +27,30 @@ namespace HouseholdResponsibilityAppServer
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<HouseholdResponsibilityContext>(options =>
+            {
+                options.UseNpgsql(
+                    "Server=localhost;Port=5432;User Id=postgres;Password=postgres;Database=HouseholdResponsibility;");
+            });
+
+
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IHouseholdRepository, HouseholdRepository>();
+            builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+            builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
+
+
+
+
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IHouseholdService, HouseholdService>();
+            builder.Services.AddScoped<IGroupService, GroupService>();
+            builder.Services.AddScoped<IInvitationService, InvitationService>();
+
+
+
+
 
             var app = builder.Build();
 
