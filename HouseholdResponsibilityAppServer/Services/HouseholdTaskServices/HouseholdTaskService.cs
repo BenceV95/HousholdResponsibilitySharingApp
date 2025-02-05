@@ -1,6 +1,10 @@
 ﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
 using HouseholdResponsibilityAppServer.Models.Task;
+using HouseholdResponsibilityAppServer.Repositories.Groups;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdTasks;
+using HouseholdResponsibilityAppServer.Repositories.UserRepo;
+using HouseholdResponsibilityAppServer.Services.Groups;
+using HouseholdResponsibilityAppServer.Services.UserService;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Text.RegularExpressions;
 
@@ -11,11 +15,17 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
         private readonly IUserService _userService;
         private readonly IGroupService _groupService;
         private readonly IHouseholdTasksRepository _householdTaskRepository;
-        public HouseholdTaskService(IUserService userService, IHouseholdTasksRepository householdTaskRepository, IHouseholdGroupService householdGroupService)
+        private readonly IUserRepository _userRepository;
+        private readonly IGroupRepository _groupRepository;
+
+
+        public HouseholdTaskService(IUserService userService, IHouseholdTasksRepository householdTaskRepository, IGroupService householdGroupService, IUserRepository userRepository, IGroupRepository groupRepository)
         {
             _userService = userService;
             _groupService = householdGroupService;
             _householdTaskRepository = householdTaskRepository;
+            _userRepository = userRepository;
+            _groupRepository = groupRepository;
         }
 
         public async Task<HouseholdTaskDTO> AddTaskAsync(CreateHouseholdTaskRequest taskCreateRequest)
@@ -63,8 +73,9 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
 
         private async Task<HouseholdTask> ConvertRequestToModel(CreateHouseholdTaskRequest taskCreateRequest)
         {
-            var group = await _groupService.GetGroupByIdAsync(taskCreateRequest.GroupId);
-            var user = await _userService.GetUserByIdAsync(taskCreateRequest.UserId);
+            var group = await _groupRepository.GetGroupByIdAsync(taskCreateRequest.GroupId);
+            var user = await _userRepository.GetUserByIdAsync(taskCreateRequest.UserId);
+
 
             return new HouseholdTask()
             {
@@ -83,9 +94,9 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
                 TaskId = taskModel.TaskId,
                 Title = taskModel.Title,
                 Description = taskModel.Description,
-                UserId = taskModel.CreatedBy.Id,
+                UserId = taskModel.CreatedBy.UserId,
                 CreatedAt = taskModel.CreatedAt,
-                GroupId = taskModel.Group.Id,
+                GroupId = taskModel.Group.GroupId,
                 Priority = taskModel.Priority,
             };
         }

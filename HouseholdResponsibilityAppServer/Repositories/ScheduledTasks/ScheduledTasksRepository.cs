@@ -52,8 +52,6 @@ namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
 
             existingTask.EventDate = scheduledTask.EventDate;
             existingTask.Repeat = scheduledTask.Repeat;
-            existingTask.DayOfWeek = scheduledTask.DayOfWeek;
-            existingTask.DayOfMonth = scheduledTask.DayOfMonth;
             existingTask.AssignedTo = scheduledTask.AssignedTo;
 
             //createdAt, createdBy shouldn't be updated I think

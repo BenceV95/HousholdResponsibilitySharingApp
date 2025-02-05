@@ -2,6 +2,10 @@
 using HouseholdResponsibilityAppServer.Models.Task;
 using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Models.Histories;
+using HouseholdResponsibilityAppServer.Models.Households;
+using HouseholdResponsibilityAppServer.Models.Invitations;
+using HouseholdResponsibilityAppServer.Models.Users;
+using HouseholdResponsibilityAppServer.Models.Groups;
 
 namespace HouseholdResponsibilityAppServer.Context
 {
@@ -11,9 +15,11 @@ namespace HouseholdResponsibilityAppServer.Context
         public DbSet<HouseholdTask> Tasks { get; set; }
         public DbSet<ScheduledTask> ScheduledTasks { get; set; }
         public DbSet<History> Histories { get; set; }
-        public DbSet<HouseholdGroup> Groups { get; set; }
+        public DbSet<TaskGroup> Groups { get; set; }
         public DbSet<Household> Households { get; set; }
-        public DbSet<Review> Reviews { get; set; }
+        //public DbSet<Review> Reviews { get; set; }
+        public DbSet<Invitation> Invitations { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,7 +41,7 @@ namespace HouseholdResponsibilityAppServer.Context
             modelBuilder.Entity<HouseholdTask>()
                 .Property(t => t.Priority)
                 .HasDefaultValue(false); // Default Priority = false
-
+            /*
             modelBuilder.Entity<HouseholdTask>()
                 .HasOne(t => t.CreatedBy) // Foreign Key relationship
                 .WithMany(u => u.Tasks)
@@ -45,6 +51,10 @@ namespace HouseholdResponsibilityAppServer.Context
                 .HasOne(t => t.Group) // Foreign key to Group
                 .WithMany(g => g.Tasks)
                 .HasForeignKey(t => t.Group);
+            */
+            
+
+
 
 
 
@@ -85,21 +95,33 @@ namespace HouseholdResponsibilityAppServer.Context
                     .HasDefaultValueSql("NOW()")
                     .IsRequired();
 
-                // DayOfWeek (Optional, should be between 0 and 6 if set)
-                entity.Property(st => st.DayOfWeek)
-                    .HasColumnType("int")
-                    .HasDefaultValue(null); // Optional
-
-                // DayOfMonth (Optional, should be between 1 and 31 if set)
-                entity.Property(st => st.DayOfMonth)
-                    .HasColumnType("int")
-                    .HasDefaultValue(null); // Optional
-
                 // AtSpecificTime (Boolean flag)
                 entity.Property(st => st.AtSpecificTime)
                     .HasDefaultValue(false)
                     .IsRequired();
             });
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Household)
+                .WithMany(h => h.Users)
+                .HasForeignKey(u => u.HouseholdId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Household>()
+                .HasOne(h => h.CreatedByUser)
+                .WithMany()
+                .HasForeignKey(h => h.CreatedBy)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
+            /*
+            modelBuilder.Entity<TaskGroup>()
+                .HasData(TaskGroup.CreateDefaultGroups());
+
+            modelBuilder.Entity<Household>()
+                .HasData(TaskGroup.CreateDefaultGroups());
+            */
+
 
 
         }

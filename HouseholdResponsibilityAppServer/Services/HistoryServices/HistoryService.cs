@@ -1,7 +1,8 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Histories;
-using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
 using HouseholdResponsibilityAppServer.Repositories.Histories;
 using HouseholdResponsibilityAppServer.Repositories.ScheduledTasks;
+using HouseholdResponsibilityAppServer.Repositories.UserRepo;
+using HouseholdResponsibilityAppServer.Services.UserService;
 using System.Threading.Tasks;
 
 namespace HouseholdResponsibilityAppServer.Services.HistoryServices
@@ -10,13 +11,14 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
     {
 
         private readonly IHistoryRepository _historiesRepository;
-        private readonly IUserService _userService;
         private readonly IScheduledTasksRepository _scheduledTasksRepository;
-        public HistoryService(IUserService userService, IScheduledTasksRepository scheduledTasksRepository, IHistoryRepository historiesRepository)
+        private readonly IUserRepository _userRepository;
+
+        public HistoryService( IScheduledTasksRepository scheduledTasksRepository, IHistoryRepository historiesRepository, IUserRepository userRepository)
         {
-            _userService = userService;
             _scheduledTasksRepository = scheduledTasksRepository;
             _historiesRepository = historiesRepository;
+            _userRepository = userRepository;
         }
 
 
@@ -64,7 +66,9 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
         private async Task<History> ConvertRequestToModel(CreateHistoryRequest historyCreateRequest)
         {
             var scheduledTask = await _scheduledTasksRepository.GetByIdAsync(historyCreateRequest.ScheduledTaskId);
-            var completedBy = await _userService.GetUserByIdAsync(historyCreateRequest.CompletedByUserId);
+            var completedBy = await _userRepository.GetUserByIdAsync(historyCreateRequest.CompletedByUserId);
+
+
 
             return new History()
             {

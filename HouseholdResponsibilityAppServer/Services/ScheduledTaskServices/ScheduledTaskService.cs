@@ -1,23 +1,20 @@
-﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
-using HouseholdResponsibilityAppServer.Models.ScheduledTask;
-using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
-using HouseholdResponsibilityAppServer.Models.Task;
+﻿using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdTasks;
 using HouseholdResponsibilityAppServer.Repositories.ScheduledTasks;
-using System.Threading.Tasks;
+using HouseholdResponsibilityAppServer.Repositories.UserRepo;
 
 namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
 {
     public class ScheduledTaskService : IScheduledTaskService
     {
-        private readonly IUserService _userService;
         private readonly IHouseholdTasksRepository _householdTaskRepository;
         private readonly IScheduledTasksRepository _scheduledTasksRepository;
-        public ScheduledTaskService(IScheduledTasksRepository scheduledTasksRepository, IUserService userService, IHouseholdTasksRepository householdTaskRepository)
+        private readonly IUserRepository _userRepository;
+        public ScheduledTaskService(IScheduledTasksRepository scheduledTasksRepository, IHouseholdTasksRepository householdTaskRepository, IUserRepository userRepository)
         {
-            _userService = userService;
             _householdTaskRepository = householdTaskRepository;
             _scheduledTasksRepository = scheduledTasksRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<ScheduledTaskDTO> AddScheduledTaskAsync(CreateScheduledTaskRequest scheduledTaskCreateRequest)
@@ -63,8 +60,9 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
         private async Task<ScheduledTask> ConvertRequestToModel(CreateScheduledTaskRequest scheduledTaskCreateRequest)
         {
             var task = await _householdTaskRepository.GetByIdAsync(scheduledTaskCreateRequest.HouseholdTaskId);
-            var createdByUser = await _userService.GetUserByIdAsync(scheduledTaskCreateRequest.CreatedByUserId);
-            var assignedToUser = await _userService.GetUserByIdAsync(scheduledTaskCreateRequest.AssignedToUserId);
+            var createdByUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.CreatedByUserId);
+            var assignedToUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.AssignedToUserId);
+
 
             return new ScheduledTask()
             {
@@ -72,8 +70,6 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
                 AssignedTo = assignedToUser,
                 HouseholdTask = task,
                 EventDate = scheduledTaskCreateRequest.EventDate,
-                DayOfWeek = scheduledTaskCreateRequest.DayOfWeek,
-                DayOfMonth = scheduledTaskCreateRequest.DayOfMonth,
                 AtSpecificTime = scheduledTaskCreateRequest.AtSpecificTime,
                 Repeat = scheduledTaskCreateRequest.Repeat,
 
@@ -90,8 +86,6 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
                 AssignedToUserId = scheduledTaskModel.AssignedTo.UserId,
                 EventDate = scheduledTaskModel.EventDate,
                 CreatedAt = scheduledTaskModel.CreatedAt,
-                DayOfWeek = scheduledTaskModel.DayOfWeek,
-                DayOfMonth = scheduledTaskModel.DayOfMonth,
                 AtSpecificTime = scheduledTaskModel.AtSpecificTime,
                 Repeat = scheduledTaskModel.Repeat,
             };

@@ -1,4 +1,8 @@
-﻿namespace HouseholdResponsibilityAppServer.Models.Task
+﻿using HouseholdResponsibilityAppServer.Models.Groups;
+using HouseholdResponsibilityAppServer.Models.Households;
+using HouseholdResponsibilityAppServer.Models.Users;
+
+namespace HouseholdResponsibilityAppServer.Models.Task
 {
     public class HouseholdTask
     {
@@ -8,8 +12,9 @@
         public User CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
         public TaskGroup Group { get; set; }
-        // if its a bool, change name later?
         public bool Priority { get; set; }
+        public Household Household { get; set; }
+
 
     }
 }

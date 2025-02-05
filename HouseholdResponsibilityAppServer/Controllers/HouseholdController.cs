@@ -1,6 +1,8 @@
-﻿using HouseholdResponsibilityAppServer.DTOs;
-using HouseholdResponsibilityAppServer.Models;
-using HouseholdResponsibilityAppServer.Services;
+﻿using HouseholdResponsibilityAppServer.Models;
+using HouseholdResponsibilityAppServer.Models.Households;
+using HouseholdResponsibilityAppServer.Models.Invitations;
+using HouseholdResponsibilityAppServer.Services.HouseholdService;
+using HouseholdResponsibilityAppServer.Services.Invitation;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]

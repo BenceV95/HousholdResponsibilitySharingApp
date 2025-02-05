@@ -1,8 +1,20 @@
 
-using HouseholdResponsibilityAppServer.Data;
-using HouseholdResponsibilityAppServer.Repositories;
-using HouseholdResponsibilityAppServer.Services;
+using HouseholdResponsibilityAppServer.Context;
+using HouseholdResponsibilityAppServer.Repositories.Groups;
+using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
+using HouseholdResponsibilityAppServer.Repositories.InvitationRepo;
+using HouseholdResponsibilityAppServer.Services.Groups;
+using HouseholdResponsibilityAppServer.Services.HouseholdService;
+using HouseholdResponsibilityAppServer.Services.Invitation;
+using HouseholdResponsibilityAppServer.Services.UserService;
+using HouseholdResponsibilityAppServer.Repositories.UserRepo;
 using Microsoft.EntityFrameworkCore;
+using HouseholdResponsibilityAppServer.Services.HouseholdTaskServices;
+using HouseholdResponsibilityAppServer.Repositories.HouseholdTasks;
+using HouseholdResponsibilityAppServer.Repositories.Histories;
+using HouseholdResponsibilityAppServer.Services.HistoryServices;
+using HouseholdResponsibilityAppServer.Repositories.ScheduledTasks;
+using HouseholdResponsibilityAppServer.Services.ScheduledTaskServices;
 
 namespace HouseholdResponsibilityAppServer
 {
@@ -28,7 +40,7 @@ namespace HouseholdResponsibilityAppServer
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<HouseholdResponsibilityContext>(options =>
+            builder.Services.AddDbContext<HouseholdResponsibilityAppContext>(options =>
             {
                 options.UseNpgsql(
                     "Server=localhost;Port=5432;User Id=postgres;Password=postgres;Database=HouseholdResponsibility;");
@@ -40,6 +52,12 @@ namespace HouseholdResponsibilityAppServer
             builder.Services.AddScoped<IGroupRepository, GroupRepository>();
             builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
 
+            builder.Services.AddScoped<IHouseholdTaskService, HouseholdTaskService>();
+            builder.Services.AddScoped<IHouseholdTasksRepository, HouseholdTasksRepository>();
+            builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
+            builder.Services.AddScoped<IHistoryService, HistoryService>();
+            builder.Services.AddScoped<IScheduledTasksRepository, ScheduledTasksRepository>();
+            builder.Services.AddScoped<IScheduledTaskService, ScheduledTaskService>();
 
 
 

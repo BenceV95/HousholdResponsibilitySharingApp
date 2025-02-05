@@ -1,5 +1,5 @@
-﻿using HouseholdResponsibilityAppServer.DTOs;
-using HouseholdResponsibilityAppServer.Services;
+﻿using HouseholdResponsibilityAppServer.Models.Groups;
+using HouseholdResponsibilityAppServer.Services.Groups;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]

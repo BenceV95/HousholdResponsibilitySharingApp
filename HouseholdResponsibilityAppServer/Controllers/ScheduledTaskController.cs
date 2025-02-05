@@ -1,5 +1,5 @@
 ﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
-using HouseholdResponsibilityAppServer.Models.ScheduledTask;
+using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Services.HouseholdTaskServices;
 using HouseholdResponsibilityAppServer.Services.ScheduledTaskServices;
 using Microsoft.AspNetCore.Mvc;

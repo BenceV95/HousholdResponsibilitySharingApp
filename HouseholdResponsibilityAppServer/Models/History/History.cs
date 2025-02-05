@@ -1,4 +1,6 @@
-﻿using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
+﻿using HouseholdResponsibilityAppServer.Models.Households;
+using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
+using HouseholdResponsibilityAppServer.Models.Users;
 
 namespace HouseholdResponsibilityAppServer.Models.Histories
 {
@@ -8,7 +10,8 @@ namespace HouseholdResponsibilityAppServer.Models.Histories
         public ScheduledTask ScheduledTask { get; set; }
         public DateTime CompletedAt { get; set; }
         public User CompletedBy { get; set; }
-        public bool Action {  get; set; } //name is not really declarative (IsCompleted??)
+        public bool Outcome {  get; set; } //name is not really declarative (IsCompleted??)
+        public Household Household { get; set; }
 
     }
 }
