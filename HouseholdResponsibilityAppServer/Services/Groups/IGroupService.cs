@@ -8,7 +8,7 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
     {
         Task<IEnumerable<GroupResponseDto>> GetAllGroupsAsync();
         Task<GroupResponseDto> GetGroupByIdAsync(int id);
-        Task CreateGroupAsync(GroupDto groupDto);
+        Task CreateGroupAsync(PostGroupDto postGroupDto);
         Task UpdateGroupAsync(int id, GroupDto groupDto);
         Task DeleteGroupAsync(int id);
     }

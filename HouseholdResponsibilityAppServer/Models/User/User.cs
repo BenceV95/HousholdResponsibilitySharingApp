@@ -1,8 +1,12 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Households;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 namespace HouseholdResponsibilityAppServer.Models.Users
 {
+    [Index(nameof(Email), IsUnique = true)]
     public class User
     {
+        [Key]
         public int UserId { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }

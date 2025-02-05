@@ -45,11 +45,11 @@ public class GroupController : ControllerBase
     }
 
     [HttpPost("/group")]
-    public async Task<ActionResult> CreateGroup([FromBody] GroupDto groupDto)
+    public async Task<ActionResult> CreateGroup([FromBody] PostGroupDto postGroupDto)
     {
         try
         {
-            await _groupService.CreateGroupAsync(groupDto);
+            await _groupService.CreateGroupAsync(postGroupDto);
             return Ok();
         }
         catch (Exception ex)

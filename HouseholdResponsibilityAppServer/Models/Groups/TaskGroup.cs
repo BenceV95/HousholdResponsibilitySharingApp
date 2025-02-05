@@ -10,6 +10,8 @@ namespace HouseholdResponsibilityAppServer.Models.Groups
         public string Name { get; set; }
         public Household Household { get; set; }
 
+        public int HouseholdId { get; set; }
+
         public static IEnumerable<TaskGroup> CreateDefaultGroups()
         {
             return new List<TaskGroup>

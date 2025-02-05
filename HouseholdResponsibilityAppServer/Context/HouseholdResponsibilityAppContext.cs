@@ -52,7 +52,7 @@ namespace HouseholdResponsibilityAppServer.Context
                 .WithMany(g => g.Tasks)
                 .HasForeignKey(t => t.Group);
             */
-            
+
 
 
 
@@ -107,13 +107,29 @@ namespace HouseholdResponsibilityAppServer.Context
                 .HasForeignKey(u => u.HouseholdId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
-            
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+            .HasIndex(u => u.Username)
+            .IsUnique();
+
             modelBuilder.Entity<Household>()
                 .HasOne(h => h.CreatedByUser)
                 .WithMany()
                 .HasForeignKey(h => h.CreatedBy)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<TaskGroup>()
+                .HasOne(tg => tg.Household)
+                .WithMany(h => h.Groups)
+                .HasForeignKey(tg => tg.HouseholdId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
             /*
             modelBuilder.Entity<TaskGroup>()
                 .HasData(TaskGroup.CreateDefaultGroups());

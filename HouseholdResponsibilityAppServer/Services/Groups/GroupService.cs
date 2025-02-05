@@ -38,11 +38,12 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
             };
         }
 
-        public async Task CreateGroupAsync(GroupDto groupDto)
+        public async Task CreateGroupAsync(PostGroupDto postGroupDto)
         {
             var group = new TaskGroup
             {
-                Name = groupDto.Name,
+                Name = postGroupDto.Name,
+                HouseholdId = postGroupDto.HouseholdId
             };
 
             await _groupRepository.AddGroupAsync(group);
