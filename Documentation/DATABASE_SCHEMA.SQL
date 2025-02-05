@@ -7,6 +7,7 @@ CREATE TABLE users (
     is_admin BOOLEAN DEFAULT FALSE, -- could be derived from houshold created_by
     password_hash VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
+    household_id INTEGER REFERENCES household(id), --added, but maybe this is unnecesary cause we have created_by in the household!
     FOREIGN KEY household_id REFERENCES household(id),
 );
 
@@ -54,13 +55,13 @@ CREATE TABLE groups (
 CREATE TABLE household (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    created_by INTEGER REFERENCES users(id),
+    created_by INTEGER REFERENCES users(id), --
     created_at TIMESTAMP DEFAULT NOW(),
 );
 
 CREATE TABLE reviews (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES user(id), -- user who is being reviewed
+    user_id INTEGER REFERENCES users(id), -- user who is being reviewed
     review TEXT NOT NULL,
     rating INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
