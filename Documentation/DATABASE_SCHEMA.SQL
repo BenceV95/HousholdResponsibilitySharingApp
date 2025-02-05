@@ -27,13 +27,7 @@ CREATE TABLE scheduled_tasks (
     task_id INTEGER REFERENCES tasks(id),
     created_by INTEGER REFERENCES users(id),
     created_at TIMESTAMP DEFAULT NOW(),
-    daily BOOLEAN DEFAULT FALSE,
-    weekly BOOLEAN DEFAULT FALSE,
-    monthly BOOLEAN DEFAULT FALSE,
-    no_repeat BOOLEAN DEFAULT FALSE, -- make sure if no_repeat is ture then event_date is set. check on both front, backend !!
-    event_date DATE,
-    day_of_week INTEGER,
-    day_of_month INTEGER,
+    repeat VARCHAR(255) NOT NULL,
     specific_time TIMESTAMP,
     assigned_to INTEGER REFERENCES users(id), -- for sprint 1: only one user can be assigned to a task
 );

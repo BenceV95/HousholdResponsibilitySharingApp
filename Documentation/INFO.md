@@ -33,9 +33,9 @@ https://github.com/users/BenceV95/projects/3/views/1
 
 ## SPRINT 2:
 - Integrate MSSQL and Entity Framework into the backend.
-- Dockerize the backend, the frontend and the database.
 - Start to develop features that require a functioning database.
 - Develop features on the UI.
+- Dockerize the backend, the frontend and the database by the end of the sprint.
 
 ## SPRINT 3:
 - Implement user registration/login functionality on the backend.
