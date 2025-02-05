@@ -23,7 +23,11 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
 
         public async Task<IEnumerable<HouseholdTask>> GetAllTasksAsync()
         {
-            return await _dbContext.Tasks.ToListAsync();
+            return await _dbContext.Tasks
+                .Include(t => t.CreatedBy) 
+                .Include(t => t.Household) 
+                .Include(t => t.Group) 
+                .ToListAsync();
         }
 
 
@@ -40,16 +44,21 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
 
         public async Task<HouseholdTask> GetByIdAsync(int taskId)
         {
-            var householdTask = await _dbContext.Tasks.FindAsync(taskId);
+            var householdTask = await _dbContext.Tasks
+                .Include(t => t.CreatedBy)
+                .Include(t => t.Household)
+                .Include(t => t.Group)
+                .SingleOrDefaultAsync(t => t.TaskId == taskId);
+
             return householdTask ?? throw new KeyNotFoundException("No task was found with given Id!");
         }
 
 
 
-        public async Task<HouseholdTask> UpdateTaskAsync(HouseholdTask householdTask)
+        public async Task<HouseholdTask> UpdateTaskAsync(HouseholdTask householdTask, int id)
         {
 
-            var existingTask = await _dbContext.Tasks.FindAsync(householdTask.TaskId);
+            var existingTask = await _dbContext.Tasks.FindAsync(id);
             if (existingTask == null)
             {
                 throw new KeyNotFoundException($"Couldn't find task in the db to update!");

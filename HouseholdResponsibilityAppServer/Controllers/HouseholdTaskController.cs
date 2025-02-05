@@ -60,14 +60,28 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
         }
 
-
+        //dont forget to make dedicated class to patchrequest.
         [HttpPatch("/task/{taskId}")]
-        public async Task<IActionResult> UpdateTask([FromBody] CreateHouseholdTaskRequest updateRequest)
+        public async Task<IActionResult> UpdateTask([FromBody] CreateHouseholdTaskRequest updateRequest, int taskId)
         {
             try
             {
-                var task = await _householdTaskService.UpdateTaskAsync(updateRequest);
+                var task = await _householdTaskService.UpdateTaskAsync(updateRequest, taskId);
                 return Ok(task);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("/task/{taskId}")]
+        public async Task<IActionResult> DeleteTask(int taskId)
+        {
+            try
+            {
+                await _householdTaskService.DeleteTaskByIdAsync(taskId);
+                return NoContent();
             }
             catch (Exception ex)
             {

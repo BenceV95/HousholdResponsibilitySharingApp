@@ -33,18 +33,27 @@ namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
 
         public async Task<IEnumerable<ScheduledTask>> GetAllScheduledTasksAsync()
         {
-            return await _dbContext.ScheduledTasks.ToListAsync();
+            return await _dbContext.ScheduledTasks
+                .Include(t => t.AssignedTo)
+                .Include(t => t.HouseholdTask)
+                .Include(t => t.CreatedBy)
+                .ToListAsync();
         }
 
         public async Task<ScheduledTask> GetByIdAsync(int scheduledTaskId)
         {
-            var scheduledTask = await _dbContext.ScheduledTasks.FindAsync(scheduledTaskId);
+            var scheduledTask = await _dbContext.ScheduledTasks
+                .Include(t => t.AssignedTo)
+                .Include(t => t.HouseholdTask)
+                .Include(t => t.CreatedBy)
+                .SingleOrDefaultAsync(t => t.ScheduledTaskId == scheduledTaskId);
+
             return scheduledTask ?? throw new KeyNotFoundException("No scheduled task was found with given Id!");
         }
 
-        public async Task<ScheduledTask> UpdateSheduledTaskAsync(ScheduledTask scheduledTask)
+        public async Task<ScheduledTask> UpdateSheduledTaskAsync(ScheduledTask scheduledTask, int taskId)
         {
-            var existingTask = await _dbContext.ScheduledTasks.FindAsync(scheduledTask.ScheduledTaskId);
+            var existingTask = await _dbContext.ScheduledTasks.FindAsync(taskId);
             if (existingTask == null)
             {
                 throw new KeyNotFoundException($"Couldn't find scheduled task in the db to update!");

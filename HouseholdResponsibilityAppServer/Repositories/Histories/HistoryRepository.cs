@@ -35,12 +35,20 @@ namespace HouseholdResponsibilityAppServer.Repositories.Histories
 
         public async Task<IEnumerable<History>> GetAllHistoriesAsync()
         {
-            return await _dbContext.Histories.ToListAsync();
+            return await _dbContext.Histories
+                .Include(h => h.CompletedBy)
+                .Include(h => h.Household)
+                .Include(h => h.ScheduledTask)
+                .ToListAsync();
         }
 
         public async Task<History> GetByIdAsync(int historyId)
         {
-            var history = await _dbContext.Histories.FindAsync(historyId);
+            var history = await _dbContext.Histories
+                .Include(h => h.CompletedBy)
+                .Include(h => h.Household)
+                .Include(h => h.ScheduledTask)
+                .SingleOrDefaultAsync(h => h.HistoryId == historyId );
             return history ?? throw new KeyNotFoundException("No history entry was found with given Id!");
         }
 

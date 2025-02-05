@@ -7,7 +7,9 @@ namespace HouseholdResponsibilityAppServer.Models.Histories
         public int ScheduledTaskId { get; set; }
         public DateTime CompletedAt { get; set; }
         public int CompletedByUserId { get; set; }
-        public bool Action { get; set; }
+        public bool Outcome { get; set; }
+
+        public int HouseholdId { get; set; }
 
     }
 }

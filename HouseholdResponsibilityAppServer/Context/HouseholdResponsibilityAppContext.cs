@@ -41,17 +41,24 @@ namespace HouseholdResponsibilityAppServer.Context
             modelBuilder.Entity<HouseholdTask>()
                 .Property(t => t.Priority)
                 .HasDefaultValue(false); // Default Priority = false
-            /*
+            
             modelBuilder.Entity<HouseholdTask>()
                 .HasOne(t => t.CreatedBy) // Foreign Key relationship
-                .WithMany(u => u.Tasks)
-                .HasForeignKey(t => t.CreatedBy);
+                .WithMany()
+                .HasForeignKey(t => t.CreatedById);
 
             modelBuilder.Entity<HouseholdTask>()
                 .HasOne(t => t.Group) // Foreign key to Group
-                .WithMany(g => g.Tasks)
-                .HasForeignKey(t => t.Group);
-            */
+                .WithMany()
+                .HasForeignKey(t => t.GroupId);
+
+
+            modelBuilder.Entity<HouseholdTask>()
+                .HasOne(t => t.Household)
+                .WithMany(h => h.HouseholdTasks)
+                .HasForeignKey(t => t.HouseholdId);
+              
+
 
 
 
@@ -137,6 +144,24 @@ namespace HouseholdResponsibilityAppServer.Context
             modelBuilder.Entity<Household>()
                 .HasData(TaskGroup.CreateDefaultGroups());
             */
+
+            modelBuilder.Entity<History>()
+               .HasOne(h => h.ScheduledTask) // Foreign Key relationship
+               .WithMany()
+               .HasForeignKey(h => h.ScheduledTaskId);
+
+            modelBuilder.Entity<History>()
+                .HasOne(h => h.CompletedBy) // Foreign key to Group
+                .WithMany()
+                .HasForeignKey(h => h.CompletedById);
+
+
+            modelBuilder.Entity<History>()
+                .HasOne(h => h.Household)
+                .WithMany(h => h.Histories)
+                .HasForeignKey(h => h.HouseholdId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
 
 
 

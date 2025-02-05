@@ -49,11 +49,11 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
             return ConvertModelToDTO(scheduledTaskModel);
         }
 
-        public async Task<ScheduledTaskDTO> UpdateScheduledTaskAsync(CreateScheduledTaskRequest updateRequest)
+        public async Task<ScheduledTaskDTO> UpdateScheduledTaskAsync(CreateScheduledTaskRequest updateRequest,int taskId)
         {
             var scheduledTaskModel = await ConvertRequestToModel(updateRequest);
 
-            var updatedModel = await _scheduledTasksRepository.UpdateSheduledTaskAsync(scheduledTaskModel);
+            var updatedModel = await _scheduledTasksRepository.UpdateSheduledTaskAsync(scheduledTaskModel, taskId);
             return ConvertModelToDTO(updatedModel);
         }
 

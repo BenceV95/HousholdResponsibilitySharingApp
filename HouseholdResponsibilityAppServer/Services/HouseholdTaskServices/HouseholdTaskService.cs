@@ -65,11 +65,11 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
         }
 
         // made with create request, no update request at the moment
-        public async Task<HouseholdTaskDTO> UpdateTaskAsync(CreateHouseholdTaskRequest updateRequest)
+        public async Task<HouseholdTaskDTO> UpdateTaskAsync(CreateHouseholdTaskRequest updateRequest, int id)
         {
             var taskModel = await ConvertRequestToModel(updateRequest);
 
-            var updatedModel = await _householdTaskRepository.UpdateTaskAsync(taskModel);
+            var updatedModel = await _householdTaskRepository.UpdateTaskAsync(taskModel, id);
             return ConvertModelToDTO(updatedModel);
         }
 

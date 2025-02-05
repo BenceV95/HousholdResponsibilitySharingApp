@@ -61,14 +61,28 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
         }
 
-
+        //dont forget to make it work with the updaterequest.
         [HttpPatch("/scheduled/{taskId}")]
-        public async Task<IActionResult> UpdateTask([FromBody] CreateScheduledTaskRequest updateRequest)
+        public async Task<IActionResult> UpdateTask([FromBody] CreateScheduledTaskRequest updateRequest, int taskId)
         {
             try
             {
-                var task = await _scheduledTaskService.UpdateScheduledTaskAsync(updateRequest);
+                var task = await _scheduledTaskService.UpdateScheduledTaskAsync(updateRequest, taskId);
                 return Ok(task);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("/scheduled/{taskId}")]
+        public async Task<IActionResult> DeleteScheduledTask(int taskId)
+        {
+            try
+            {
+                await _scheduledTaskService.DeleteScheduledTaskByIdAsync(taskId);
+                return NoContent();
             }
             catch (Exception ex)
             {

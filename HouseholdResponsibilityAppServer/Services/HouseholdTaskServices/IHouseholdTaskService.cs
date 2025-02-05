@@ -12,6 +12,6 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
 
         public Task<HouseholdTaskDTO> GetByIdAsync(int taskId);
 
-        public Task<HouseholdTaskDTO> UpdateTaskAsync(CreateHouseholdTaskRequest updateRequest);
+        public Task<HouseholdTaskDTO> UpdateTaskAsync(CreateHouseholdTaskRequest updateRequest, int id);
     }
 }
