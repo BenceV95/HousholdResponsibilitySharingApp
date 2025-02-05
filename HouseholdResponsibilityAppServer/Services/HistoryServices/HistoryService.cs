@@ -73,7 +73,7 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
             return new History()
             {
                 ScheduledTask = scheduledTask,
-                Action = historyCreateRequest.Action,
+                Outcome = historyCreateRequest.Action,
                 CompletedAt = historyCreateRequest.CompletedAt,
                 CompletedBy = completedBy,
             };
@@ -86,7 +86,7 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
                 CompletedByUserId = historyModel.CompletedBy.UserId,
                 CompletedAt = historyModel.CompletedAt,
                 ScheduledTaskId = historyModel.ScheduledTask.ScheduledTaskId,
-                Action = historyModel.Action,
+                Action = historyModel.Outcome,
             };
         }
 

@@ -12,6 +12,7 @@ namespace HouseholdResponsibilityAppServer.Models.Users
         public string PasswordHash { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
+        public int? HouseholdId { get; set; }
         public Household? Household { get; set; }
     }
 }

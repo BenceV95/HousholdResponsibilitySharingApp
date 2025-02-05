@@ -107,7 +107,7 @@ namespace HouseholdResponsibilityAppServer.Context
                 .HasForeignKey(u => u.HouseholdId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
-
+            
             modelBuilder.Entity<Household>()
                 .HasOne(h => h.CreatedByUser)
                 .WithMany()

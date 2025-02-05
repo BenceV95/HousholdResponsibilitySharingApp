@@ -52,7 +52,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.Histories
                 throw new KeyNotFoundException("Couldn't find history entry in the db to update!");
             }
 
-            existingHistory.Action = history.Action;
+            existingHistory.Outcome = history.Outcome;
             existingHistory.CompletedBy = history.CompletedBy;
             existingHistory.CompletedAt = history.CompletedAt;
 

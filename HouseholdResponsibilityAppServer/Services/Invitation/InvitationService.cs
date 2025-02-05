@@ -38,8 +38,6 @@ public class InvitationService : IInvitationService
 
         var user = await _userRepository.GetUserByIdAsync(userId);
 
-        user.HouseholdId = invitation.HouseholdId;
-
         invitation.IsAccepted = true;
 
         await _invitationRepository.UpdateInvitationAsync(invitation);
