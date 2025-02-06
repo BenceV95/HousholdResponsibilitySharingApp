@@ -60,3 +60,16 @@ export async function apiPost(endpoint, data) {
 
   return response.json();
 }
+
+export async function apiDelete(endpoint) {
+  console.log(`${BACKEND_URL}${endpoint}`);
+  
+  const response = await fetch(`${BACKEND_URL}${endpoint}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("API request failed");
+  }
+
+}

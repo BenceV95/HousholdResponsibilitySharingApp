@@ -55,15 +55,15 @@ public class UserController : ControllerBase
         try
         {
             await _userService.CreateUserAsync(userDto);
-            return Ok();
+            return Ok(new { message = "User created successfully!" }); //changed cuz frontend
         }
         catch (Exception ex)
         {
             Console.Error.WriteLine(ex.Message);
-
-            return BadRequest("An error occurred while creating user.");
+            return BadRequest(new { message = "An error occurred while creating user." });
         }
     }
+
 
     [HttpPut("/user/{userId}")]
     public async Task<ActionResult> UpdateUser(int userId, [FromBody] UserDto userDto)
@@ -71,7 +71,7 @@ public class UserController : ControllerBase
         try
         {
             await _userService.UpdateUserAsync(userId, userDto);
-            return NoContent();
+            return Ok(new { message = "Update successfull!" });  //changed cuz frontend
         }
         catch (Exception ex)
         {
@@ -79,7 +79,7 @@ public class UserController : ControllerBase
 
             return BadRequest("An error occurred while updating user.");
         }
-
+        
     }
 
     [HttpDelete("/user/{userId}")]

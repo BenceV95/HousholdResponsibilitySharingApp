@@ -17,6 +17,11 @@ const Navbar = () => {
                         <span>Tasks</span>
                     </button>
                 </Link>
+                <Link href="/users">
+                    <button className='btn btn-primary'>
+                        <span>Users</span>
+                    </button>
+                </Link>
                 <Link href="/settings">
                     <button className='btn btn-primary'>
                         <span>Settings</span>

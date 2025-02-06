@@ -1,0 +1,58 @@
+.get-user-by-id {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 2px solid white;
+    border-radius: 10px;
+    background-color: #222;
+    color: white;
+}
+
+.get-user-by-id label {
+    font-weight: bold;
+}
+
+.get-user-by-id input {
+    padding: 12px;
+    font-size: 16px;
+    width: 100%;
+    border: 2px solid #666;
+    border-radius: 5px;
+    background-color: #444;
+    color: white;
+}
+
+.get-user-by-id span {
+    color: red;
+    font-size: 12px;
+}
+
+.user-info {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid white;
+    border-radius: 10px;
+    background-color: #333;
+    color: white;
+    text-align: center;
+}
+
+.get-user-by-id button {
+    padding: 12px;
+    font-size: 16px;
+    background-color: #4CAF50; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.get-user-by-id button:hover {
+    background-color: #45a049; 
+}
