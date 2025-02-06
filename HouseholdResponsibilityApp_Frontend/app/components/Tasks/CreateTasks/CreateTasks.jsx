@@ -1,7 +1,7 @@
 "use client";
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { apiFetch, apiPut, apiPost } from '../../../(utils)/api';
+import { apiFetch, apiPut, apiPost, apiDelete } from '../../../(utils)/api';
 import './CreateTasks.css';
 import uuidv4 from '../../../(utils)/uuidv4';
 
@@ -16,14 +16,14 @@ const CreateTasks = () => {
         const taskData = {
             title: data.title,
             description: data.description,
-            createdbyid: data.created_by,
-            groupid: data.group_id,
+            createdbyid: data.createdBy,
+            groupid: data.groupId,
             priority: data.priority || false,
-            householdid: 1 // HARD CODED !!!!
+            householdid: data.householdId
         };
 
         console.log(taskData);
-        
+
         try {
             let postedForm = await apiPost("/task", taskData);
             console.log(postedForm);
@@ -55,7 +55,7 @@ const CreateTasks = () => {
             <input
                 type="number"
                 id="createdBy"
-                {...register('created_by', { required: 'Created By is required' })}
+                {...register('createdBy', { required: 'Created By is required' })}
             />
             {errors.created_by && <span>{errors.created_by.message}</span>}
 
@@ -63,8 +63,17 @@ const CreateTasks = () => {
             <input
                 type="number"
                 id="groupId"
-                {...register('group_id')}
+                {...register('groupId', { required: 'Group ID is required' })}
             />
+            {errors.groupId && <span>{errors.groupId.message}</span>}
+
+            <label htmlFor="householdId">Household ID:</label>
+            <input
+                type="number"
+                id="householdId"
+                {...register('householdId', { required: 'Household ID is required' })}
+            />
+            {errors.householdId && <span>{errors.householdId.message}</span>}
 
             <label htmlFor="priority">Priority:</label>
             <input

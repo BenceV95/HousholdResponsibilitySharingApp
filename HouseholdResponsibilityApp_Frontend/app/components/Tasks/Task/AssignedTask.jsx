@@ -1,20 +1,30 @@
 "use client";
 import React, { useState } from 'react'
-import { apiFetch, apiPut } from '../../../(utils)/api';
+import { apiFetch, apiPut, apiDelete, apiPost } from '../../../(utils)/api';
 import Loading from '../../../(utils)/Loading';
 
 const AssignedTask = () => {
 
-    const [data, setData] = useState({});
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const getData = async () => {
         setLoading(true);
         console.log("downloading");
-        const promise = await apiFetch("/assigned_tasks");
+        const promise = await apiFetch("/scheduleds");
         setData(promise);
         console.log(promise);
         setLoading(false);
+    }
+
+    const deleteTask = async (e) => {
+        console.log(e.target.id);
+        const filtered = data.filter(t => t.scheduledTaskId != e.target.id);
+        setData(filtered);
+
+        const deletePromise = await apiDelete(`/scheduled/${e.target.id}`);
+        console.log("Deleted ", e.target.id);
+
     }
 
     return (
@@ -24,13 +34,17 @@ const AssignedTask = () => {
             </div>
             <div className='display'>
                 {loading ? (<Loading />) :
-                    (Object.entries(data).map(([dataID, dataEntry]) => (
-                        <div key={dataID} className='taskData'>
-                            <h3>task_id: {dataEntry.task_id}</h3>
-                            <h3>assigned_to: {dataEntry.assigned_to}</h3>
-                            <h3>created_by: {dataEntry.created_by}</h3>
-                            <h3>repeat: {dataEntry.repeat}</h3>
-                            <h3>specific_time: {dataEntry.specific_time}</h3>
+                    (data.map((dataEntry, i) => (
+                        <div key={i} className='taskData'>
+                            <span>scheduledTaskId: {dataEntry.scheduledTaskId}</span><br />
+                            <span>householdTaskId: {dataEntry.householdTaskId}</span><br />
+                            <span>createdByUserId: {dataEntry.createdByUserId}</span><br />
+                            <span>createdAt: {dataEntry.createdAt}</span><br />
+                            <span>repeat: {dataEntry.repeat}</span><br />
+                            <span>eventDate: {dataEntry.eventDate}</span><br />
+                            <span>atSpecificTime: {dataEntry.atSpecificTime}</span><br />
+                            <span>assignedToUserId: {dataEntry.assignedToUserId}</span><br />
+                            <button className='btn btn-danger' id={dataEntry.scheduledTaskId} onClick={(e) => deleteTask(e)}>DELETE</button>
                         </div>
                     )))}
             </div>
