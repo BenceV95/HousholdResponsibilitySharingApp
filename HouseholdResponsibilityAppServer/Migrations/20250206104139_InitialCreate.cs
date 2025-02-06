@@ -36,7 +36,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
                     GroupId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    HouseholdId = table.Column<int>(type: "integer", nullable: true)
+                    HouseholdId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,8 +51,9 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ScheduledTaskId = table.Column<int>(type: "integer", nullable: false),
                     CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CompletedByUserId = table.Column<int>(type: "integer", nullable: false),
-                    Action = table.Column<bool>(type: "boolean", nullable: false)
+                    CompletedById = table.Column<int>(type: "integer", nullable: false),
+                    Outcome = table.Column<bool>(type: "boolean", nullable: false),
+                    HouseholdId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -108,10 +109,11 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    CreatedByUserId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
                     GroupId = table.Column<int>(type: "integer", nullable: false),
-                    Priority = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    Priority = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    HouseholdId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,8 +125,14 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         principalColumn: "GroupId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Tasks_Users_CreatedByUserId",
-                        column: x => x.CreatedByUserId,
+                        name: "FK_Tasks_Households_HouseholdId",
+                        column: x => x.HouseholdId,
+                        principalTable: "Households",
+                        principalColumn: "HouseholdId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Tasks_Users_CreatedById",
+                        column: x => x.CreatedById,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -173,9 +181,14 @@ namespace HouseholdResponsibilityAppServer.Migrations
                 column: "HouseholdId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Histories_CompletedByUserId",
+                name: "IX_Histories_CompletedById",
                 table: "Histories",
-                column: "CompletedByUserId");
+                column: "CompletedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Histories_HouseholdId",
+                table: "Histories",
+                column: "HouseholdId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Histories_ScheduledTaskId",
@@ -203,9 +216,9 @@ namespace HouseholdResponsibilityAppServer.Migrations
                 column: "HouseholdTaskId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_CreatedByUserId",
+                name: "IX_Tasks_CreatedById",
                 table: "Tasks",
-                column: "CreatedByUserId");
+                column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_GroupId",
@@ -213,16 +226,42 @@ namespace HouseholdResponsibilityAppServer.Migrations
                 column: "GroupId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Tasks_HouseholdId",
+                table: "Tasks",
+                column: "HouseholdId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_HouseholdId",
                 table: "Users",
                 column: "HouseholdId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Username",
+                table: "Users",
+                column: "Username",
+                unique: true);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Groups_Households_HouseholdId",
                 table: "Groups",
                 column: "HouseholdId",
                 principalTable: "Households",
-                principalColumn: "HouseholdId");
+                principalColumn: "HouseholdId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Histories_Households_HouseholdId",
+                table: "Histories",
+                column: "HouseholdId",
+                principalTable: "Households",
+                principalColumn: "HouseholdId",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Histories_ScheduledTasks_ScheduledTaskId",
@@ -233,9 +272,9 @@ namespace HouseholdResponsibilityAppServer.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Histories_Users_CompletedByUserId",
+                name: "FK_Histories_Users_CompletedById",
                 table: "Histories",
-                column: "CompletedByUserId",
+                column: "CompletedById",
                 principalTable: "Users",
                 principalColumn: "UserId",
                 onDelete: ReferentialAction.Cascade);

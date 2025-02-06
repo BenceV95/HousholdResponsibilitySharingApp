@@ -1,7 +1,7 @@
 "use client";
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { apiFetch,apiPut } from '../../../(utils)/api';
+import { apiFetch, apiPut, apiPost } from '../../../(utils)/api';
 import './CreateTasks.css';
 import uuidv4 from '../../../(utils)/uuidv4';
 
@@ -9,22 +9,23 @@ const CreateTasks = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [message, setMessage] = useState('');
 
-    
+
 
     const onSubmit = async (data) => {
 
         const taskData = {
-            [uuidv4()]: {
-                title: data.title,
-                description: data.description,
-                created_by: data.created_by,
-                group_id: data.group_id,
-                priority: data.priority || false,
-            }
+            title: data.title,
+            description: data.description,
+            createdbyid: data.created_by,
+            groupid: data.group_id,
+            priority: data.priority || false,
+            householdid: 1 // HARD CODED !!!!
         };
 
+        console.log(taskData);
+        
         try {
-            let postedForm = await apiPut("/tasks", taskData);
+            let postedForm = await apiPost("/task", taskData);
             console.log(postedForm);
             setMessage('Successfully posted form data !');
 

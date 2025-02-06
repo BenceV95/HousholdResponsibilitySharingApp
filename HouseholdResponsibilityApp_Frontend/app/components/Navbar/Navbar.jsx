@@ -6,6 +6,7 @@ const Navbar = () => {
     return (
         <heading className="heading">
             <nav className='navbar'>
+                {/* once we have auth then we need to do a landing page and a home page */}
                 <Link href='/'>
                     <button className='btn btn-primary'>
                         <span>HOME</span>
@@ -14,6 +15,11 @@ const Navbar = () => {
                 <Link href="/tasks">
                     <button className='btn btn-primary'>
                         <span>Tasks</span>
+                    </button>
+                </Link>
+                <Link href="/settings">
+                    <button className='btn btn-primary'>
+                        <span>Settings</span>
                     </button>
                 </Link>
             </nav>

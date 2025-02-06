@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HouseholdResponsibilityAppServer.Migrations
 {
     [DbContext(typeof(HouseholdResponsibilityAppContext))]
-    [Migration("20250205105542_InitialCreate")]
+    [Migration("20250206104139_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -33,7 +33,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("GroupId"));
 
-                    b.Property<int?>("HouseholdId")
+                    b.Property<int>("HouseholdId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
@@ -55,21 +55,26 @@ namespace HouseholdResponsibilityAppServer.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("HistoryId"));
 
-                    b.Property<bool>("Action")
-                        .HasColumnType("boolean");
-
                     b.Property<DateTime>("CompletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("CompletedByUserId")
+                    b.Property<int>("CompletedById")
                         .HasColumnType("integer");
+
+                    b.Property<int>("HouseholdId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("Outcome")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("ScheduledTaskId")
                         .HasColumnType("integer");
 
                     b.HasKey("HistoryId");
 
-                    b.HasIndex("CompletedByUserId");
+                    b.HasIndex("CompletedById");
+
+                    b.HasIndex("HouseholdId");
 
                     b.HasIndex("ScheduledTaskId");
 
@@ -189,7 +194,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int>("CreatedById")
                         .HasColumnType("integer");
 
                     b.Property<string>("Description")
@@ -197,6 +202,9 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("GroupId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("HouseholdId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("Priority")
@@ -211,9 +219,11 @@ namespace HouseholdResponsibilityAppServer.Migrations
 
                     b.HasKey("TaskId");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedById");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("HouseholdId");
 
                     b.ToTable("Tasks");
                 });
@@ -257,23 +267,39 @@ namespace HouseholdResponsibilityAppServer.Migrations
 
                     b.HasKey("UserId");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("HouseholdId");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("HouseholdResponsibilityAppServer.Models.Groups.TaskGroup", b =>
                 {
-                    b.HasOne("HouseholdResponsibilityAppServer.Models.Households.Household", null)
+                    b.HasOne("HouseholdResponsibilityAppServer.Models.Households.Household", "Household")
                         .WithMany("Groups")
-                        .HasForeignKey("HouseholdId");
+                        .HasForeignKey("HouseholdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Household");
                 });
 
             modelBuilder.Entity("HouseholdResponsibilityAppServer.Models.Histories.History", b =>
                 {
                     b.HasOne("HouseholdResponsibilityAppServer.Models.Users.User", "CompletedBy")
                         .WithMany()
-                        .HasForeignKey("CompletedByUserId")
+                        .HasForeignKey("CompletedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HouseholdResponsibilityAppServer.Models.Households.Household", "Household")
+                        .WithMany("Histories")
+                        .HasForeignKey("HouseholdId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -284,6 +310,8 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .IsRequired();
 
                     b.Navigation("CompletedBy");
+
+                    b.Navigation("Household");
 
                     b.Navigation("ScheduledTask");
                 });
@@ -329,7 +357,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
                 {
                     b.HasOne("HouseholdResponsibilityAppServer.Models.Users.User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedByUserId")
+                        .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -339,9 +367,17 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("HouseholdResponsibilityAppServer.Models.Households.Household", "Household")
+                        .WithMany("HouseholdTasks")
+                        .HasForeignKey("HouseholdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("CreatedBy");
 
                     b.Navigation("Group");
+
+                    b.Navigation("Household");
                 });
 
             modelBuilder.Entity("HouseholdResponsibilityAppServer.Models.Users.User", b =>
@@ -357,6 +393,10 @@ namespace HouseholdResponsibilityAppServer.Migrations
             modelBuilder.Entity("HouseholdResponsibilityAppServer.Models.Households.Household", b =>
                 {
                     b.Navigation("Groups");
+
+                    b.Navigation("Histories");
+
+                    b.Navigation("HouseholdTasks");
 
                     b.Navigation("Users");
                 });

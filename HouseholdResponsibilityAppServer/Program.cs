@@ -42,8 +42,7 @@ namespace HouseholdResponsibilityAppServer
 
             builder.Services.AddDbContext<HouseholdResponsibilityAppContext>(options =>
             {
-                options.UseNpgsql(
-                    "Server=localhost;Port=5432;User Id=postgres;Password=postgres;Database=HouseholdResponsibility;");
+                options.UseNpgsql(builder.Configuration["DbConnectionString"]); // user secrets used here
             });
 
 
