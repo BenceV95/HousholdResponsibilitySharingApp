@@ -23,7 +23,7 @@ namespace HouseholdResponsibilityAppServer
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+/*
             builder.Services.AddCors(options =>
             {
                 options.AddDefaultPolicy(policy =>
@@ -33,6 +33,7 @@ namespace HouseholdResponsibilityAppServer
                         .AllowAnyMethod();
                 });
             });
+*/
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -79,9 +80,9 @@ namespace HouseholdResponsibilityAppServer
                 app.UseSwaggerUI();
             }
 
-            app.UseCors();
+            //app.UseCors();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

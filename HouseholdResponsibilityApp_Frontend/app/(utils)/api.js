@@ -1,10 +1,13 @@
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+//const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+const BACKEND_URL = "/api";
 
 /* 
 usage: apiFetch("/tasks")
 */
 export async function apiFetch(endpoint) {
-  console.log(BACKEND_URL);
+  console.log(`${BACKEND_URL}${endpoint}`);
+  
   
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {
     method: "GET",
