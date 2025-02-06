@@ -4,7 +4,7 @@ import "./CreateHousehold.css"
 import { apiPost } from "../../../(utils)/api";
 
 
-
+//this component also needs the user in the future
 export default function CreateHousehold() {
     const [householdName, setHouseholdName] = useState(null);
 

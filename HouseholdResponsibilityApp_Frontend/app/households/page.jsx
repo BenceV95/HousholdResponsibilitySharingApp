@@ -3,6 +3,7 @@
 import { useState } from "react"
 import AllHouseholds from "../components/Households/AllHouseholds/AllHouseholds"
 import CreateHousehold from "../components/Households/CreateHousehold/CreateHousehold";
+import ChangeHouseholdName from "../components/Households/ChangeHouseholdName/ChangeHouseholdName";
 
 
 
@@ -24,10 +25,10 @@ export default function Households() {
             <button value={"changeName"} onClick={(e) => setAction(e.target.value)} className='btn btn-warning'>Change Household Name</button>
             <button value={"sendInvite"} onClick={(e) => setAction(e.target.value)} className='btn btn-warning' >Send Household Invite</button>
             {
-                action === "create" ? <CreateHousehold/> :
-                action === "listAll" ?  <AllHouseholds />:
-                action === "changeName" ? <>changeName</> :
-                action === "sendInvite" ? <>sendInvite</> : null
+                action === "create" ? <CreateHousehold /> :
+                    action === "listAll" ? <AllHouseholds /> :
+                        action === "changeName" ? <ChangeHouseholdName /> :
+                            action === "sendInvite" ? <>sendInvite</> : null
             }
 
         </>
