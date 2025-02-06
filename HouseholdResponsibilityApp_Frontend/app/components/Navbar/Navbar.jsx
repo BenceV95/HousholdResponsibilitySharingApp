@@ -27,6 +27,9 @@ const Navbar = () => {
                         <span>Settings</span>
                     </button>
                 </Link>
+                <Link href="/households" >
+                    <button className='btn btn-primary'>Households</button>
+                </Link>
             </nav>
         </heading>
     )
