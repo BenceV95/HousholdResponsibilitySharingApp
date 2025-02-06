@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react'
-import { apiFetch, apiPut } from '../../../(utils)/api';
+import { apiDelete, apiFetch, apiPut, apiPost } from '../../../(utils)/api';
 import './GetTasks.css'
 import Loading from '../../../(utils)/Loading';
 import Task from '../Task/Task';
@@ -19,6 +19,16 @@ const GetTasks = () => {
         setLoading(false);
     }
 
+    const deleteTask = async (e) => {
+        console.log(e.target.id);
+        const filtered = data.filter(t => t.taskId != e.target.id);
+        setData(filtered);
+
+        const deletePromise = await apiDelete(`/task/${e.target.id}`);
+        console.log("Deleted ",e.target.id);
+        
+    }
+
     return (
         <div className='getTasks'>
             <div className='getDataButton'>
@@ -29,7 +39,7 @@ const GetTasks = () => {
                     (
                         Object.entries(data).map(([dataID, dataEntry]) => (
                             <div key={dataID} className='taskData'>
-                                <Task data={dataEntry} />
+                                <Task data={dataEntry} deleteTask={deleteTask}/>
                             </div>
                         ))
 

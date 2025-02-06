@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import React, { useState } from 'react';
-import { apiFetch, apiPut } from '../../../(utils)/api';
+import { apiDelete, apiFetch, apiPut, apiPost } from '../../../(utils)/api';
 import './AssignTasks.css';
 import uuidv4 from '../../../(utils)/uuidv4';
 
@@ -21,15 +21,19 @@ const AssignTasks = () => {
             return;
         }
 
-        let idAssignedData = {
-            [uuidv4()]:{...data}
+        data.eventDate = new Date(data.eventDate).toISOString();
+        data.repeat = parseInt(data.repeat,10);
+        const modifiedData = {
+            ...data,
+            atSpecificTime: specificTimeSelected
         }
 
+        console.log(modifiedData);
+        
         clearErrors("event_date");
 
-        // API call simulation
         try {
-            const promise = await apiPut("/assigned_tasks", idAssignedData);
+            const promise = await apiPost("/scheduled", modifiedData);
             console.log(promise);
 
             setSuccess("Task scheduled successfully!");
@@ -42,40 +46,40 @@ const AssignTasks = () => {
         <div className="assignTasks">
             <form onSubmit={handleSubmit(onSubmit)}>
 
-                <input type="number" {...register("task_id", { required: true })} placeholder='Task ID' />
-                {errors.task_id && <p className="error">Task ID is required</p>}
+                <input type="number" {...register("householdTaskId", { required: true, setValueAs: value => value === "" ? undefined : parseInt(value, 10) })} placeholder='Task ID' />
+                {errors.householdTaskId && <p className="error">Task ID is required</p>}
 
-                <input type="number" {...register("created_by", { required: true })} placeholder='Created By (UserId)' />
-                {errors.created_by && <p className="error">Created By is required</p>}
+                <input type="number" {...register("createdByUserId", { required: true, setValueAs: value => value === "" ? undefined : parseInt(value, 10) })} placeholder='Created By (UserId)' />
+                {errors.createdByUserId && <p className="error">Created By is required</p>}
 
-                <input type="number" {...register("assigned_to", { required: true })} placeholder='Assigned To (UserId)' />
-                {errors.assigned_to && <p className="error">Assigned To is required</p>}
+                <input type="number" {...register("assignedToUserId", { required: true, setValueAs: value => value === "" ? undefined : parseInt(value, 10) })} placeholder='Assigned To (UserId)' />
+                {errors.assignedToUserId && <p className="error">Assigned To is required</p>}
 
                 <label>Repeat Frequency:</label>
                 <div className='repeatRadios'>
                     <label>
-                        <input type="radio" value="daily" {...register("repeat")} /> Daily
+                        <input type="radio" value="0" {...register("repeat") } /> Daily
                     </label>
                     <label>
-                        <input type="radio" value="weekly" {...register("repeat")} /> Weekly
+                        <input type="radio" value="1" {...register("repeat")} /> Weekly
                     </label>
                     <label>
-                        <input type="radio" value="monthly" {...register("repeat")} /> Monthly
+                        <input type="radio" value="2" {...register("repeat")} /> Monthly
                     </label>
                     <label>
-                        <input type="radio" value="no_repeat" {...register("repeat")} /> No Repeat
+                        <input type="radio" value="3" {...register("repeat")} /> No Repeat
                     </label>                    
                 </div>
                 {errors.repeat && <p className="error">Repeat Frequency is required</p>}
+
                 <label>Specific Time:</label>
                 <label className="switch">
-                    <input type="checkbox" onChange={SelectSpecificTime}/>
+                    <input type="checkbox" onChange={SelectSpecificTime} />
                         <span className="slider round"></span>
                 </label>
                 
-                {/* toggle switch here. for switching between time and or date */}
-                <input type={specificTimeSelected ? ("datetime-local") : ("date")} {...register("specific_time", { required: true })} />
-                {errors.specific_time && <p className="error">Date is required</p>}
+                <input type={specificTimeSelected ? ("datetime-local") : ("date")} {...register("eventDate", { required: true })} />
+                {errors.eventDate && <p className="error">Date is required</p>}
                 <br />
                 <br />
                 <button type="submit" className='btn btn-success'>Submit</button>
