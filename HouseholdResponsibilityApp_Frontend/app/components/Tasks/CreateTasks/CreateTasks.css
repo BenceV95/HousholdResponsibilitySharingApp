@@ -1,0 +1,29 @@
+.task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.task-form label {
+    font-weight: bold;
+}
+
+.task-form input,
+.task-form textarea {
+    padding: 8px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+
+.task-form span {
+    color: red;
+    font-size: 12px;
+}
+
+.task-form p {
+    margin-top: 15px;
+    font-weight: bold;
+}

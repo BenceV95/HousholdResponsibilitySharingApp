@@ -1,0 +1,21 @@
+.delete-user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    background-color: #222;
+    color: white;
+}
+
+.delete-user-form button {
+    background-color: #f44336; 
+    color: white;
+}
+
+.delete-user-form button:hover {
+    background-color: #da190b; 
+}
