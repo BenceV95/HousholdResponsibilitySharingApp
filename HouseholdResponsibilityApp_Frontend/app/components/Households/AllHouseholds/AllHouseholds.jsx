@@ -8,9 +8,6 @@ import { apiFetch } from "../../../(utils)/api";
 
 
 
-
-
-
 export default function AllHouseholds() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -19,10 +16,8 @@ export default function AllHouseholds() {
     console.log("data:", data)
     const getData = async () => {
         setLoading(true);
-        console.log("downloading");
         const promise = await apiFetch("/households");
         setData([...promise]);
-        console.log(promise);
         setLoading(false);
     }
 

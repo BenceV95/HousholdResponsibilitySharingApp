@@ -26,7 +26,7 @@ export default function ChangeHouseholdName() {
             <form onSubmit={changeName} action="">
                 <input placeholder="New name" onChange={(e) => setNewName(e.target.value)} type="newName" />
                 <input placeholder="Household Id" onChange={(e) => setHouseholdId(parseInt(e.target.value))} type="number" name="householdId" id="" />
-                <button type="submit" >Change</button>
+                <button type="submit" className="btn btn-primary" >Change</button>
             </form>
         </div>
     )

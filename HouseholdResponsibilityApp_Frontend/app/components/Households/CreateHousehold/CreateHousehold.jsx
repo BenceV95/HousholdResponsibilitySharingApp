@@ -25,7 +25,7 @@ export default function CreateHousehold() {
         <div className="create-household">
             <form onSubmit={sendHouseholdCreateRequest} action="">
                 <input onChange={(e) => setHouseholdName(e.target.value)} type="text" name="householdName" id="householdName" placeholder="Household name" />
-                <button type="submit">Create</button>
+                <button type="submit" className="btn btn-primary">Create</button>
             </form>
         </div>
     )
