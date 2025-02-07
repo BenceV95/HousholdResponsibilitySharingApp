@@ -43,7 +43,8 @@ namespace HouseholdResponsibilityAppServer
 
             builder.Services.AddDbContext<HouseholdResponsibilityAppContext>(options =>
             {
-                options.UseNpgsql(builder.Configuration["DbConnectionString"]); // user secrets used here
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+                //options.UseNpgsql(builder.Configuration["DbConnectionString"]); // user secrets used here
             });
 
 
@@ -84,6 +85,14 @@ namespace HouseholdResponsibilityAppServer
 
             //app.UseHttpsRedirection();
 
+            // Apply pending migrations
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
+                db.Database.Migrate();
+            }
+            
+
             app.UseAuthorization();
 
 
@@ -93,3 +102,5 @@ namespace HouseholdResponsibilityAppServer
         }
     }
 }
+
+

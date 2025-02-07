@@ -1,6 +1,4 @@
-//const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-
-const BACKEND_URL = "/api";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 /* 
 usage: apiFetch("/tasks")
