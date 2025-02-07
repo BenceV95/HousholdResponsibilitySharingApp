@@ -28,7 +28,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
                 LastName = user.LastName,
                 IsAdmin = user.IsAdmin,
                 CreatedAt = user.CreatedAt,
-                HouseholdId = user.HouseholdId
+                HouseholdId = user.Household?.HouseholdId
             }).ToList();
 
         }
@@ -46,7 +46,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
                 LastName = user.LastName,
                 IsAdmin = user.IsAdmin,
                 CreatedAt = user.CreatedAt,
-                HouseholdId = user.HouseholdId
+                HouseholdId = user.Household?.HouseholdId
             };
         }
 

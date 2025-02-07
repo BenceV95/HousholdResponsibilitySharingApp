@@ -1,5 +1,6 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Histories;
 using HouseholdResponsibilityAppServer.Repositories.Histories;
+using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
 using HouseholdResponsibilityAppServer.Repositories.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Repositories.UserRepo;
 using HouseholdResponsibilityAppServer.Services.UserService;
@@ -13,12 +14,14 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
         private readonly IHistoryRepository _historiesRepository;
         private readonly IScheduledTasksRepository _scheduledTasksRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IHouseholdRepository _householdRepository;
 
-        public HistoryService( IScheduledTasksRepository scheduledTasksRepository, IHistoryRepository historiesRepository, IUserRepository userRepository)
+        public HistoryService(IScheduledTasksRepository scheduledTasksRepository, IHistoryRepository historiesRepository, IUserRepository userRepository, IHouseholdRepository householdRepository)
         {
             _scheduledTasksRepository = scheduledTasksRepository;
             _historiesRepository = historiesRepository;
             _userRepository = userRepository;
+            _householdRepository = householdRepository;
         }
 
 
@@ -67,6 +70,7 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
         {
             var scheduledTask = await _scheduledTasksRepository.GetByIdAsync(historyCreateRequest.ScheduledTaskId);
             var completedBy = await _userRepository.GetUserByIdAsync(historyCreateRequest.CompletedByUserId);
+            var household = await _householdRepository.GetHouseholdByIdAsync(historyCreateRequest.HouseholdId);
 
 
 
@@ -76,7 +80,7 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
                 Outcome = historyCreateRequest.Outcome,
                 CompletedAt = historyCreateRequest.CompletedAt,
                 CompletedBy = completedBy,
-                HouseholdId = historyCreateRequest.HouseholdId,
+                Household = household
             };
         }
         private HistoryDTO ConvertModelToDTO(History historyModel)
@@ -88,7 +92,7 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
                 CompletedAt = historyModel.CompletedAt,
                 ScheduledTaskId = historyModel.ScheduledTask.ScheduledTaskId,
                 Outcome = historyModel.Outcome,
-                HouseholdId = historyModel.HouseholdId,
+                HouseholdId = historyModel.Household.HouseholdId,
 
             };
         }

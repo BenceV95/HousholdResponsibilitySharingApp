@@ -15,8 +15,6 @@ namespace HouseholdResponsibilityAppServer.Models.Users
         public bool IsAdmin { get; set; }
         public string PasswordHash { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-
-        public int? HouseholdId { get; set; }
         public Household? Household { get; set; }
     }
 }
