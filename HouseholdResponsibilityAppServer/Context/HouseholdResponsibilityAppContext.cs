@@ -6,11 +6,16 @@ using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Models.Invitations;
 using HouseholdResponsibilityAppServer.Models.Users;
 using HouseholdResponsibilityAppServer.Models.Groups;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace HouseholdResponsibilityAppServer.Context
 {
-    public class HouseholdResponsibilityAppContext(DbContextOptions options) : DbContext(options)
+    public class HouseholdResponsibilityAppContext: IdentityDbContext<IdentityUser, IdentityRole, string>
     {
+        public HouseholdResponsibilityAppContext(DbContextOptions<HouseholdResponsibilityAppContext> options) 
+            : base(options) { }
+
         public DbSet<User> Users { get; set; }
         public DbSet<HouseholdTask> Tasks { get; set; }
         public DbSet<ScheduledTask> ScheduledTasks { get; set; }
@@ -24,7 +29,7 @@ namespace HouseholdResponsibilityAppServer.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            base.OnModelCreating(modelBuilder);
             //HouseholdTask
             modelBuilder.Entity<HouseholdTask>()
                 .HasKey(t => t.TaskId); // Primary Key

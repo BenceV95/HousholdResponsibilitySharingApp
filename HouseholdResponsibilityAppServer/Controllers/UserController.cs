@@ -2,6 +2,7 @@
 using HouseholdResponsibilityAppServer.Models.Users;
 using HouseholdResponsibilityAppServer.Services.Invitation;
 using HouseholdResponsibilityAppServer.Services.UserService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -17,6 +18,7 @@ public class UserController : ControllerBase
         _invitationService = invitationService;
     }
 
+    [Authorize]
     [HttpGet("/users")]
     public async Task<ActionResult> GetAllUser()
     {

@@ -15,6 +15,12 @@ using HouseholdResponsibilityAppServer.Repositories.Histories;
 using HouseholdResponsibilityAppServer.Services.HistoryServices;
 using HouseholdResponsibilityAppServer.Repositories.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Services.ScheduledTaskServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using HouseholdResponsibilityAppServer.Services.Authentication;
+using Microsoft.OpenApi.Models;
 
 namespace HouseholdResponsibilityAppServer
 {
@@ -23,29 +29,48 @@ namespace HouseholdResponsibilityAppServer
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-/*
-            builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(policy =>
-                {
-                    policy.WithOrigins("http://localhost:3000") // Allow the frontend domain
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                });
-            });
-*/
+
             // Add services to the container.
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
+            builder.Services.AddSwaggerGen(option =>
+            {
+                option.SwaggerDoc("v1", new OpenApiInfo { Title = "Household API", Version = "v1" });
+                option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter a valid token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+                option.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type=ReferenceType.SecurityScheme,
+                            Id="Bearer"
+                        }
+                    },
+                    new string[]{}
+                }
+            });
+            });
             builder.Services.AddDbContext<HouseholdResponsibilityAppContext>(options =>
             {
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-                //options.UseNpgsql(builder.Configuration["DbConnectionString"]); // user secrets used here
+                //options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+                options.UseNpgsql(builder.Configuration["DbConnectionString"]); // user secrets used here
             });
+
+            // Config settings
+            var jwtSettings = builder.Configuration.GetSection("Jwt");
+            var issuerSigningKey = builder.Configuration["Jwt:IssuerSigningKey"];
 
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -59,6 +84,9 @@ namespace HouseholdResponsibilityAppServer
             builder.Services.AddScoped<IHistoryService, HistoryService>();
             builder.Services.AddScoped<IScheduledTasksRepository, ScheduledTasksRepository>();
             builder.Services.AddScoped<IScheduledTaskService, ScheduledTaskService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<AuthenticationSeeder>();
 
 
 
@@ -68,7 +96,8 @@ namespace HouseholdResponsibilityAppServer
             builder.Services.AddScoped<IInvitationService, InvitationService>();
 
 
-
+            AddAuth();
+            AddIdentity();
 
 
             var app = builder.Build();
@@ -81,24 +110,71 @@ namespace HouseholdResponsibilityAppServer
                 app.UseSwaggerUI();
             }
 
-            //app.UseCors();
+            app.UseHttpsRedirection();
 
-            //app.UseHttpsRedirection();
-
+            using var scope = app.Services.CreateScope(); // AuthenticationSeeder is a scoped service, therefore we need a scope instance to access it
+            var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
+            authenticationSeeder.AddRoles();
+            authenticationSeeder.AddAdmin();
             // Apply pending migrations
-            using (var scope = app.Services.CreateScope())
-            {
-                var db = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
-                db.Database.Migrate();
-            }
-            
+            var db = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
+            db.Database.Migrate();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
+
+            void AddAuth()
+            {
+                builder.Services
+             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+             .AddJwtBearer(options =>
+             {
+                 options.TokenValidationParameters = new TokenValidationParameters()
+                 {
+                     ClockSkew = TimeSpan.Zero,
+                     ValidateIssuer = true,    // kibocsátó ellenõrzése
+                     ValidateAudience = true,  // címzett ellenõrzése
+                     ValidateLifetime = true,
+                     ValidateIssuerSigningKey = true,
+                     ValidIssuer = jwtSettings["ValidIssuer"],
+                     ValidAudience = jwtSettings["ValidAudience"],
+                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(issuerSigningKey)),
+                 };
+
+                 // A token cookie-ból lesz kiolvasva ha a HTTP headersben nincs megadva.
+                 options.Events = new JwtBearerEvents
+                 {
+                     OnMessageReceived = context =>
+                     {
+                         if (string.IsNullOrEmpty(context.Token))
+                         {
+                             context.Token = context.Request.Cookies["token"];
+                         }
+                         return Task.CompletedTask;
+                     }
+                 };
+             });
+            }
+
+            void AddIdentity()
+            {
+                builder.Services
+                    .AddIdentityCore<IdentityUser>(options =>
+                    {
+                        options.SignIn.RequireConfirmedAccount = false;
+                        options.User.RequireUniqueEmail = true;
+                        options.Password.RequireDigit = false;
+                        options.Password.RequiredLength = 6;
+                        options.Password.RequireNonAlphanumeric = false;
+                        options.Password.RequireUppercase = false;
+                        options.Password.RequireLowercase = false;
+                    })
+                    .AddRoles<IdentityRole>() //Enable Identity roles 
+                    .AddEntityFrameworkStores<HouseholdResponsibilityAppContext>(); 
+            }
+
         }
     }
 }
