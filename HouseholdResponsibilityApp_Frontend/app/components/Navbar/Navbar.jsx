@@ -12,6 +12,12 @@ const Navbar = () => {
                         <span>HOME</span>
                     </button>
                 </Link>
+                <Link href="/login">
+                 <button className="btn btn-primary">Login</button>
+               </Link>
+               <Link href="/register">
+                <button className="btn btn-primary">Register</button>
+                </Link>
                 <Link href="/tasks">
                     <button className='btn btn-primary'>
                         <span>Tasks</span>

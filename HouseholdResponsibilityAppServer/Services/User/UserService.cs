@@ -22,11 +22,11 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
             return users.Select(user => new UserResponseDto
             {
                 UserResponseDtoId = user.Id,
-                Username = user.Username,
+                Username = user.UserName,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                IsAdmin = user.IsAdmin,
+                //IsAdmin = user.IsAdmin, roletabléből majd
                 CreatedAt = user.CreatedAt,
             }).ToList();
 
@@ -39,7 +39,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
             return new UserResponseDto
             {
                 UserResponseDtoId = user.Id,
-                Username = user.Username,
+                Username = user.UserName,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,

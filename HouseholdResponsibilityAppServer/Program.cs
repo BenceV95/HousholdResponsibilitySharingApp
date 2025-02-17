@@ -121,6 +121,7 @@ namespace HouseholdResponsibilityAppServer
             var db = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
             db.Database.Migrate();
 
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();

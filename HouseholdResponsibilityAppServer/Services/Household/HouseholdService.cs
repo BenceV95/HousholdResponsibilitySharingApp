@@ -23,7 +23,7 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdService
                 HouseholdResponseDtoId = household.HouseholdId,
                 Name = household.Name,
                 CreatedAt = household.CreatedAt,
-                CreatedByUsername = household.CreatedByUser?.Username ?? "Unknown"
+                CreatedByUsername = household.CreatedByUser?.UserName ?? "Unknown"
             }).ToList();
         }
 
@@ -36,7 +36,7 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdService
                 HouseholdResponseDtoId = household.HouseholdId,
                 Name = household.Name,
                 CreatedAt = household.CreatedAt,
-                CreatedByUsername = household.CreatedByUser?.Username ?? "Unknown"
+                CreatedByUsername = household.CreatedByUser?.UserName ?? "Unknown"
             };
         }
 
