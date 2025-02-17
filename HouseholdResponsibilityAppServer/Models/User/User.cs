@@ -7,9 +7,8 @@ namespace HouseholdResponsibilityAppServer.Models.Users
     [Index(nameof(Email), IsUnique = true)]
     public class User : IdentityUser
     {
-        public IdentityRole Role { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public Household? Household { get; set; }
     }

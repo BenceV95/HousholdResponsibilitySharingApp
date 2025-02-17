@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HouseholdResponsibilityAppServer.Migrations
 {
     [DbContext(typeof(HouseholdResponsibilityAppContext))]
-    [Migration("20250217135549_ContextUpdate4")]
-    partial class ContextUpdate4
+    [Migration("20250217142213_UpdatedScheme3")]
+    partial class UpdatedScheme3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -248,7 +248,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
@@ -261,9 +260,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
 
                     b.Property<int?>("HouseholdId")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("IsAdmin")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -284,7 +280,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
@@ -303,10 +298,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -321,7 +312,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.HasIndex("Username")
+                    b.HasIndex("UserName")
                         .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);

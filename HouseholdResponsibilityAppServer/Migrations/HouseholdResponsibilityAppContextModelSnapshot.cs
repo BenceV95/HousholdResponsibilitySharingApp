@@ -245,7 +245,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
@@ -253,17 +252,12 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int?>("HouseholdId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsAdmin")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
@@ -281,7 +275,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
@@ -300,10 +293,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -318,7 +307,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.HasIndex("Username")
+                    b.HasIndex("UserName")
                         .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);

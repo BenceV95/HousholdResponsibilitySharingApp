@@ -13,10 +13,10 @@ const Navbar = () => {
                     </button>
                 </Link>
                 <Link href="/login">
-                 <button className="btn btn-primary">Login</button>
-               </Link>
-               <Link href="/register">
-                <button className="btn btn-primary">Register</button>
+                    <button className="btn btn-primary">Login</button>
+                </Link>
+                <Link href="/register">
+                    <button className="btn btn-primary">Register</button>
                 </Link>
                 <Link href="/tasks">
                     <button className='btn btn-primary'>

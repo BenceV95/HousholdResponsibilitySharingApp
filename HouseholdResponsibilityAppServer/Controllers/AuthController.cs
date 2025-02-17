@@ -2,6 +2,7 @@
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Security.Claims;
 
 namespace HouseholdResponsibilityAppServer.Controllers
@@ -11,6 +12,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authenticationService;
+
 
         public AuthController(IAuthService authenticationService)
         {
@@ -22,6 +24,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
         {
             if (!ModelState.IsValid)
             {
+                Debug.WriteLine(request.ToString());
                 return BadRequest(ModelState);
             }
 
@@ -29,10 +32,11 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
             if (!result.Success)
             {
+                Debug.WriteLine(request.ToString());
                 AddErrors(result);
                 return BadRequest(ModelState);
             }
-
+            Debug.WriteLine(request.ToString());
             return CreatedAtAction(nameof(Register), new RegistrationResponse(result.Email, result.UserName));
         }
 

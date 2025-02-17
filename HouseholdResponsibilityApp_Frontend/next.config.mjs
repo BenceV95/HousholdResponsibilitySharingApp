@@ -6,7 +6,7 @@ const nextConfig = {
         {
           source: "/api/:path*",
           //destination: "http://backend:8080/:path*", // Target ASP.NET API
-          destination: "https://localhost:7153/:path*", // Target ASP.NET API
+          destination: "http://localhost:5141/:path*", // Target ASP.NET API
         },
       ];
     },

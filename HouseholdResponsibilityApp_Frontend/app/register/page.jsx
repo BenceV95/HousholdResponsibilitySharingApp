@@ -14,7 +14,7 @@ export default function Register() {
     e.preventDefault();
     setError(null);
     try {
-      await apiPost("/Auth/Register", { Email: email, Username: username, Password: password });
+      await apiPost("/Auth/Register", { email, username, password });
       router.push("/login");
     } catch (err) {
       setError("Registration failed");

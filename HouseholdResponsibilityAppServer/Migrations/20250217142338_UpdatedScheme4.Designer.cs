@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HouseholdResponsibilityAppServer.Migrations
 {
     [DbContext(typeof(HouseholdResponsibilityAppContext))]
-    [Migration("20250206123626_Initial")]
-    partial class Initial
+    [Migration("20250217142338_UpdatedScheme4")]
+    partial class UpdatedScheme4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,8 +58,9 @@ namespace HouseholdResponsibilityAppServer.Migrations
                     b.Property<DateTime>("CompletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("CompletedById")
-                        .HasColumnType("integer");
+                    b.Property<string>("CompletedById")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("HouseholdId")
                         .HasColumnType("integer");
@@ -92,8 +93,8 @@ namespace HouseholdResponsibilityAppServer.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("integer");
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -101,7 +102,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
 
                     b.HasKey("HouseholdId");
 
-                    b.HasIndex("CreatedBy");
+                    b.HasIndex("CreatedByUserId");
 
                     b.ToTable("Households");
                 });
@@ -144,8 +145,9 @@ namespace HouseholdResponsibilityAppServer.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ScheduledTaskId"));
 
-                    b.Property<int>("AssignedToId")
-                        .HasColumnType("integer");
+                    b.Property<string>("AssignedToId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("AtSpecificTime")
                         .ValueGeneratedOnAdd()
@@ -157,13 +159,14 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
-                    b.Property<int>("CreatedById")
-                        .HasColumnType("integer");
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("EventDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("HouseholdTaskId")
+                    b.Property<int>("HouseholdTaskTaskId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Repeat")
@@ -176,7 +179,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("HouseholdTaskId");
+                    b.HasIndex("HouseholdTaskTaskId");
 
                     b.ToTable("ScheduledTasks");
                 });
@@ -194,8 +197,9 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
-                    b.Property<int>("CreatedById")
-                        .HasColumnType("integer");
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -230,52 +234,218 @@ namespace HouseholdResponsibilityAppServer.Migrations
 
             modelBuilder.Entity("HouseholdResponsibilityAppServer.Models.Users.User", b =>
                 {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int?>("HouseholdId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsAdmin")
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
-                    b.HasKey("UserId");
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
 
                     b.HasIndex("HouseholdId");
 
-                    b.HasIndex("Username")
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("HouseholdResponsibilityAppServer.Models.Groups.TaskGroup", b =>
@@ -320,7 +490,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
                 {
                     b.HasOne("HouseholdResponsibilityAppServer.Models.Users.User", "CreatedByUser")
                         .WithMany()
-                        .HasForeignKey("CreatedBy")
+                        .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("CreatedByUser");
@@ -342,7 +512,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
 
                     b.HasOne("HouseholdResponsibilityAppServer.Models.Task.HouseholdTask", "HouseholdTask")
                         .WithMany()
-                        .HasForeignKey("HouseholdTaskId")
+                        .HasForeignKey("HouseholdTaskTaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -388,6 +558,57 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Household");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("HouseholdResponsibilityAppServer.Models.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("HouseholdResponsibilityAppServer.Models.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HouseholdResponsibilityAppServer.Models.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("HouseholdResponsibilityAppServer.Models.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HouseholdResponsibilityAppServer.Models.Households.Household", b =>

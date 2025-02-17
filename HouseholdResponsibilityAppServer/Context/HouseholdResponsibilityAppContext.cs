@@ -113,6 +113,10 @@ namespace HouseholdResponsibilityAppServer.Context
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            //modelBuilder.Entity<User>()
+            //    .HasOne(u => u.Role)
+            //    .WithMany();
+
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();

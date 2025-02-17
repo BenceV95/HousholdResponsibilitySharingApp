@@ -43,7 +43,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                IsAdmin = user.IsAdmin,
+                //IsAdmin = user.IsAdmin,
                 CreatedAt = user.CreatedAt,
             };
         }
@@ -52,7 +52,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
         {
             var user = new User
             {
-                Username = userDto.Username,
+                UserName = userDto.Username,
                 Email = userDto.Email,
                 FirstName = userDto.FirstName,
                 LastName = userDto.LastName,
@@ -67,7 +67,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
 
-            user.Username = userDto.Username;
+            user.UserName = userDto.Username;
             user.Email = userDto.Email;
             user.FirstName = userDto.FirstName;
             user.LastName = userDto.LastName;

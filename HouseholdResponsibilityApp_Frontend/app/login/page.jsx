@@ -13,10 +13,8 @@ export default function Login() {
     e.preventDefault();
     setError(null);
     try {
-      await apiPost("/Auth/Login", { Email: email, Password: password });
-      // Dispatch-oljuk a userUpdated eseményt a Navbar frissítéséhez
-      window.dispatchEvent(new Event("userUpdated"));
-      router.push("/solar-watch");
+      await apiPost("/Auth/Login", { email, password });
+      router.push("/");
     } catch (err) {
       setError("Incorrect email or password");
       console.error(err);
