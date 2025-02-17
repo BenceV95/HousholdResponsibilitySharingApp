@@ -76,7 +76,6 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
                 Outcome = historyCreateRequest.Outcome,
                 CompletedAt = historyCreateRequest.CompletedAt,
                 CompletedBy = completedBy,
-                HouseholdId = historyCreateRequest.HouseholdId,
             };
         }
         private HistoryDTO ConvertModelToDTO(History historyModel)
@@ -84,11 +83,10 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
             return new HistoryDTO()
             {
                 HistoryId = historyModel.HistoryId,
-                CompletedByUserId = historyModel.CompletedBy.UserId,
+                CompletedByUserId = historyModel.CompletedBy.Id,
                 CompletedAt = historyModel.CompletedAt,
                 ScheduledTaskId = historyModel.ScheduledTask.ScheduledTaskId,
                 Outcome = historyModel.Outcome,
-                HouseholdId = historyModel.HouseholdId,
 
             };
         }

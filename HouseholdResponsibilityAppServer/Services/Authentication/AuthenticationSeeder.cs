@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HouseholdResponsibilityAppServer.Models.Users;
+using Microsoft.AspNetCore.Identity;
 
 namespace HouseholdResponsibilityAppServer.Services.Authentication
 {
@@ -6,9 +7,9 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
     {
 
         private RoleManager<IdentityRole> roleManager;
-        private UserManager<IdentityUser> userManager;
+        private UserManager<User> userManager;
 
-        public AuthenticationSeeder(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+        public AuthenticationSeeder(RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
@@ -44,7 +45,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             var adminInDb = await userManager.FindByEmailAsync("admin@admin.com");
             if (adminInDb == null)
             {
-                var admin = new IdentityUser { UserName = "admin", Email = "admin@admin.com" };
+                var admin = new User { UserName = "admin", Email = "admin@admin.com" };
                 var adminCreated = await userManager.CreateAsync(admin, "admin123");
 
                 if (adminCreated.Succeeded)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HouseholdResponsibilityAppServer.Models.Users;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,7 +12,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
     {
         private const int ExpirationMinutes = 1;
 
-        public string CreateToken(IdentityUser user, string role = null)
+        public string CreateToken(User user, string role = null)
         {
             var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
             var claims = CreateClaims(user, role, expiration);
@@ -30,7 +31,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
                 signingCredentials: credentials
             );
 
-        private List<Claim> CreateClaims(IdentityUser user, string? role, DateTime expiration)
+        private List<Claim> CreateClaims(User user, string? role, DateTime expiration)
         {
             var claims = new List<Claim>
            {

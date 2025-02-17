@@ -25,11 +25,11 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
             }
         }
 
-        public async Task<User> GetUserByIdAsync(int userId)
+        public async Task<User> GetUserByIdAsync(string userId)
         {
             try
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
                 if (user == null)
                 {
@@ -63,7 +63,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
 
             int affectedRows = await _context.SaveChangesAsync();
 
-            if (affectedRows == 0) throw new KeyNotFoundException($"User with ID {user.UserId} not found.");
+            if (affectedRows == 0) throw new KeyNotFoundException($"User with ID {user.Id} not found.");
         }
 
         /*public async Task DeleteUserAsync(int userId)
@@ -79,9 +79,9 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
         }
         */
 
-        public async Task DeleteUserAsync(int userId)
+        public async Task DeleteUserAsync(string userId)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user == null)
             {

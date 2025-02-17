@@ -36,7 +36,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("/user/{userId}")]
-    public async Task<ActionResult> GetUserById(int userId)
+    public async Task<ActionResult> GetUserById(string userId)
     {
         try
         {
@@ -68,7 +68,7 @@ public class UserController : ControllerBase
 
 
     [HttpPut("/user/{userId}")]
-    public async Task<ActionResult> UpdateUser(int userId, [FromBody] UserDto userDto)
+    public async Task<ActionResult> UpdateUser(string userId, [FromBody] UserDto userDto)
     {
         try
         {
@@ -85,7 +85,7 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete("/user/{userId}")]
-    public async Task<ActionResult> DeleteUser(int userId)
+    public async Task<ActionResult> DeleteUser(string userId)
     {
         try
         {
@@ -101,7 +101,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("/user/{userId}/accept-invitation")]
-    public async Task<ActionResult> AcceptInvitation(int userId, [FromBody] AcceptInvitationDto acceptDto)
+    public async Task<ActionResult> AcceptInvitation(string userId, [FromBody] AcceptInvitationDto acceptDto)
     {
         try
         {

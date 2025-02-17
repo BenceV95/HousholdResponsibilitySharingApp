@@ -21,32 +21,30 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
 
             return users.Select(user => new UserResponseDto
             {
-                UserResponseDtoId = user.UserId,
+                UserResponseDtoId = user.Id,
                 Username = user.Username,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 IsAdmin = user.IsAdmin,
                 CreatedAt = user.CreatedAt,
-                HouseholdId = user.HouseholdId
             }).ToList();
 
         }
 
-        public async Task<UserResponseDto> GetUserByIdAsync(int userId)
+        public async Task<UserResponseDto> GetUserByIdAsync(string userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
 
             return new UserResponseDto
             {
-                UserResponseDtoId = user.UserId,
+                UserResponseDtoId = user.Id,
                 Username = user.Username,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 IsAdmin = user.IsAdmin,
                 CreatedAt = user.CreatedAt,
-                HouseholdId = user.HouseholdId
             };
         }
 
@@ -65,7 +63,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
             await _userRepository.AddUserAsync(user);
         }
 
-        public async Task UpdateUserAsync(int userId, UserDto userDto)
+        public async Task UpdateUserAsync(string userId, UserDto userDto)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
 
@@ -78,7 +76,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
             await _userRepository.UpdateUserAsync(user);
         }
 
-        public async Task DeleteUserAsync(int userId)
+        public async Task DeleteUserAsync(string userId)
         {
             await _userRepository.DeleteUserAsync(userId);
         }

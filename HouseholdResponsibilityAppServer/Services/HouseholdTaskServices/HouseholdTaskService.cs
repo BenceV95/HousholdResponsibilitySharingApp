@@ -100,7 +100,7 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
                 TaskId = taskModel.TaskId,
                 Title = taskModel.Title,
                 Description = taskModel.Description,
-                UserId = taskModel.CreatedBy.UserId,
+                UserId = taskModel.CreatedBy.Id,
                 CreatedAt = taskModel.CreatedAt,
                 GroupId = taskModel.Group.GroupId,
                 Priority = taskModel.Priority,

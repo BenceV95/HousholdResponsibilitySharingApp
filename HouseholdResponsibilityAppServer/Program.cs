@@ -21,6 +21,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using Microsoft.OpenApi.Models;
+using HouseholdResponsibilityAppServer.Models.Users;
 
 namespace HouseholdResponsibilityAppServer
 {
@@ -161,7 +162,7 @@ namespace HouseholdResponsibilityAppServer
             void AddIdentity()
             {
                 builder.Services
-                    .AddIdentityCore<IdentityUser>(options =>
+                    .AddIdentityCore<User>(options =>
                     {
                         options.SignIn.RequireConfirmedAccount = false;
                         options.User.RequireUniqueEmail = true;

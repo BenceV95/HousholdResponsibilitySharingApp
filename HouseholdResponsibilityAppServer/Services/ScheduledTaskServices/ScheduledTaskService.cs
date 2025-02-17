@@ -82,8 +82,8 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
             {
                 ScheduledTaskId = scheduledTaskModel.ScheduledTaskId,
                 HouseholdTaskId = scheduledTaskModel.HouseholdTask.TaskId,
-                CreatedByUserId = scheduledTaskModel.CreatedBy.UserId,
-                AssignedToUserId = scheduledTaskModel.AssignedTo.UserId,
+                CreatedByUserId = scheduledTaskModel.CreatedBy.Id,
+                AssignedToUserId = scheduledTaskModel.AssignedTo.Id,
                 EventDate = scheduledTaskModel.EventDate,
                 CreatedAt = scheduledTaskModel.CreatedAt,
                 AtSpecificTime = scheduledTaskModel.AtSpecificTime,

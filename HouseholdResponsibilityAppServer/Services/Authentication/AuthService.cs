@@ -1,17 +1,18 @@
 ﻿using HouseholdResponsibilityAppServer.Contracts;
+using HouseholdResponsibilityAppServer.Models.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace HouseholdResponsibilityAppServer.Services.Authentication
 {
     public class AuthService : IAuthService
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
 
         private readonly ITokenService _tokenService;
 
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AuthService(UserManager<IdentityUser> userManager, ITokenService tokenService,
+        public AuthService(UserManager<User> userManager, ITokenService tokenService,
             RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
@@ -21,7 +22,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
 
         public async Task<AuthResult> RegisterAsync(string email, string username, string password, string role)
         {
-            var user = new IdentityUser { UserName = username, Email = email }; //ez csak létrehozza de nincs mentve
+            var user = new User { UserName = username, Email = email }; //ez csak létrehozza de nincs mentve
             var result = await _userManager.CreateAsync(user, password); //ez menti el + hasheli a passwordot is.
 
             if (!result.Succeeded)

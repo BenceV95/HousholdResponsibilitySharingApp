@@ -43,7 +43,6 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
             var group = new TaskGroup
             {
                 Name = postGroupDto.Name,
-                HouseholdId = postGroupDto.HouseholdId
             };
 
             await _groupRepository.AddGroupAsync(group);
