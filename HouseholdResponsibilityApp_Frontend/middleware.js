@@ -1,56 +1,39 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server'
+// import { decrypt } from '@/app/lib/session'
+import { cookies } from 'next/headers'
 
+// 1. Specify protected and public routes
+const protectedRoutes = ['/tasks']
+const publicRoutes = ['/login', '/register', '/']
 
-export function middleware(request) {
+export default async function middleware(req) {
+    // 2. Check if the current route is protected or public
+    const path = req.nextUrl.pathname
+    const isProtectedRoute = protectedRoutes.includes(path)
+    const isPublicRoute = publicRoutes.includes(path)
 
-    const { pathname } = request.nextUrl;
+    // 3. Decrypt the session from the cookie
+    const tokenValue = (await cookies()).get('token')?.value
+    //   const session = await decrypt(cookie)
 
-    const unprotectedPaths = ["/login", "/", "/unauthorized"]
-
-    const token = request.cookies.get("token")?.value;
-
-    if (!unprotectedPaths.includes(pathname) && !token) {
-
-        const url = request.nextUrl.clone();
-        url.pathname = "/unauthorized";
-        return NextResponse.redirect(new URL("/unauthorized", request.url));
-
+    // 5. Redirect to /login if the user is not authenticated
+    if (isProtectedRoute && !tokenValue) {
+        return NextResponse.redirect(new URL('/unauthorized', req.nextUrl))
     }
 
-    return NextResponse.next();
+    // 6. Redirect to /dashboard if the user is authenticated
+    // if (
+    //     isPublicRoute &&
+    //     tokenValue &&
+    //     !req.nextUrl.pathname.startsWith('/dashboard')
+    // ) {
+    //     return NextResponse.redirect(new URL('/dashboard', req.nextUrl))
+    // }
+
+    return NextResponse.next()
 }
 
+// Routes Middleware should not run on
 export const config = {
-    matcher: [
-        /*
-         
-    Match all request paths except for the ones starting with:
-       
-    api (API routes)
-    _next/static (static files)
-    _next/image (image optimization files)
-    favicon.ico, sitemap.xml, robots.txt (metadata files)
-    */
-        {
-            source: '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
-            missing: [{ type: 'header', key: 'next-router-prefetch' }, { type: 'header', key: 'purpose', value: 'prefetch' },],
-        },
-
-        {
-            source:
-                '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
-            has: [
-                { type: 'header', key: 'next-router-prefetch' },
-                { type: 'header', key: 'purpose', value: 'prefetch' },
-            ],
-        },
-
-        {
-            source:
-                '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
-            has: [{ type: 'header', key: 'x-present' }],
-            missing: [{ type: 'header', key: 'x-missing', value: 'prefetch' }],
-        },
-    ],
-
+    matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
 }

@@ -1,7 +1,7 @@
 "use client";
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { apiFetch } from '../../../(utils)/api';
+import { apiFetch } from '../../../../(utils)/api';
 import './GetUserById.css';
 
 const GetUserById = () => {

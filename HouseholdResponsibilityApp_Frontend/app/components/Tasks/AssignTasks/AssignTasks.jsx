@@ -1,8 +1,8 @@
 import { useForm } from 'react-hook-form';
 import React, { useState } from 'react';
-import { apiDelete, apiFetch, apiPut, apiPost } from '../../../(utils)/api';
+import { apiDelete, apiFetch, apiPut, apiPost } from '../../../../(utils)/api';
 import './AssignTasks.css';
-import uuidv4 from '../../../(utils)/uuidv4';
+import uuidv4 from '../../../../(utils)/uuidv4';
 
 const AssignTasks = () => {
     const { register, handleSubmit, watch, setError, clearErrors, formState: { errors } } = useForm();

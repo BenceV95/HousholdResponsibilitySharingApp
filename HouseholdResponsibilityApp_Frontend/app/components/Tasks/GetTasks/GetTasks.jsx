@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from 'react'
-import { apiDelete, apiFetch, apiPut, apiPost } from '../../../(utils)/api';
+import { apiDelete, apiFetch, apiPut, apiPost } from '../../../../(utils)/api';
 import './GetTasks.css'
-import Loading from '../../../(utils)/Loading';
+import Loading from '../../../../(utils)/Loading';
 import Task from '../Task/Task';
 
 const GetTasks = () => {

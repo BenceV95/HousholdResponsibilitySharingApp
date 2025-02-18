@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import "./CreateHousehold.css"
-import { apiPost } from "../../../(utils)/api";
+import { apiPost } from "../../../../(utils)/api";
 
 
 //this component also needs the user in the future

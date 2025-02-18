@@ -1,9 +1,9 @@
 "use client";
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { apiFetch, apiPut, apiPost, apiDelete } from '../../../(utils)/api';
+import { apiFetch, apiPut, apiPost, apiDelete } from '../../../../(utils)/api';
 import './CreateTasks.css';
-import uuidv4 from '../../../(utils)/uuidv4';
+import uuidv4 from '../../../../(utils)/uuidv4';
 
 const CreateTasks = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();

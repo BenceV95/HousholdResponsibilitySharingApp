@@ -1,8 +1,8 @@
 "use client"
-import Loading from "../../../(utils)/Loading";
+import Loading from "../../../../(utils)/Loading";
 import { useState } from "react";
 import Household from "../Household/Household";
-import { apiFetch } from "../../../(utils)/api";
+import { apiFetch } from "../../../../(utils)/api";
 
 
 

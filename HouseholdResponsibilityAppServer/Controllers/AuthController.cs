@@ -12,7 +12,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authenticationService;
-
+        const int _expirationTimeInMinutes = 10;
 
         public AuthController(IAuthService authenticationService)
         {
@@ -71,10 +71,10 @@ namespace HouseholdResponsibilityAppServer.Controllers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Lax,
-                Expires = DateTime.UtcNow.AddMinutes(1)
+                Expires = DateTime.UtcNow.AddMinutes(_expirationTimeInMinutes)
             });
 
-            return Ok(new AuthResponse(result.Email, result.UserName, result.Token));
+            return Ok(new AuthResponse(result.Email, result.UserName, result.Token, result.UserId));
         }
 
         [HttpPost("Logout")]

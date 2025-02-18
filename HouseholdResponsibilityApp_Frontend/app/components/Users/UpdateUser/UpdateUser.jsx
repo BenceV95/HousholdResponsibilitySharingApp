@@ -1,7 +1,7 @@
 "use client";
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { apiPut } from '../../../(utils)/api';
+import { apiPut } from '../../../../(utils)/api';
 import './UpdateUser.css';
 
 const UpdateUser = () => {

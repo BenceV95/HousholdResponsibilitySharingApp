@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { apiPost } from "../(utils)/api.js";
+import { apiPost } from "../../(utils)/api.js";
 
 export default function Register() {
   const [email, setEmail] = useState("");

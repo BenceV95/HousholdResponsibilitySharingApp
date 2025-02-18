@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react'
-import { apiFetch, apiPut, apiDelete, apiPost } from '../../../(utils)/api';
-import Loading from '../../../(utils)/Loading';
+import { apiFetch, apiPut, apiDelete, apiPost } from '../../../../(utils)/api';
+import Loading from '../../../../(utils)/Loading';
 
 const AssignedTask = () => {
 

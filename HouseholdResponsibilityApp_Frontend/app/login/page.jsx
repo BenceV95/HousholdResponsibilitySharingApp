@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { apiPost } from "../(utils)/api.js";
+import { apiPost } from "../../(utils)/api.js";
+import { useAuth } from "../components/AuthContext/AuthProvider.js";
 
 export default function Login() {
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -11,14 +13,7 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(null);
-    try {
-      await apiPost("/Auth/Login", { email, password });
-      router.push("/");
-    } catch (err) {
-      setError("Incorrect email or password");
-      console.error(err);
-    }
+    await login(email, password)
   };
 
   return (

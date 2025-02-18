@@ -10,7 +10,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
 {
     public class TokenService : ITokenService
     {
-        private const int ExpirationMinutes = 1;
+        private const int ExpirationMinutes = 10;
 
         public string CreateToken(User user, string role = null)
         {
