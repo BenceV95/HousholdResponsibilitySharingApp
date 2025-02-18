@@ -65,12 +65,12 @@ namespace HouseholdResponsibilityAppServer.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Token beállítása cookie-ban:
+
             Response.Cookies.Append("token", result.Token, new CookieOptions
             {
-                HttpOnly = true,  //a cookie csak a szerver által elérhető
-                Secure = true,      //a cookie csak https esetén kerül elküldésre
-                SameSite = SameSiteMode.Lax,  //biztonsági beállítás csak akk küldi el a cookiét ha linkre kattintunk pl.
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTime.UtcNow.AddMinutes(1)
             });
 
@@ -85,16 +85,15 @@ namespace HouseholdResponsibilityAppServer.Controllers
         }
 
 
-        //az aktuális user adatait fogja szolgáltatni.
+
         [Authorize]
         [HttpGet("Me")]
         public IActionResult Me()
         {
-            var user = HttpContext.User; //tartalmazza a hitelesített user-hez tartozó claimeket.
+            var user = HttpContext.User;
             if (user == null)
                 return Unauthorized();
 
-            //kinyerjük az adatokat
             var email = user.FindFirst(ClaimTypes.Email)?.Value;
             var username = user.FindFirst(ClaimTypes.Name)?.Value;
             var expClaim = user.FindFirst("exp")?.Value;
