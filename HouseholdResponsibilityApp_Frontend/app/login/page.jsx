@@ -1,7 +1,5 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { apiPost } from "../../(utils)/api.js";
 import { useAuth } from "../components/AuthContext/AuthProvider.js";
 
 export default function Login() {
@@ -9,7 +7,6 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const router = useRouter();
 
   const handleLogin = async (e) => {
     e.preventDefault();

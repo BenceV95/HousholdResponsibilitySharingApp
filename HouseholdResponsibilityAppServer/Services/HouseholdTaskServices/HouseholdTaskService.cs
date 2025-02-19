@@ -107,5 +107,18 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
             };
         }
 
+        public async Task<IEnumerable<HouseholdTaskDTO>> GetallTasksByHouseholdIdAsync(int householdId)
+        {
+            List<HouseholdTaskDTO> taskDTOs = new List<HouseholdTaskDTO>();
+            var filteredTasks = await _householdTaskRepository.GetallTasksByHouseholdIdAsync(householdId);
+
+
+            foreach (var task in filteredTasks)
+            {
+                taskDTOs.Add(ConvertModelToDTO(task));
+            }
+
+            return taskDTOs;
+        }
     }
 }

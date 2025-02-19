@@ -1,6 +1,8 @@
 ﻿using HouseholdResponsibilityAppServer.Models;
 using HouseholdResponsibilityAppServer.Models.Groups;
 using HouseholdResponsibilityAppServer.Repositories.Groups;
+using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
+using HouseholdResponsibilityAppServer.Services.HouseholdService;
 using Microsoft.AspNetCore.Identity;
 using System.Text.RegularExpressions;
 
@@ -10,9 +12,13 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
     {
         private readonly IGroupRepository _groupRepository;
 
-        public GroupService(IGroupRepository groupRepository)
+        // when creating a group we have to add  a household to it, so we need this dependecy to look up the household
+        private readonly IHouseholdRepository _householdRepository;
+
+        public GroupService(IGroupRepository groupRepository, IHouseholdRepository householdRepo)
         {
             _groupRepository = groupRepository;
+            _householdRepository = householdRepo;
         }
 
         public async Task<IEnumerable<GroupResponseDto>> GetAllGroupsAsync()
@@ -40,9 +46,13 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
 
         public async Task CreateGroupAsync(PostGroupDto postGroupDto)
         {
+            
+            var household = await _householdRepository.GetHouseholdByIdAsync(postGroupDto.HouseholdId);
+
             var group = new TaskGroup
             {
                 Name = postGroupDto.Name,
+                Household = household
             };
 
             await _groupRepository.AddGroupAsync(group);
