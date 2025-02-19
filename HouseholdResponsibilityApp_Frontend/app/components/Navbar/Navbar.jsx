@@ -30,7 +30,7 @@ const Navbar = () => {
                                 <button className="btn btn-primary">Register</button>
                             </Link>
                         </> :
-                        <button onClick={logout}>Logout</button>
+                        <button onClick={logout} className="btn btn-danger">Logout</button>
                 }
 
                 <Link href="/tasks">

@@ -30,10 +30,11 @@ export const AuthProvider = ({ children }) => {
             const response = await fetch("/auth/user", { cache: "no-store" });
             const userData = await response.json();
             setUser(userData);
-            // setError(null);
+            return userData;
         } catch (error) {
             console.error("Failed to fetch user:", error);
             setUser(null);
+            throw new Error("Failed to log in");
         }
     };
 

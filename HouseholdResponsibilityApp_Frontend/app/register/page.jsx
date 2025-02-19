@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { apiPost } from "../../(utils)/api.js";
 import "./Register.css";
@@ -14,6 +15,8 @@ export default function Register() {
   } = useForm();
 
   const [loading, setLoading] = useState(false);
+  const [responseMessage, setResponseMessage] = useState("");
+  const [error, setError] = useState(false);
 
   const router = useRouter();
 
@@ -23,11 +26,15 @@ export default function Register() {
 
     try {
       const response = await apiPost("/Auth/Register", data);
-      router.push("/login");
+      setResponseMessage("Registration successful. Please log in.");
+      //router.push("/login");
     } catch (error) {
       console.error(error);
+      setError(true);
+      setResponseMessage("An error occurred. Please try again later. "+error);
     } finally {
       setLoading(false);
+      
     }
   };
 
@@ -66,11 +73,20 @@ export default function Register() {
           {errors.password && <p className="error-message">{errors.password.message}</p>}
         </div>
 
-        <button type="submit" disabled={loading} className="btn btn-primary">
+        <button type="submit" disabled={loading || responseMessage} className="btn btn-primary">
           {loading ? "Registering..." : "Register"}
         </button>
 
       </form>
+
+      {responseMessage && (<div className="response-message">
+        <p style={{color: error ? "red" : "#28a745"}}> {responseMessage}</p>
+      </div>)}
+
+      <div className="login">
+        <p>Already have an account?</p>
+        <Link href={"/login"} className="btn btn-success">Log in</Link>
+      </div>
     </div>
   );
 }
