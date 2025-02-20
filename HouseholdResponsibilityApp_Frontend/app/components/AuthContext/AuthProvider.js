@@ -23,18 +23,46 @@ export const AuthProvider = ({ children }) => {
 
     async function login(email, password) {
         try {
-            //set the token from the backend
-            const responseFromLogin = await apiPost("/Auth/Login", { email, password });
+            // set cookies from the backend
+            const responseFromLogin = await fetch("/api/Auth/Login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            // for error checking purposes i had to modify so we can check response here
+            const jsonResponse = await responseFromLogin.json();
+            console.log(jsonResponse);
+            
+            if (!responseFromLogin.ok) {
+
+                let errorString = "";
+                Object.entries(jsonResponse).forEach(([key, value]) => {
+                    errorString += (`${key}:`, value)+"\n";
+                });
+
+                throw new Error(errorString);
+            }
 
             //set the user globally from the token
-            const response = await fetch("/auth/user", { cache: "no-store" });
+            const response = await fetch("/auth/user", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                cache: "no-store"
+            }); // front-end server endpoint
             const userData = await response.json();
+            
             setUser(userData);
-            return userData;
+            return jsonResponse;
+
         } catch (error) {
-            console.error("Failed to fetch user:", error);
             setUser(null);
-            throw new Error("Failed to log in");
+            throw (error);
         }
     };
 

@@ -5,10 +5,9 @@ import { useAuth } from "../components/AuthContext/AuthProvider.js";
 import "./Login.css";
 
 export default function Login() {
+
   const { login } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleLogin = async (e) => {
@@ -22,7 +21,8 @@ export default function Login() {
       const response = await login(email, password);
       router.push("/");
     } catch (error) {
-      setError(error);
+      setError(error.message);
+      console.log(error);
     }
 
   };
@@ -42,7 +42,7 @@ export default function Login() {
 
         <button type="submit" className="btn btn-success">Login</button>
       </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && (<p>{error}</p>)}
     </div>
   );
 }

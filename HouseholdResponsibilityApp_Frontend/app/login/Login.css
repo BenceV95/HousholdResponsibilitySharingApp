@@ -30,3 +30,17 @@
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+.login-container button {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.login-container p {
+    color: red;
+    text-Align: center;
+    background-color: #424242;
+    border-radius: 10px;
+    margin: 1rem auto;
+    padding: 1rem;
+}
