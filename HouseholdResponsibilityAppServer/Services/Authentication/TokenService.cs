@@ -43,8 +43,12 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
                 new(ClaimTypes.Name, user.UserName),
                 new(ClaimTypes.Email, user.Email),
                 // Explicit "exp" claim hozzáadása:
-                new Claim("exp", ((DateTimeOffset)expiration).ToUnixTimeSeconds().ToString())
+                new Claim("exp", ((DateTimeOffset)expiration).ToUnixTimeSeconds().ToString()),
+
            };
+
+            var householdIdValue = user.Household != null ? user.Household.HouseholdId.ToString() : null;
+            claims.Add(new Claim("householdId", householdIdValue));
 
             if (!string.IsNullOrEmpty(role))
             {

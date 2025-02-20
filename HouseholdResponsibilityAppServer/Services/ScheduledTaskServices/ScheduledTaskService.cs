@@ -63,6 +63,30 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
             var createdByUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.CreatedByUserId);
             var assignedToUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.AssignedToUserId);
 
+            if (task == null)
+            {
+                throw new Exception("Household task not found!");
+            }
+            if (createdByUser == null)
+            {
+                throw new Exception("Created by user not found!");
+            }
+            if (assignedToUser == null)
+            {
+                throw new Exception("Assigned to user not found!");
+            }
+
+            // Checks whether the household associated with the task matches the createdByUser's household
+            if (createdByUser.Household == null || createdByUser.Household.HouseholdId != task.Household.HouseholdId)
+            {
+                throw new Exception("You do not belong to the same household as the task!");
+            }
+            // Checks whether the assignedToUser is also in the same household
+            if (assignedToUser.Household == null || assignedToUser.Household.HouseholdId != task.Household.HouseholdId)
+            {
+                throw new Exception("The user to assign the task to does not belong to the same household!");
+            }
+
 
             return new ScheduledTask()
             {

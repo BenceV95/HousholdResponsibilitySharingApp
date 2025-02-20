@@ -21,7 +21,8 @@ export default async function authorizeUser() {
             const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
             const role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
             const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
-            const householdId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/householdId"];
+            const householdId = decodedToken["householdId"];
+
 
             // console.log('Decoded token:', decodedToken);
             // console.log(userName)

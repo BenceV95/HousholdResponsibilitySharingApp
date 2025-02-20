@@ -1,6 +1,8 @@
-﻿using HouseholdResponsibilityAppServer.Contracts;
+﻿using HouseholdResponsibilityAppServer.Context;
+using HouseholdResponsibilityAppServer.Contracts;
 using HouseholdResponsibilityAppServer.Models.Users;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace HouseholdResponsibilityAppServer.Services.Authentication
 {
@@ -12,12 +14,16 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
 
         private readonly RoleManager<IdentityRole> _roleManager;
 
+        private readonly HouseholdResponsibilityAppContext _context;
+
+
         public AuthService(UserManager<User> userManager, ITokenService tokenService,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager, HouseholdResponsibilityAppContext context)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _roleManager = roleManager;
+            _context = context;
         }
 
         public async Task<AuthResult> RegisterAsync(string email, string username, string password, string role)
@@ -58,7 +64,6 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
         public async Task<AuthResult> LoginAsync(string email, string password)
         {
             var managedUser = await _userManager.FindByEmailAsync(email);
-
             if (managedUser == null)
             {
                 return InvalidEmail(email);
@@ -70,13 +75,15 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
                 return InvalidPassword(email, managedUser.UserName);
             }
 
+            // <-- Itt jön a Household betöltése:
+            _context.Entry(managedUser).Reference(u => u.Household).Load();
 
-            // get the role and pass it to the TokenService
             var roles = await _userManager.GetRolesAsync(managedUser);
-            var accessToken = _tokenService.CreateToken(managedUser, roles[0]);
+            var accessToken = _tokenService.CreateToken(managedUser, roles.FirstOrDefault());
 
             return new AuthResult(true, managedUser.Email, managedUser.UserName, accessToken, managedUser.Id, managedUser.Household?.HouseholdId);
         }
+
 
         private static AuthResult InvalidEmail(string email)
         {
