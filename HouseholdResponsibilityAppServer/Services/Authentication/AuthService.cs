@@ -9,9 +9,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
     public class AuthService : IAuthService
     {
         private readonly UserManager<User> _userManager;
-
         private readonly ITokenService _tokenService;
-
         private readonly RoleManager<IdentityRole> _roleManager;
 
         private readonly HouseholdResponsibilityAppContext _context;
@@ -26,27 +24,33 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             _context = context;
         }
 
-        public async Task<AuthResult> RegisterAsync(string email, string username, string password, string role)
+        public async Task<AuthResult> RegisterAsync(RegistrationRequest request, string role)
         {
-            var user = new User { UserName = username, Email = email }; //ez csak létrehozza de nincs mentve
-            var result = await _userManager.CreateAsync(user, password); //ez menti el + hasheli a passwordot is.
+            var user = new User
+            {
+                UserName = request.Username,
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName
+            };
+            var result = await _userManager.CreateAsync(user, request.Password);
 
             if (!result.Succeeded)
             {
-                return FailedRegistration(result, email, username);
+                return FailedRegistration(result, request.Email, request.Username);
             }
 
             var roleExists = await _roleManager.RoleExistsAsync(role);
             if (!roleExists)
             {
-                return new AuthResult(false, email, username, "" , "", null)
+                return new AuthResult(false, request.Email, request.Username, "" , "", null)
                 {
                     ErrorMessages = { { "RoleError", "The specified role does not exist." } }
                 };
             }
 
             await _userManager.AddToRoleAsync(user, role);
-            return new AuthResult(true, email, username, "", "", null);
+            return new AuthResult(false, request.Email, request.Username, "" , "", null)
         }
 
         private static AuthResult FailedRegistration(IdentityResult result, string email, string username)
@@ -74,10 +78,10 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             {
                 return InvalidPassword(email, managedUser.UserName);
             }
-
-
-            _context.Entry(managedUser).Reference(u => u.Household).Load();
-
+            
+            // this is for returning the household id
+             _context.Entry(managedUser).Reference(u => u.Household).Load();
+             
             var roles = await _userManager.GetRolesAsync(managedUser);
             var accessToken = _tokenService.CreateToken(managedUser, roles.FirstOrDefault());
 

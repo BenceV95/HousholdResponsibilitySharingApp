@@ -34,12 +34,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
-                if (user == null)
-                {
-                    throw new KeyNotFoundException($"User with ID {userId} not found.");
-                }
-
-                return user;
+                return user ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
             }
             catch (Exception ex)
             {

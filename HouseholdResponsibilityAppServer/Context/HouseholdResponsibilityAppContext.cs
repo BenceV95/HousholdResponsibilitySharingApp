@@ -59,13 +59,6 @@ namespace HouseholdResponsibilityAppServer.Context
             modelBuilder.Entity<HouseholdTask>()
                 .HasOne(t => t.Household)
                 .WithMany(h => h.HouseholdTasks);
-              
-
-
-
-
-
-
 
             //ScheduledTask
             modelBuilder.Entity<ScheduledTask>(entity =>
@@ -128,7 +121,7 @@ namespace HouseholdResponsibilityAppServer.Context
             modelBuilder.Entity<Household>()
                 .HasOne(h => h.CreatedByUser)
                 .WithMany()
-                .IsRequired(false)
+                .IsRequired(true)
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<TaskGroup>()

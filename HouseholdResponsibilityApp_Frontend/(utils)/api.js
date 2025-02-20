@@ -5,12 +5,12 @@ usage: apiFetch("/tasks")
 */
 export async function apiFetch(endpoint) {
   console.log(`${BACKEND_URL}${endpoint}`);
-  
-  
+
+
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {
     method: "GET",
     headers: {
-      "Content-Type": "application/json",      
+      "Content-Type": "application/json",
     },
   });
 
@@ -19,7 +19,7 @@ export async function apiFetch(endpoint) {
   }
 
   console.log(`data arrived from: ${BACKEND_URL}${endpoint}`);
-  
+
   return response.json();
 }
 
@@ -29,23 +29,23 @@ let data = {...data comes here to be sent}
 apiPut("/tasks",data)
 */
 export async function apiPut(endpoint, data) {
-    const response = await fetch(`${BACKEND_URL}${endpoint}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data)
-    });
-  
-    if (!response.ok) {
-      throw new Error("API request failed");
-    }
-    return response.json();
+  const response = await fetch(`${BACKEND_URL}${endpoint}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data)
+  });
+
+  if (!response.ok) {
+    throw new Error("API request failed");
+  }
+  return response.json();
 }
 
 export async function apiPost(endpoint, data) {
   console.log(`${BACKEND_URL}${endpoint}`);
-  
+
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {
     method: "POST",
     headers: {
@@ -53,7 +53,7 @@ export async function apiPost(endpoint, data) {
     },
     body: JSON.stringify(data)
   });
-console.log( "stringified", JSON.stringify(data));
+  console.log("stringified", JSON.stringify(data));
   if (!response.ok) {
     throw new Error("API request failed");
   }
@@ -63,7 +63,7 @@ console.log( "stringified", JSON.stringify(data));
 
 export async function apiDelete(endpoint) {
   console.log(`${BACKEND_URL}${endpoint}`);
-  
+
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {
     method: "DELETE",
   });

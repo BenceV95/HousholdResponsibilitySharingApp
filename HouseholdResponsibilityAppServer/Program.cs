@@ -126,6 +126,7 @@ namespace HouseholdResponsibilityAppServer
             app.UseAuthorization();
             app.MapControllers();
             app.Run();
+            return;
 
             void AddAuth()
             {
