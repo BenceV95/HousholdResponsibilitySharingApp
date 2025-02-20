@@ -40,7 +40,7 @@ export default function WeeklyCalendar() {
     useEffect(() => {
         try {
             async function getHouseholdTasks() {
-                const data = await apiFetch(`/tasks/filtered/${2}`) // and this should return only the tasks in the given household final version should be -> user.householdId
+                const data = await apiFetch(`/tasks/filtered/${user.householdId}`) // and this should return only the tasks in the given household final version should be -> user.householdId
                 setTasks(data)
             }
 
@@ -57,7 +57,7 @@ export default function WeeklyCalendar() {
             console.log(e)
         }
 
-    }, [])
+    }, [user])
 
     useEffect(() => {
         setTasksToDisplay(fetchTasks());
