@@ -18,7 +18,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
             try
             {
                 return await _context.Users
-                    .Include(u => u.Household) // Betölti a kapcsolódó Household entitást
+                    .Include(u => u.Household)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -32,7 +32,9 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
         {
             try
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                var user = await _context.Users
+                    .Include(u => u.Household)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
 
                 return user ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
             }

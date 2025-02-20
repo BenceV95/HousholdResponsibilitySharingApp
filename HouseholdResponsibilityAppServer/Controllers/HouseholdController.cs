@@ -62,19 +62,19 @@ public class HouseholdController : ControllerBase
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (householdDto.UserId != userId)
             {
-                Debug.WriteLine(householdDto.UserId +" - "+ userId);
+                Debug.WriteLine(householdDto.UserId + " - " + userId);
                 return Forbid();
             }
 
             await _householdService.CreateHouseholdAsync(householdDto);
-
-            return Ok(); // maybe send the id back here to renew the token ?
+            // send back  some random msg so frontend can parse it, and not throw an error
+            return Ok(new { message = "Household succesfully created" }); // maybe send the id back here to renew the token ?
         }
         catch (Exception ex)
         {
             //Console.Error.WriteLine(ex.Message);
-            
-            return BadRequest("An error occurred while creating household.\n"+ex.Message);
+
+            return BadRequest("An error occurred while creating household.\n" + ex.Message);
         }
     }
 
