@@ -63,6 +63,7 @@ public class HouseholdController : ControllerBase
             Console.Error.WriteLine(ex.Message);
 
             return BadRequest("An error occurred while creating household.");
+
         }
     }
 
