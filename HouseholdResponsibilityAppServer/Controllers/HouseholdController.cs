@@ -1,8 +1,11 @@
-﻿using HouseholdResponsibilityAppServer.Models;
+﻿using System.Diagnostics;
+using System.Security.Claims;
+using HouseholdResponsibilityAppServer.Models;
 using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Models.Invitations;
 using HouseholdResponsibilityAppServer.Services.HouseholdService;
 using HouseholdResponsibilityAppServer.Services.Invitation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -49,21 +52,28 @@ public class HouseholdController : ControllerBase
             return BadRequest("An error occurred while retrieving household.");
         }
     }
-
+    [Authorize]
     [HttpPost("/household")]
     public async Task<ActionResult> CreateHousehold([FromBody] HouseholdDto householdDto)
     {
         try
         {
+            // checking for if the user is the same as the one who is creating the household
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (householdDto.UserId != userId)
+            {
+                Debug.WriteLine(householdDto.UserId +" - "+ userId);
+                return Forbid();
+            }
+
             await _householdService.CreateHouseholdAsync(householdDto);
             return Ok();
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
-
-            return BadRequest("An error occurred while creating household.");
-
+            //Console.Error.WriteLine(ex.Message);
+            
+            return BadRequest("An error occurred while creating household.\n"+ex.Message);
         }
     }
 

@@ -161,3 +161,8 @@ main {
 .btn:active {
   transform: scale(0.98);
 }
+
+.btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}

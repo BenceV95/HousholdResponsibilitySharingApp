@@ -35,7 +35,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
         {
             var claims = new List<Claim>
            {
-                new(JwtRegisteredClaimNames.Sub, "TokenForTheApiWithAuth"),//tulajdonos
+                new(JwtRegisteredClaimNames.Sub, user.Id),//tulajdonos
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),//egyedi guid
                 //mikor lett kiadva a token
                 new(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(DateTime.UtcNow).ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Integer64),

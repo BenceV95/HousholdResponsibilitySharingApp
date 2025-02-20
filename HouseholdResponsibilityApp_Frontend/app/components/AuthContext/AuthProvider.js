@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useReducer } from "react";
 import { apiPost } from "../../../(utils)/api";
 import { useRouter } from "next/navigation";
 
@@ -20,20 +20,64 @@ export const AuthProvider = ({ children }) => {
     }, [user])
 
 
+    //set the user every page render/refresh
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await fetch("/auth/user", { credentials: "include" });
+                const userData = await response.json();
+                console.log("user data from fetch: ", userData)
+
+
+                setUser(userData);
+            } catch (error) {
+                console.error("Failed to fetch user:", error);
+                setUser(null);
+            }
+        };
+
+        fetchUser();
+    }, [])
+
+
+
 
     async function login(email, password) {
         try {
-            //set the token from the backend
-            const responseFromLogin = await apiPost("/Auth/Login", { email, password });
+            // set cookies from the backend
+            const responseFromLogin = await fetch("/api/Auth/Login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            // for error checking purposes i had to modify so we can check response here
+            const jsonResponse = await responseFromLogin.json();
+            console.log(jsonResponse);
+            
+            if (!responseFromLogin.ok) {
+
+                let errorString = "";
+                Object.entries(jsonResponse).forEach(([key, value]) => {
+                    errorString += (`${key}:`, value)+"\n";
+                });
+
+                throw new Error(errorString);
+            }
 
             //set the user globally from the token
-            const response = await fetch("/auth/user", { cache: "no-store" });
+            const response = await fetch("/auth/user");
+
             const userData = await response.json();
+            
             setUser(userData);
-            // setError(null);
+            return jsonResponse;
+
         } catch (error) {
-            console.error("Failed to fetch user:", error);
             setUser(null);
+            throw (error);
         }
     };
 
