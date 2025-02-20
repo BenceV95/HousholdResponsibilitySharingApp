@@ -67,7 +67,8 @@ public class HouseholdController : ControllerBase
             }
 
             await _householdService.CreateHouseholdAsync(householdDto);
-            return Ok();
+
+            return Ok(); // maybe send the id back here to renew the token ?
         }
         catch (Exception ex)
         {
