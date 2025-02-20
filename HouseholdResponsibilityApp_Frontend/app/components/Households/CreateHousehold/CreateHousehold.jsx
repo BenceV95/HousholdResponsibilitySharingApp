@@ -1,32 +1,42 @@
-"use client"
-import { useState } from "react"
-import "./CreateHousehold.css"
+"use client";
+import { useState } from "react";
+import { useAuth } from "../../AuthContext/AuthProvider"; 
+import "./CreateHousehold.css";
 import { apiPost } from "../../../../(utils)/api";
 
-
-//this component also needs the user in the future
 export default function CreateHousehold() {
-    const [householdName, setHouseholdName] = useState(null);
+  const [householdName, setHouseholdName] = useState("");
+  const { user } = useAuth();
 
-
-    async function sendHouseholdCreateRequest() {
-        if (householdName) {
-            try {
-                //this catches an error, cause its not fixed what the server should send back!
-                await apiPost("/household", { name: householdName })
-
-            } catch (e) {
-                alert(e)
-            }
-        }
+  async function sendHouseholdCreateRequest(e) {
+    e.preventDefault(); 
+    if (householdName && user) {
+      try {
+        const payload = {
+          name: householdName,
+          userId: user.userId, 
+        };
+        await apiPost("/household", payload);
+      } catch (e) {
+        alert(e);
+      }
     }
+  }
 
-    return (
-        <div className="create-household">
-            <form onSubmit={sendHouseholdCreateRequest} action="">
-                <input onChange={(e) => setHouseholdName(e.target.value)} type="text" name="householdName" id="householdName" placeholder="Household name" />
-                <button type="submit" className="btn btn-primary">Create</button>
-            </form>
-        </div>
-    )
+  return (
+    <div className="create-household">
+      <form onSubmit={sendHouseholdCreateRequest}>
+        <input
+          onChange={(e) => setHouseholdName(e.target.value)}
+          type="text"
+          name="householdName"
+          id="householdName"
+          placeholder="Household name"
+        />
+        <button type="submit" className="btn btn-primary">
+          Create
+        </button>
+      </form>
+    </div>
+  );
 }

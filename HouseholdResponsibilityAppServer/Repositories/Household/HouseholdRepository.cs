@@ -18,7 +18,9 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdRepo
         {
             try
             {
-                return await _context.Households.ToListAsync();
+                return await _context.Households
+                                             .Include(h => h.CreatedByUser)
+                                             .ToListAsync();
             }
             catch (Exception ex)
             {
