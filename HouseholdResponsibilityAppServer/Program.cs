@@ -75,25 +75,28 @@ namespace HouseholdResponsibilityAppServer
 
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IUserService, UserService>();
+
             builder.Services.AddScoped<IHouseholdRepository, HouseholdRepository>();
+            builder.Services.AddScoped<IHouseholdService, HouseholdService>();
+
             builder.Services.AddScoped<IGroupRepository, GroupRepository>();
-            builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
+            builder.Services.AddScoped<IGroupService, GroupService>();
 
             builder.Services.AddScoped<IHouseholdTaskService, HouseholdTaskService>();
             builder.Services.AddScoped<IHouseholdTasksRepository, HouseholdTasksRepository>();
+
             builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
             builder.Services.AddScoped<IHistoryService, HistoryService>();
+
             builder.Services.AddScoped<IScheduledTasksRepository, ScheduledTasksRepository>();
             builder.Services.AddScoped<IScheduledTaskService, ScheduledTaskService>();
+
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<AuthenticationSeeder>();
 
-
-
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IHouseholdService, HouseholdService>();
-            builder.Services.AddScoped<IGroupService, GroupService>();
+            builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
             builder.Services.AddScoped<IInvitationService, InvitationService>();
 
 

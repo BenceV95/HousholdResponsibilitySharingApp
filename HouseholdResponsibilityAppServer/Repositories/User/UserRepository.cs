@@ -30,16 +30,11 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
 
         public async Task<User> GetUserByIdAsync(string userId)
         {
-            try
-            {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await _context.Users
+                .Include(u => u.Household)
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
-                return user ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Database error: Unable to fetch user by ID.");
-            }
+            return user ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
         }
 
         public async Task AddUserAsync(User user)

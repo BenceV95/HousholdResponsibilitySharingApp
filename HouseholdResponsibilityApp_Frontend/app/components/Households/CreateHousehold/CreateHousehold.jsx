@@ -6,7 +6,7 @@ import { apiPost } from "../../../../(utils)/api";
 
 export default function CreateHousehold() {
   const [householdName, setHouseholdName] = useState("");
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
 
   async function sendHouseholdCreateRequest(e) {
     e.preventDefault(); 
@@ -16,7 +16,10 @@ export default function CreateHousehold() {
           name: householdName,
           userId: user.userId, 
         };
-        await apiPost("/household", payload);
+        const householdId = await apiPost("/household", payload);
+        let tempUser = user;
+        tempUser.householdId = householdId;
+        setUser(tempUser) // temp solution until token renew method is implemented - may not even work lol
       } catch (e) {
         alert(e);
       }

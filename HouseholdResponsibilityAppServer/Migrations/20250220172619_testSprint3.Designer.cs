@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HouseholdResponsibilityAppServer.Migrations
 {
     [DbContext(typeof(HouseholdResponsibilityAppContext))]
-    [Migration("20250220142945_testSprint3")]
+    [Migration("20250220172619_testSprint3")]
     partial class testSprint3
     {
         /// <inheritdoc />
