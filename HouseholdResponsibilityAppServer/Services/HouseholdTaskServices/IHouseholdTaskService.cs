@@ -1,4 +1,6 @@
-﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
+﻿using HouseholdResponsibilityAppServer.Models.Households;
+using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
+using HouseholdResponsibilityAppServer.Models.Task;
 
 namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
 {
@@ -13,5 +15,7 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
         public Task<HouseholdTaskDTO> GetByIdAsync(int taskId);
 
         public Task<HouseholdTaskDTO> UpdateTaskAsync(CreateHouseholdTaskRequest updateRequest, int id);
+
+        public Task<IEnumerable<HouseholdTaskDTO>> GetallTasksByHouseholdIdAsync(int householdId);
     }
 }
