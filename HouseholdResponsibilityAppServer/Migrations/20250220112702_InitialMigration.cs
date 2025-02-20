@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HouseholdResponsibilityAppServer.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatedScheme2 : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -116,9 +116,8 @@ namespace HouseholdResponsibilityAppServer.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    RoleId = table.Column<string>(type: "text", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     HouseholdId = table.Column<int>(type: "integer", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -139,12 +138,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -360,11 +353,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
                 column: "HouseholdId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_RoleId",
-                table: "AspNetUsers",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_UserName",
                 table: "AspNetUsers",
                 column: "UserName",
@@ -468,10 +456,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_AspNetUsers_AspNetRoles_RoleId",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_Households_AspNetUsers_CreatedByUserId",
                 table: "Households");
 
@@ -497,6 +481,9 @@ namespace HouseholdResponsibilityAppServer.Migrations
                 name: "Invitations");
 
             migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
                 name: "ScheduledTasks");
 
             migrationBuilder.DropTable(
@@ -504,9 +491,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Groups");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

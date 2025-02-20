@@ -1,6 +1,7 @@
 ﻿using HouseholdResponsibilityAppServer.Models;
 using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
+using HouseholdResponsibilityAppServer.Repositories.UserRepo;
 using Microsoft.AspNetCore.Identity;
 
 namespace HouseholdResponsibilityAppServer.Services.HouseholdService
@@ -8,10 +9,12 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdService
     public class HouseholdService : IHouseholdService
     {
         private readonly IHouseholdRepository _householdRepository;
+        private readonly IUserRepository _userRepository;
 
-        public HouseholdService(IHouseholdRepository householdRepository)
+        public HouseholdService(IHouseholdRepository householdRepository, IUserRepository userRepository)
         {
             _householdRepository = householdRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<IEnumerable<HouseholdResponseDto>> GetAllHouseholdsAsync()
@@ -42,9 +45,13 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdService
 
         public async Task CreateHouseholdAsync(HouseholdDto householdDto)
         {
+
+            var user = await _userRepository.GetUserByIdAsync(householdDto.UserId);
+
             var household = new Household
             {
                 Name = householdDto.Name,
+                CreatedByUser = user,
                 CreatedAt = DateTime.UtcNow,
             };
 

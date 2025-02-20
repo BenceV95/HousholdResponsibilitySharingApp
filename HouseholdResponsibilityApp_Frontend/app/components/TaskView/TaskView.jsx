@@ -25,6 +25,7 @@ export default function WeeklyCalendar() {
     const [scheduledTasks, setScheduledTasks] = useState([]);
     const [tasks, setTasks] = useState([]);
     const [tasksToDisplay, setTasksToDisplay] = useState([]);
+    const [events, setEvents] = useState([]);
 
 
     useEffect(() => {
@@ -39,7 +40,7 @@ export default function WeeklyCalendar() {
     useEffect(() => {
         try {
             async function getHouseholdTasks() {
-                const data = await apiFetch(`/tasks/filtered/${1}`) // and this should return only the tasks in the given household final version should be -> user.householdId
+                const data = await apiFetch(`/tasks/filtered/${2}`) // and this should return only the tasks in the given household final version should be -> user.householdId
                 setTasks(data)
             }
 
@@ -67,10 +68,14 @@ export default function WeeklyCalendar() {
         return scheduledTasks.map(scheduledTask => {
             const template = tasks.find(task => task.taskId === scheduledTask.householdTaskId);    // great naming convention
             return template
-                ? { ...scheduledTask, title: template.title, description: template.description, endDate: addHours(new Date(scheduledTask.eventDate), 1) }
+                ? { ...scheduledTask, allDay: !scheduledTask.atSpecificTime, title: template.title, description: template.description, start: new Date(scheduledTask.eventDate), end: addHours(new Date(scheduledTask.eventDate), 1) }
                 : null;
         }).filter(task => task !== null);
     };
+
+    useEffect(() => {
+        setEvents(tasksToDisplay)
+    }, [tasksToDisplay]);
 
 
     // const events = tasksToDisplay.map(task => ({
@@ -80,15 +85,15 @@ export default function WeeklyCalendar() {
     //     allDay: !task.atSpecificTime, // Ensures it spans the full day
     // }));
 
-    const events = [
-        { title: "🧹 Clean Kitchen", start: new Date("2025-02-18"), end: new Date("2025-02-18"), allDay: true, assignedTo: "Alice" },
-        { title: "🛒 Buy Groceries", start: new Date("2025-02-19"), end: new Date("2025-02-19"), allDay: false, assignedTo: "Bob" },
-        { title: "📦 Take Out Trash", start: new Date("2025-02-20"), end: new Date("2025-02-20"), allDay: false, assignedTo: "Chajrlie" },
-        { title: "📦 Take Out Trash", start: new Date("2025-02-20"), end: new Date("2025-02-20"), allDay: false, assignedTo: "Chajrlie" },
-        { title: "📦 Take Out Trash", start: new Date("2025-02-01"), end: new Date("2025-02-01"), allDay: false, assignedTo: "Chajrlie" },
-        { title: "📦 Take Out Trash", start: new Date("2025-02-01"), end: new Date("2025-02-01"), allDay: false, assignedTo: "Chajrlie" },
-        { title: "📦 Take Out Trash", start: new Date("2025-02-01"), end: new Date("2025-02-01"), allDay: false, assignedTo: "Chajrlie" },
-    ];
+    // const events = [
+    //     { title: "🧹 Clean Kitchen", start: new Date("2025-02-18"), end: new Date("2025-02-18"), allDay: true, assignedTo: "Alice" },
+    //     { title: "🛒 Buy Groceries", start: new Date("2025-02-19"), end: new Date("2025-02-19"), allDay: false, assignedTo: "Bob" },
+    //     { title: "📦 Take Out Trash", start: new Date("2025-02-20"), end: new Date("2025-02-20"), allDay: false, assignedTo: "Chajrlie" },
+    //     { title: "📦 Take Out Trash", start: new Date("2025-02-20"), end: new Date("2025-02-20"), allDay: false, assignedTo: "Chajrlie" },
+    //     { title: "📦 Take Out Trash", start: new Date("2025-02-01"), end: new Date("2025-02-01"), allDay: false, assignedTo: "Chajrlie" },
+    //     { title: "📦 Take Out Trash", start: new Date("2025-02-01"), end: new Date("2025-02-01"), allDay: false, assignedTo: "Chajrlie" },
+    //     { title: "📦 Take Out Trash", start: new Date("2025-02-01"), end: new Date("2025-02-01"), allDay: false, assignedTo: "Chajrlie" },
+    // ];
 
     //maybe we can make a color picker, and store the preferred one in the db. idk
     const getEventStyle = (event) => {
@@ -115,7 +120,7 @@ export default function WeeklyCalendar() {
     return (
         <div style={{ height: "40rem", width: "1000px", padding: "20px" }}>
             <Calendar
-                 selectable
+                selectable
                 eventPropGetter={getEventStyle}
                 localizer={localizer}
                 onSelectEvent={(e) => { alert(`Task start:${e.start} \n Task name: ${e.title}`) }}

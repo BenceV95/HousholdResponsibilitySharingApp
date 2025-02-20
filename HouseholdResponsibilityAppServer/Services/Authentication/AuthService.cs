@@ -75,7 +75,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
                 return InvalidPassword(email, managedUser.UserName);
             }
 
-            // <-- Itt jön a Household betöltése:
+
             _context.Entry(managedUser).Reference(u => u.Household).Load();
 
             var roles = await _userManager.GetRolesAsync(managedUser);

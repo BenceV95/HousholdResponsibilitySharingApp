@@ -47,7 +47,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
 
            };
 
-            var householdIdValue = user.Household != null ? user.Household.HouseholdId.ToString() : null;
+            var householdIdValue = user.Household != null ? user.Household.HouseholdId.ToString() : ""; // cannot be null unfortunatelly
             claims.Add(new Claim("householdId", householdIdValue));
 
             if (!string.IsNullOrEmpty(role))

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HouseholdResponsibilityAppServer.Migrations
 {
     [DbContext(typeof(HouseholdResponsibilityAppContext))]
-    [Migration("20250217141415_UpdatedScheme2")]
-    partial class UpdatedScheme2
+    [Migration("20250220112702_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -255,14 +255,12 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int?>("HouseholdId")
                         .HasColumnType("integer");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
@@ -288,10 +286,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -315,8 +309,6 @@ namespace HouseholdResponsibilityAppServer.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
-
-                    b.HasIndex("RoleId");
 
                     b.HasIndex("UserName")
                         .IsUnique();
@@ -565,15 +557,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasForeignKey("HouseholdId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Household");
-
-                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
