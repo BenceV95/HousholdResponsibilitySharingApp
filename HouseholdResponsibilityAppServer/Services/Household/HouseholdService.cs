@@ -58,7 +58,6 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdService
                 Name = householdDto.Name,
                 CreatedByUser = user,
                 CreatedAt = DateTime.UtcNow,
-                CreatedByUser = user,
                 Users = new List<User>(){user}
             };
 

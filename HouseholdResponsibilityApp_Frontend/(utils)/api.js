@@ -20,7 +20,7 @@ export async function apiFetch(endpoint) {
 
   console.log(`data arrived from: ${BACKEND_URL}${endpoint}`);
 
-  return response.json();
+  return await response.json();
 }
 
 /* 
@@ -40,7 +40,7 @@ export async function apiPut(endpoint, data) {
   if (!response.ok) {
     throw new Error("API request failed");
   }
-  return response.json();
+  return await response.json();
 }
 
 export async function apiPost(endpoint, data) {
@@ -53,12 +53,15 @@ export async function apiPost(endpoint, data) {
     },
     body: JSON.stringify(data)
   });
+
   console.log("stringified", JSON.stringify(data));
+  console.log("response", response);
+  
   if (!response.ok) {
     throw new Error("API request failed");
   }
 
-  return response.json();
+  return await response.json();
 }
 
 export async function apiDelete(endpoint) {

@@ -27,7 +27,8 @@ const AssignTasks = () => {
       try {
         const taskList = await apiFetch("/tasks");
         const userList = await apiFetch("/users");
-
+        console.log(userList);
+        
         if (user) {
           const filteredTasks = taskList.filter(
             (task) => Number(task.householdId) === Number(user.householdId)
@@ -125,7 +126,7 @@ const AssignTasks = () => {
           <option value="">-- Select a User --</option>
           {users.map((u) => (
             <option key={u.userResponseDtoId} value={u.userResponseDtoId}>
-              {u.username}
+              {u.username == user.userName ? "Me" : u.username}
             </option>
           ))}
         </select>

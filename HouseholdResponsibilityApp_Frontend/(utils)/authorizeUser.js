@@ -9,6 +9,7 @@ export default async function authorizeUser() {
 
     // console.log("token", token)
 
+console.log("token", token);
 
     if (token) {
         try {

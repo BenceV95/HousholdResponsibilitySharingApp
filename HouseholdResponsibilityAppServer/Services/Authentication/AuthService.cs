@@ -50,7 +50,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             }
 
             await _userManager.AddToRoleAsync(user, role);
-            return new AuthResult(false, request.Email, request.Username, "" , "", null)
+            return new AuthResult(true, request.Email, request.Username, "", "", null);
         }
 
         private static AuthResult FailedRegistration(IdentityResult result, string email, string username)

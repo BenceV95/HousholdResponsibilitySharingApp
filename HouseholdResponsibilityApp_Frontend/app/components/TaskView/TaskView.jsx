@@ -40,8 +40,10 @@ export default function WeeklyCalendar() {
     useEffect(() => {
         try {
             async function getHouseholdTasks() {
-                const data = await apiFetch(`/tasks/filtered/${user.householdId}`) // and this should return only the tasks in the given household final version should be -> user.householdId
-                setTasks(data)
+                if (user) {
+                    const data = await apiFetch(`/tasks/filtered/${user.householdId}`) // and this should return only the tasks in the given household final version should be -> user.householdId
+                    setTasks(data)
+                }
             }
 
 
@@ -68,7 +70,15 @@ export default function WeeklyCalendar() {
         return scheduledTasks.map(scheduledTask => {
             const template = tasks.find(task => task.taskId === scheduledTask.householdTaskId);    // great naming convention
             return template
-                ? { ...scheduledTask, allDay: !scheduledTask.atSpecificTime, title: template.title, description: template.description, start: new Date(scheduledTask.eventDate), end: addHours(new Date(scheduledTask.eventDate), 1) }
+                ? {
+                    ...scheduledTask,
+                    allDay: !scheduledTask.atSpecificTime,
+                    title: template.title,
+                    description: template.description,
+                    start: new Date(scheduledTask.eventDate),
+                    end: addHours(new Date(scheduledTask.eventDate), 1),
+                    assignedTo: "user4"
+                }
                 : null;
         }).filter(task => task !== null);
     };
@@ -98,7 +108,7 @@ export default function WeeklyCalendar() {
     //maybe we can make a color picker, and store the preferred one in the db. idk
     const getEventStyle = (event) => {
         const colors = {
-            Alice: "#FF5733",   // Red
+            test4: "#FF5733",   // Red
             Bob: "#33FF57",     // Green
             Charlie: "#3357FF"  // Blue
         };

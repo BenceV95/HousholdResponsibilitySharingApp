@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HouseholdResponsibilityAppServer.Migrations
 {
     [DbContext(typeof(HouseholdResponsibilityAppContext))]
-    [Migration("20250219160149_befureAddingUsers1")]
-    partial class befureAddingUsers1
+    [Migration("20250220142945_testSprint3")]
+    partial class testSprint3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,6 +94,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -491,7 +492,8 @@ namespace HouseholdResponsibilityAppServer.Migrations
                     b.HasOne("HouseholdResponsibilityAppServer.Models.Users.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.Navigation("CreatedByUser");
                 });

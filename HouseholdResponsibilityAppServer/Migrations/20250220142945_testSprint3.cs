@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HouseholdResponsibilityAppServer.Migrations
 {
     /// <inheritdoc />
-    public partial class befureAddingUsers : Migration
+    public partial class testSprint3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -168,7 +168,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedByUserId = table.Column<string>(type: "text", nullable: true)
+                    CreatedByUserId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
