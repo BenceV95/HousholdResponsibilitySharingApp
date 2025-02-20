@@ -40,9 +40,9 @@ const Navbar = () => {
                                     <span>Users</span>
                                 </button>
                             </Link>
-                            <Link href="/settings">
+                            <Link href="/profile">
                                 <button className='btn btn-primary'>
-                                    <span>Settings(WIP)</span>
+                                    <span>Profile(WIP)</span>
                                 </button>
                             </Link>
                             <Link href="/households" >

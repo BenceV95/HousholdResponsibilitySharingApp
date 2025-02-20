@@ -18,7 +18,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdRepo
         {
             try
             {
-                return await _context.Households.ToListAsync();
+                return await _context.Households.Include(h=>h.CreatedByUser).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -30,7 +30,9 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdRepo
         {
             try
             {
-                var household = await _context.Households.FirstOrDefaultAsync(h => h.HouseholdId == householdId);
+                var household = await _context.Households
+                    .Include(h => h.CreatedByUser)
+                    .FirstOrDefaultAsync(h => h.HouseholdId == householdId);
 
                 if (household == null)
                 {
@@ -45,12 +47,13 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdRepo
             }
         }
 
-        public async Task AddHouseholdAsync(Household household)
+        public async Task<Household> AddHouseholdAsync(Household household)
         {
             try
             {
                 await _context.Households.AddAsync(household);
                 await _context.SaveChangesAsync();
+                return household; // should return it with the ID
             }
             catch (Exception ex)
             {

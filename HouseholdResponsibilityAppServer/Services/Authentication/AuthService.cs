@@ -7,9 +7,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
     public class AuthService : IAuthService
     {
         private readonly UserManager<User> _userManager;
-
         private readonly ITokenService _tokenService;
-
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public AuthService(UserManager<User> userManager, ITokenService tokenService,
@@ -39,7 +37,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             var roleExists = await _roleManager.RoleExistsAsync(role);
             if (!roleExists)
             {
-                return new AuthResult(false, request.Email, request.Username, "" , "")
+                return new AuthResult(false, request.Email, request.Username, "", "")
                 {
                     ErrorMessages = { { "RoleError", "The specified role does not exist." } }
                 };
@@ -75,7 +73,6 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             {
                 return InvalidPassword(email, managedUser.UserName);
             }
-
 
             // get the role and pass it to the TokenService
             var roles = await _userManager.GetRolesAsync(managedUser);
