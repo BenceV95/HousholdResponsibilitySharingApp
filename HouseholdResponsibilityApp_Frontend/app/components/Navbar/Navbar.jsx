@@ -1,15 +1,12 @@
-"use client"
+"use client";
 import Link from "next/link";
-import './Navbar.css'
+import "./Navbar.css";
 import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext/AuthProvider";
 
 const Navbar = () => {
+  
     const { user, logout } = useAuth();
-
-
-
-
 
     return (
         <header className="heading">
@@ -48,6 +45,9 @@ const Navbar = () => {
                             <Link href="/households" >
                                 <button className='btn btn-primary'>Households</button>
                             </Link>
+                           <Link href="/groups">
+                               <button className="btn btn-primary">Groups</button>
+                           </Link>
                             <button onClick={logout} className="btn btn-danger">Logout</button>
                         </>
                 }
