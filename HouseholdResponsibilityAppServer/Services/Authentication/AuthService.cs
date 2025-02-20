@@ -75,7 +75,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             var roles = await _userManager.GetRolesAsync(managedUser);
             var accessToken = _tokenService.CreateToken(managedUser, roles[0]);
 
-            return new AuthResult(true, managedUser.Email, managedUser.UserName, accessToken, managedUser.Id, managedUser.Household.HouseholdId);
+            return new AuthResult(true, managedUser.Email, managedUser.UserName, accessToken, managedUser.Id, managedUser.Household?.HouseholdId);
         }
 
         private static AuthResult InvalidEmail(string email)

@@ -15,12 +15,13 @@ export default async function authorizeUser() {
             // Decode the token and extract the payload
             const decodedToken = jwtDecode(token); // `token.value` is the actual JWT string
 
-            // console.log("decoded token:", decodedToken)
+            console.log("decoded token:", decodedToken)
 
             const userName = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
             const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
             const role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
             const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+            const householdId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/householdId"];
 
             // console.log('Decoded token:', decodedToken);
             // console.log(userName)
@@ -30,7 +31,8 @@ export default async function authorizeUser() {
                 userName,
                 email,
                 role,
-                userId
+                userId,
+                householdId
             }
         } catch (error) {
             console.error('Error decoding token:', error);

@@ -39,8 +39,7 @@ export default function WeeklyCalendar() {
     useEffect(() => {
         try {
             async function getHouseholdTasks() {
-                //todo : put the users household id in the token
-                const data = await apiFetch(`/filtered/${user.householdId}`) // and this should return only the tasks in the given household
+                const data = await apiFetch(`/tasks/filtered/${1}`) // and this should return only the tasks in the given household final version should be -> user.householdId
                 setTasks(data)
             }
 
