@@ -17,13 +17,16 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
         {
             try
             {
-                return await _context.Users.ToListAsync();
+                return await _context.Users
+                    .Include(u => u.Household) // Betölti a kapcsolódó Household entitást
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
                 throw new Exception("Database error: Unable to fetch users.");
             }
         }
+
 
         public async Task<User> GetUserByIdAsync(string userId)
         {

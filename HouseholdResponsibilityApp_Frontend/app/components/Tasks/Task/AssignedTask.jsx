@@ -1,55 +1,93 @@
 "use client";
-import React, { useState } from 'react'
-import { apiFetch, apiPut, apiDelete, apiPost } from '../../../../(utils)/api';
-import Loading from '../../../../(utils)/Loading';
+import React, { useState, useEffect } from "react";
+import { apiFetch, apiDelete } from "../../../../(utils)/api";
+import Loading from "../../../../(utils)/Loading";
 
-const AssignedTask = () => {
+export default function AssignedTask() {
+  const [scheduledTasks, setScheduledTasks] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
-
-    const getData = async () => {
-        setLoading(true);
-        console.log("downloading");
-        const promise = await apiFetch("/scheduleds");
-        setData(promise);
-        console.log(promise);
-        setLoading(false);
+  const getData = async () => {
+    setLoading(true);
+    try {
+      const [schedResp, taskResp, userResp] = await Promise.all([
+        apiFetch("/scheduleds"),
+        apiFetch("/tasks"),
+        apiFetch("/users"),
+      ]);
+      setScheduledTasks(schedResp);
+      setTasks(taskResp);
+      setUsers(userResp);
+    } catch (err) {
+      console.error("Error:", err);
     }
+    setLoading(false);
+  };
 
-    const deleteTask = async (e) => {
-        console.log(e.target.id);
-        const filtered = data.filter(t => t.scheduledTaskId != e.target.id);
-        setData(filtered);
+  const deleteTask = async (id) => {
+    const filtered = scheduledTasks.filter((st) => st.scheduledTaskId !== id);
+    setScheduledTasks(filtered);
+    await apiDelete(`/scheduled/${id}`);
+  };
 
-        const deletePromise = await apiDelete(`/scheduled/${e.target.id}`);
-        console.log("Deleted ", e.target.id);
+  function findTaskTitle(taskId) {
+    const t = tasks.find((x) => x.taskId === taskId);
+    return t ? t.title : `Task #${taskId}`;
+  }
 
+  function findUserName(userId) {
+    const u = users.find((x) => x.userResponseDtoId === userId);
+    return u ? u.username : userId; 
+  }
+
+  function repeatToString(repeatNum) {
+    switch (repeatNum) {
+      case 0: return "Daily";
+      case 1: return "Weekly";
+      case 2: return "Monthly";
+      default: return "NoRepeat";
     }
+  }
 
-    return (
-        <div className='viewAssignedTasks'>
-            <div className='getDataButton'>
-                <button onClick={getData} className='btn btn-primary'>Get Data</button>
-            </div>
-            <div className='display'>
-                {loading ? (<Loading />) :
-                    (data.map((dataEntry, i) => (
-                        <div key={i} className='taskData'>
-                            <span>scheduledTaskId: {dataEntry.scheduledTaskId}</span><br />
-                            <span>householdTaskId: {dataEntry.householdTaskId}</span><br />
-                            <span>createdByUserId: {dataEntry.createdByUserId}</span><br />
-                            <span>createdAt: {dataEntry.createdAt}</span><br />
-                            <span>repeat: {dataEntry.repeat}</span><br />
-                            <span>eventDate: {dataEntry.eventDate}</span><br />
-                            <span>atSpecificTime: {dataEntry.atSpecificTime}</span><br />
-                            <span>assignedToUserId: {dataEntry.assignedToUserId}</span><br />
-                            <button className='btn btn-danger' id={dataEntry.scheduledTaskId} onClick={(e) => deleteTask(e)}>DELETE</button>
-                        </div>
-                    )))}
-            </div>
+  return (
+    <div className="viewAssignedTasks">
+      <div className="getDataButton">
+        <button onClick={getData} className="btn btn-primary">
+          Get Data
+        </button>
+      </div>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="display">
+          {scheduledTasks.map((dataEntry, i) => {
+            const title = findTaskTitle(dataEntry.householdTaskId);
+            const createdByName = findUserName(dataEntry.createdByUserId);
+            const assignedName = findUserName(dataEntry.assignedToUserId);
+            const repeatStr = repeatToString(dataEntry.repeat);
+            const eventDate = new Date(dataEntry.eventDate).toLocaleString(); 
+
+            return (
+              <div key={i} className="taskData">
+                <h3>{title}</h3>
+                <p>Created By: {createdByName}</p>
+                <p>Assigned To: {assignedName}</p>
+                <p>Repeat: {repeatStr}</p>
+                <p>Event Date: {eventDate}</p>
+                <p>Specific Time: {dataEntry.atSpecificTime ? "Yes" : "No"}</p>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => deleteTask(dataEntry.scheduledTaskId)}
+                >
+                  DELETE
+                </button>
+              </div>
+            );
+          })}
         </div>
-    )
+      )}
+    </div>
+  );
 }
-
-export default AssignedTask

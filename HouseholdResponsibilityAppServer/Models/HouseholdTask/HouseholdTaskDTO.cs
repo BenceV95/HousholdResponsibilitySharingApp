@@ -9,5 +9,7 @@
         public string UserId { get; set; }
         public int GroupId { get; set; }
         public bool Priority { get; set; }
+
+        public int HouseholdId { get; set; }
     }
 }

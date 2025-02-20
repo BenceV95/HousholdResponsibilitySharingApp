@@ -5,7 +5,8 @@
      string Email,
      string UserName,
      string Token,
-     string UserId)
+     string UserId,
+     int? HouseholdId)
     {
         //Error code - error message
         public readonly Dictionary<string, string> ErrorMessages = new();

@@ -69,7 +69,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
                 Expires = DateTime.UtcNow.AddMinutes(_expirationTimeInMinutes)
             });
 
-            return Ok(new AuthResponse(result.Email, result.UserName, result.Token, result.UserId));
+            return Ok(new AuthResponse(result.Email, result.UserName, result.Token, result.UserId, result.HouseholdId));
         }
 
         [HttpPost("Logout")]

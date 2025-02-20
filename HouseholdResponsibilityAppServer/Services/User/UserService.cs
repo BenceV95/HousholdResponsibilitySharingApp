@@ -28,6 +28,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
                 LastName = user.LastName,
                 //IsAdmin = user.IsAdmin, roletabléből majd
                 CreatedAt = user.CreatedAt,
+                HouseholdId = user.Household?.HouseholdId
             }).ToList();
 
         }

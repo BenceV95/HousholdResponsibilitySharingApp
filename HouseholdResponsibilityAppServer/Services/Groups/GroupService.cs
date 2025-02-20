@@ -1,7 +1,13 @@
-﻿using HouseholdResponsibilityAppServer.Models;
+﻿using HouseholdResponsibilityAppServer.Context;
+using HouseholdResponsibilityAppServer.Models;
 using HouseholdResponsibilityAppServer.Models.Groups;
+using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Repositories.Groups;
+using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
+
+using HouseholdResponsibilityAppServer.Services.HouseholdService;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
 namespace HouseholdResponsibilityAppServer.Services.Groups
@@ -10,11 +16,16 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
     {
         private readonly IGroupRepository _groupRepository;
 
-        public GroupService(IGroupRepository groupRepository)
+
+        private readonly IHouseholdRepository _householdRepository;
+
+
+        public GroupService(IGroupRepository groupRepository, IHouseholdRepository householdRepository)
         {
             _groupRepository = groupRepository;
-        }
+            _householdRepository = householdRepository;
 
+        }
         public async Task<IEnumerable<GroupResponseDto>> GetAllGroupsAsync()
         {
             var groups = await _groupRepository.GetAllGroupsAsync();
@@ -23,9 +34,10 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
             {
                 GroupResponseDtoId = group.GroupId,
                 Name = group.Name,
+                HouseholdId = group.Household.HouseholdId
             }).ToList();
-
         }
+
 
         public async Task<GroupResponseDto> GetGroupByIdAsync(int groupId)
         {
@@ -40,9 +52,14 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
 
         public async Task CreateGroupAsync(PostGroupDto postGroupDto)
         {
+
+            var household = await _householdRepository.GetHouseholdByIdAsync(postGroupDto.HouseholdId);
+
             var group = new TaskGroup
             {
                 Name = postGroupDto.Name,
+                Household = household,
+
             };
 
             await _groupRepository.AddGroupAsync(group);

@@ -52,10 +52,11 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdService
             {
                 throw new InvalidOperationException("User already has a household.");
             }
-             
+            
             var household = new Household
             {
                 Name = householdDto.Name,
+                CreatedByUser = user,
                 CreatedAt = DateTime.UtcNow,
                 CreatedByUser = user,
                 Users = new List<User>(){user}

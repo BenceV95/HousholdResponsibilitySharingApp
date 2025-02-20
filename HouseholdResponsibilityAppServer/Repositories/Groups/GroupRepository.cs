@@ -17,7 +17,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.Groups
         {
             try
             {
-                return await _context.Groups.ToListAsync();
+                return await _context.Groups.Include(g => g.Household).ToListAsync();
             }
             catch (Exception ex)
             {
