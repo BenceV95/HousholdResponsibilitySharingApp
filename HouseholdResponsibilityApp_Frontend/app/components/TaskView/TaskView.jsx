@@ -116,6 +116,7 @@ export default function WeeklyCalendar() {
     return (
         <div style={{ height: "40rem", width: "1000px", padding: "20px" }}>
             <Calendar
+                 selectable
                 eventPropGetter={getEventStyle}
                 localizer={localizer}
                 onSelectEvent={(e) => { alert(`Task start:${e.start} \n Task name: ${e.title}`) }}
