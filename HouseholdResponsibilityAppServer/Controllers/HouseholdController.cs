@@ -72,7 +72,7 @@ public class HouseholdController : ControllerBase
         catch (Exception ex)
         {
             //Console.Error.WriteLine(ex.Message);
-
+            
             return BadRequest("An error occurred while creating household.\n"+ex.Message);
         }
     }
