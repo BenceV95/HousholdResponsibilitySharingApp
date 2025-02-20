@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../components/AuthContext/AuthProvider.js";
+import Link from "next/link";
 import "./Login.css";
 
 export default function Login() {
@@ -42,7 +43,11 @@ export default function Login() {
 
         <button type="submit" className="btn btn-success">Login</button>
       </form>
-      {error && (<p>{error}</p>)}
+      {error && (<p className="loginError">{error}</p>)}
+      <div className="register">
+        <p>Don't have an account yet?</p>
+        <Link href={"/register"} className="btn btn-primary">Register</Link>
+      </div>
     </div>
   );
 }
