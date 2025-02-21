@@ -66,6 +66,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
                 return BadRequest(ModelState);
             }
 
+            //when the user logs in, add cookies, and to the cookie add the token
 
             Response.Cookies.Append("token", result.Token, new CookieOptions
             {
@@ -108,13 +109,17 @@ namespace HouseholdResponsibilityAppServer.Controllers
             return Ok(new { email, username, expirationUnix });
         }
 
+
+          // call this endpoint from the frontend after the token needs to be updated
         [Authorize]
-        [HttpGet("refresh")]
+        [HttpGet("update-token")]
         public async Task<IActionResult> RefreshToken()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "User"; // just a fallback if we cannot get the user's role
-            if (userId == null) return Unauthorized();
+
+
+
+            if (userId == null) return Unauthorized(); // since this endpoint is protected [Authorize] userId and user should never be null
 
             // Fetch updated user details (now including HouseholdId)
             var user = await _userRepository.GetUserByIdAsync(userId);
@@ -131,7 +136,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
 
             // Generate new token with updated HouseholdId
-            var token = _tokenService.CreateToken(user, userRole);
+            var token = await _tokenService.CreateToken(user);
 
 
             Response.Cookies.Append("token", token, new CookieOptions

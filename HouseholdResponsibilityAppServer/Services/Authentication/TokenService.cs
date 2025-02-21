@@ -12,16 +12,18 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
     {
         private const int ExpirationMinutes = 10;
         private readonly IConfiguration _configuration;
+        private readonly UserManager<User> _userManager;
 
-        public TokenService(IConfiguration configuration)
+        public TokenService(IConfiguration configuration, UserManager<User> userManager)
         {
             _configuration = configuration;
+            _userManager = userManager;
         }
 
-        public string CreateToken(User user, string role = null)
+        public async Task<string> CreateToken(User user)
         {
             var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
-            var claims = CreateClaims(user, role, expiration);
+            var claims = await CreateClaimsAsync(user, expiration);
             var signingCredentials = CreateSigningCredentials();
             var token = CreateJwtToken(claims, signingCredentials, expiration);
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -37,7 +39,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
                 signingCredentials: credentials
             );
 
-        private List<Claim> CreateClaims(User user, string? role, DateTime expiration)
+        private async Task<List<Claim>> CreateClaimsAsync(User user, DateTime expiration)
         {
             var claims = new List<Claim>
            {
@@ -53,7 +55,10 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             var householdId = user.Household?.HouseholdId.ToString() ?? ""; // cannot be null unfortunatelly
             claims.Add(new Claim("householdId", householdId));
 
-            if (!string.IsNullOrEmpty(user.GetUserRole))
+            var roles = await _userManager.GetRolesAsync(user);
+
+
+            foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }

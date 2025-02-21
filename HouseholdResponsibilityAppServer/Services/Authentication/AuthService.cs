@@ -43,19 +43,19 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             var roleExists = await _roleManager.RoleExistsAsync(role);
             if (!roleExists)
             {
-                return new AuthResult(false, request.Email, request.Username, "" , "", null)
+                return new AuthResult(false, request.Email, request.Username, "", null)
                 {
                     ErrorMessages = { { "RoleError", "The specified role does not exist." } }
                 };
             }
 
             await _userManager.AddToRoleAsync(user, role);
-            return new AuthResult(true, request.Email, request.Username, "", "", null);
+            return new AuthResult(true, request.Email, request.Username, "", null);
         }
 
         private static AuthResult FailedRegistration(IdentityResult result, string email, string username)
         {
-            var authResult = new AuthResult(false, email, username, "", "", null);
+            var authResult = new AuthResult(false, email, username, "", null);
 
             foreach (var error in result.Errors)
             {
@@ -82,23 +82,22 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             // this is for returning the household id
              _context.Entry(managedUser).Reference(u => u.Household).Load();
              
-            var roles = await _userManager.GetRolesAsync(managedUser);
-            var accessToken = _tokenService.CreateToken(managedUser, roles.FirstOrDefault());
+            var accessToken = await _tokenService.CreateToken(managedUser);
 
-            return new AuthResult(true, managedUser.Email, managedUser.UserName, accessToken, managedUser.Id, managedUser.Household?.HouseholdId);
+            return new AuthResult(true, managedUser.Email, managedUser.UserName, accessToken, managedUser.Household?.HouseholdId);
         }
 
 
         private static AuthResult InvalidEmail(string email)
         {
-            var result = new AuthResult(false, email, "", "", "", null);
+            var result = new AuthResult(false, email, "", "", null);
             result.ErrorMessages.Add("Bad credentials", "Invalid email");
             return result;
         }
 
         private static AuthResult InvalidPassword(string email, string userName)
         {
-            var result = new AuthResult(false, email, userName, "", "", null);
+            var result = new AuthResult(false, email, userName, "", null);
             result.ErrorMessages.Add("Bad credentials", "Invalid password");
             return result;
         }

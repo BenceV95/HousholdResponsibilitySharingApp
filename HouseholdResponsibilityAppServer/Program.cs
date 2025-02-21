@@ -22,7 +22,6 @@ using Microsoft.AspNetCore.Identity;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using Microsoft.OpenApi.Models;
 using HouseholdResponsibilityAppServer.Models.Users;
-using HouseholdResponsibilityAppServer.Repositories.Roles;
 
 namespace HouseholdResponsibilityAppServer
 {
@@ -100,7 +99,6 @@ namespace HouseholdResponsibilityAppServer
             builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
             builder.Services.AddScoped<IInvitationService, InvitationService>();
 
-            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 
             AddAuth();
@@ -175,7 +173,7 @@ namespace HouseholdResponsibilityAppServer
                         options.SignIn.RequireConfirmedAccount = false;
                         options.User.RequireUniqueEmail = true;
                         options.Password.RequireDigit = false;
-                        options.Password.RequiredLength = 6;
+                        options.Password.RequiredLength = 2; //for now it needs to be only 2 digits long
                         options.Password.RequireNonAlphanumeric = false;
                         options.Password.RequireUppercase = false;
                         options.Password.RequireLowercase = false;

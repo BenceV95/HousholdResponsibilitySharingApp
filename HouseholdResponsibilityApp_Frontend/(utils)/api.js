@@ -1,11 +1,12 @@
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const BACKEND_URL = "/api";
+
+//we should make our fetches uniform, and make the backend send unform error messages as well!
+//also, not just saying API request failed, cause we wont know what exactly went wrong
 
 /* 
 usage: apiFetch("/tasks")
 */
 export async function apiFetch(endpoint) {
-  console.log(`${BACKEND_URL}${endpoint}`);
-
 
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {
     method: "GET",
@@ -14,13 +15,14 @@ export async function apiFetch(endpoint) {
     },
   });
 
+  const data = await response.json()
+
   if (!response.ok) {
-    throw new Error("API request failed");
+
+    throw new Error("API request failed", data.message);
   }
 
-  console.log(`data arrived from: ${BACKEND_URL}${endpoint}`);
-
-  return await response.json();
+  return data;
 }
 
 /* 
@@ -37,14 +39,18 @@ export async function apiPut(endpoint, data) {
     body: JSON.stringify(data)
   });
 
+
+  const data = await response.json()
+
   if (!response.ok) {
-    throw new Error("API request failed");
+
+    throw new Error("API request failed", data.message);
   }
-  return await response.json();
+
+  return data;
 }
 
 export async function apiPost(endpoint, data) {
-  console.log(`${BACKEND_URL}${endpoint}`);
 
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {
     method: "POST",
@@ -54,15 +60,18 @@ export async function apiPost(endpoint, data) {
     body: JSON.stringify(data)
   });
 
+
+  const data = await response.json()
+
   if (!response.ok) {
-    throw new Error("API request failed");
+
+    throw new Error("API request failed", data.message);
   }
 
-  return await response.json();
+  return data;
 }
 
 export async function apiDelete(endpoint) {
-  console.log(`${BACKEND_URL}${endpoint}`);
 
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {
     method: "DELETE",
