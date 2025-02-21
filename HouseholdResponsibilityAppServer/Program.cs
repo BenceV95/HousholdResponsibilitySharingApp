@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Identity;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using Microsoft.OpenApi.Models;
 using HouseholdResponsibilityAppServer.Models.Users;
+using HouseholdResponsibilityAppServer.Repositories.Roles;
 
 namespace HouseholdResponsibilityAppServer
 {
@@ -99,6 +100,8 @@ namespace HouseholdResponsibilityAppServer
             builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
             builder.Services.AddScoped<IInvitationService, InvitationService>();
 
+            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+
 
             AddAuth();
             AddIdentity();
@@ -106,7 +109,7 @@ namespace HouseholdResponsibilityAppServer
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+
             if (app.Environment.IsDevelopment())
             {  
 
@@ -140,8 +143,8 @@ namespace HouseholdResponsibilityAppServer
                  options.TokenValidationParameters = new TokenValidationParameters()
                  {
                      ClockSkew = TimeSpan.Zero,
-                     ValidateIssuer = true,    // kibocsátó ellenõrzése
-                     ValidateAudience = true,  // címzett ellenõrzése
+                     ValidateIssuer = true,
+                     ValidateAudience = true,
                      ValidateLifetime = true,
                      ValidateIssuerSigningKey = true,
                      ValidIssuer = jwtSettings["ValidIssuer"],
@@ -149,7 +152,7 @@ namespace HouseholdResponsibilityAppServer
                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(issuerSigningKey)),
                  };
 
-                 // A token cookie-ból lesz kiolvasva ha a HTTP headersben nincs megadva.
+
                  options.Events = new JwtBearerEvents
                  {
                      OnMessageReceived = context =>

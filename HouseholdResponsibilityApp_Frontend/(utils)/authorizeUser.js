@@ -10,6 +10,8 @@ export default async function authorizeUser() {
 
     //we should ditch this idea, and make the backend authenticate us!
 
+    // dont forget to put some example data in the backend, appsettings.json
+
     if (token) {
         try {
 

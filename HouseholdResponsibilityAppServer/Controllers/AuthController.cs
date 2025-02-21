@@ -16,7 +16,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
         private readonly IAuthService _authenticationService;
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
-        const int _expirationTimeInMinutes = 10;
+        const int _expirationTimeInMinutes = 30;
 
         public AuthController(IAuthService authenticationService, IUserRepository userRepository, ITokenService tokenService)
         {
@@ -75,7 +75,8 @@ namespace HouseholdResponsibilityAppServer.Controllers
                 Expires = DateTime.UtcNow.AddMinutes(_expirationTimeInMinutes)
             });
 
-            return Ok(new AuthResponse(result.Email, result.UserName, result.Token, result.UserId, result.HouseholdId));
+            //here we should just send back meta data that we want to display on the front end (user Id we dont need, cause on subsequent request we get it from the token);
+            return Ok(new AuthResponse(result.Email, result.UserName, result.HouseholdId));
         }
 
         [HttpPost("Logout")]
@@ -88,7 +89,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
 
         [Authorize]
-        [HttpGet("Me")]
+        [HttpGet("/authenticate")]
         public IActionResult Me()
         {
             var user = HttpContext.User;
@@ -147,3 +148,46 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
     }
 }
+
+
+
+//try
+//{
+//    if (UserHelper.GetUserId(HttpContext, out var userId, out var unauthorized))
+//        return unauthorized;
+
+//    Console.WriteLine(userId);
+
+//    var accounts = await _accountService.GetAll(userId);
+//    return Ok(accounts);
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine(ex.Message);
+//    return BadRequest(ex.Message);
+//}
+
+
+
+
+//using System.Security.Claims;
+//using Microsoft.AspNetCore.Mvc;
+
+//namespace Aurum.Utils;
+
+//public static class UserHelper
+//{
+//    public static bool GetUserId(HttpContext context, out string? userId, out IActionResult? unauthorized)
+//    {
+//        userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+//        if (userId != null)
+//        {
+//            unauthorized = null;
+//            return false;
+//        }
+
+//        unauthorized = new UnauthorizedResult();
+//        return true;
+//    }
+//}

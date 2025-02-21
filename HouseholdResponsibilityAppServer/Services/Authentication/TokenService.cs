@@ -11,6 +11,12 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
     public class TokenService : ITokenService
     {
         private const int ExpirationMinutes = 10;
+        private readonly IConfiguration _configuration;
+
+        public TokenService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         public string CreateToken(User user, string role = null)
         {
@@ -24,7 +30,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
         private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials,
             DateTime expiration) =>
             new(
-                "apiWithAuthBackend",  //issuer
+                "apiWithAuthBackend",  //issuer    later get it from appsettings.json...
                 "apiWithAuthBackend", //audience
                 claims,
                 expires: expiration,
@@ -35,22 +41,19 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
         {
             var claims = new List<Claim>
            {
-                new(JwtRegisteredClaimNames.Sub, user.Id),//tulajdonos
-                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),//egyedi guid
-                //mikor lett kiadva a token
+                new(JwtRegisteredClaimNames.Sub, user.Id),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(DateTime.UtcNow).ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Integer64),
                 new(ClaimTypes.NameIdentifier, user.Id),
                 new(ClaimTypes.Name, user.UserName),
                 new(ClaimTypes.Email, user.Email),
-                // Explicit "exp" claim hozzáadása:
                 new Claim("exp", ((DateTimeOffset)expiration).ToUnixTimeSeconds().ToString()),
-
            };
 
-            var householdIdValue = user.Household != null ? user.Household.HouseholdId.ToString() : ""; // cannot be null unfortunatelly
-            claims.Add(new Claim("householdId", householdIdValue));
+            var householdId = user.Household?.HouseholdId.ToString() ?? ""; // cannot be null unfortunatelly
+            claims.Add(new Claim("householdId", householdId));
 
-            if (!string.IsNullOrEmpty(role))
+            if (!string.IsNullOrEmpty(user.GetUserRole))
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
@@ -61,20 +64,11 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
 
         private SigningCredentials CreateSigningCredentials()
         {
-            //Az aláíráshoz szükséges hitelesítő adatokat hozza létre(kulcs + algoritmus)
             return new SigningCredentials(
-                //  1️ Létrehozunk egy titkos kulcsot, amit a token aláírásához használunk.
-                //    - A SymmetricSecurityKey egy olyan kulcs,
-                //    amely ugyanazzal a titkos kulccsal írja alá és ellenőrzi a tokent.
                 new SymmetricSecurityKey(
-                    //  2️ A titkos kulcsot szövegként (string) adjuk meg, de azt bájt tömbbé kell alakítani.
-                    //    - Encoding.UTF8.GetBytes() átalakítja a titkos kulcsot byte tömbbé,
-                    //    hogy a SymmetricSecurityKey elfogadja.
-                    Encoding.UTF8.GetBytes("!SomethingSecret!!SomethingSecret!")
+
+                    Encoding.UTF8.GetBytes(_configuration["Jwt:IssuerSigningKey"])
                 ),
-                //  3️ Megadjuk, hogy milyen algoritmussal történjen az aláírás.
-                //    - Itt a HMAC SHA256-ot (HMAC-SHA256) használjuk, ami egy
-                //    biztonságos hash-alapú aláírási módszer.
                 SecurityAlgorithms.HmacSha256
             );
         }
