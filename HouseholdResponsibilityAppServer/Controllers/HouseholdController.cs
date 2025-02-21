@@ -1,8 +1,11 @@
-﻿using HouseholdResponsibilityAppServer.Models;
+﻿using System.Diagnostics;
+using System.Security.Claims;
+using HouseholdResponsibilityAppServer.Models;
 using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Models.Invitations;
 using HouseholdResponsibilityAppServer.Services.HouseholdService;
 using HouseholdResponsibilityAppServer.Services.Invitation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -50,21 +53,52 @@ public class HouseholdController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost("/household")]
     public async Task<ActionResult> CreateHousehold([FromBody] HouseholdDto householdDto)
     {
         try
         {
-            await _householdService.CreateHouseholdAsync(householdDto);
-            return Ok();
+            // checking for if the user is the same as the one who is creating the household
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (householdDto.UserId != userId)
+            {
+
+                return Forbid();
+            }
+
+            var createdHousehold = await _householdService.CreateHouseholdAsync(householdDto);
+
+            return Ok(createdHousehold.HouseholdId); // return the created household id
+
+        }
+        catch (Exception ex)
+        {
+
+            return BadRequest("An error occurred while creating household.\n" + ex.Message);
+        }
+    }
+
+    [Authorize]
+    [HttpPost("/household/join")]
+    public async Task<ActionResult> JoinHousehold([FromQuery]int id)
+    {
+        // this is a temp solution for the demo, validation need to be implemented !!!!
+        try
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Debug.WriteLine(id + " - " + userId);
+            await _householdService.JoinHousehold(id, userId);
+
+            return Ok(new {Message = $"User: {userId} has joined household: {id}."});
         }
         catch (Exception ex)
         {
             Console.Error.WriteLine(ex.Message);
-
-            return BadRequest("An error occurred while creating household.");
+            return BadRequest("An error occurred while joining the household.\n"+ex.Message);
         }
     }
+
 
     [HttpPut("/household/{householdId}")]
     public async Task<ActionResult> UpdateHousehold(int householdId, [FromBody] HouseholdDto householdDto)

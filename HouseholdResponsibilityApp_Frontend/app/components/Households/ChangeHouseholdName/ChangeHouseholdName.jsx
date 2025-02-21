@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { apiPut } from "../../../(utils)/api"
+import { apiPut } from "../../../../(utils)/api"
 import AllHouseholds from "../AllHouseholds/AllHouseholds";
 
 export default function ChangeHouseholdName() {

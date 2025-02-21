@@ -1,6 +1,6 @@
 "use client";
 import { useState } from 'react';
-import { apiFetch, apiPut } from '../(utils)/api';
+import { apiFetch, apiPut } from '../../(utils)/api';
 import './tasks.css';
 import CreateTasks from '../components/Tasks/CreateTasks/CreateTasks';
 import GetTasks from '../components/Tasks/GetTasks/GetTasks';

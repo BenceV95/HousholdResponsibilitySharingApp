@@ -9,10 +9,9 @@ namespace HouseholdResponsibilityAppServer.Models.Households
     {
         public int HouseholdId { get; set; }
         public string Name { get; set; }
-        public int? CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public User? CreatedByUser { get; set; }
+        public required User CreatedByUser { get; set; }
 
         public List<User> Users { get; set; } = new();
 
@@ -21,9 +20,5 @@ namespace HouseholdResponsibilityAppServer.Models.Households
         public List<HouseholdTask> HouseholdTasks { get; set; } = new();
 
         public List<History> Histories { get; set; } = new();
-
-
-
-
     }
 }

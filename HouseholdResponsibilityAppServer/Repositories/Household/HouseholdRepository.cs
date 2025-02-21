@@ -18,7 +18,10 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdRepo
         {
             try
             {
-                return await _context.Households.ToListAsync();
+                return await _context.Households
+                    .Include(h => h.CreatedByUser)
+                    .Include(u => u.Users)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -28,29 +31,26 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdRepo
 
         public async Task<Household> GetHouseholdByIdAsync(int householdId)
         {
-            try
-            {
-                var household = await _context.Households.FirstOrDefaultAsync(h => h.HouseholdId == householdId);
+            var household = await _context.Households
+                .Include(h => h.CreatedByUser)
+                .Include(u => u.Users)
+                .FirstOrDefaultAsync(h => h.HouseholdId == householdId);
 
-                if (household == null)
-                {
-                    throw new KeyNotFoundException($"Household with ID {householdId} not found.");
-                }
-
-                return household;
-            }
-            catch (Exception ex)
+            if (household == null)
             {
-                throw new Exception("Database error: Unable to fetch household by ID.");
+                throw new KeyNotFoundException($"Household with ID {householdId} not found.");
             }
+            household.Users = household.Users.ToList();
+            return household;
         }
 
-        public async Task AddHouseholdAsync(Household household)
+        public async Task<Household> AddHouseholdAsync(Household household)
         {
             try
             {
                 await _context.Households.AddAsync(household);
                 await _context.SaveChangesAsync();
+                return household; // should return it with the ID
             }
             catch (Exception ex)
             {
@@ -64,7 +64,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdRepo
 
             int affectedRows = await _context.SaveChangesAsync();
 
-            if (affectedRows == 0) throw new KeyNotFoundException($"User with ID {household.HouseholdId} not found.");
+            if (affectedRows == 0) throw new KeyNotFoundException($"Household with ID {household.HouseholdId} not found.");
         }
 
         /*public async Task DeleteHouseholdAsync(int householdId)

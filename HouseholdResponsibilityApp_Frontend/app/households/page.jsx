@@ -1,22 +1,12 @@
-"use client"
-
+"use client";
 import { useState } from "react"
 import AllHouseholds from "../components/Households/AllHouseholds/AllHouseholds"
 import CreateHousehold from "../components/Households/CreateHousehold/CreateHousehold";
 import ChangeHouseholdName from "../components/Households/ChangeHouseholdName/ChangeHouseholdName";
-
-
-
-function selectAction() {
-
-}
-
-
+import JoinHousehold from "../components/Households/JoinHousehold/page";
 
 export default function Households() {
     const [action, setAction] = useState(null);
-
-
 
     return (
         <>
@@ -28,7 +18,7 @@ export default function Households() {
                 action === "create" ? <CreateHousehold /> :
                     action === "listAll" ? <AllHouseholds /> :
                         action === "changeName" ? <ChangeHouseholdName /> :
-                            action === "sendInvite" ? <>sendInvite</> : null
+                            action === "sendInvite" ? <JoinHousehold /> : null
             }
 
         </>

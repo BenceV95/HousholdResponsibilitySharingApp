@@ -6,8 +6,10 @@
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public int GroupId { get; set; }
         public bool Priority { get; set; }
+
+        public int HouseholdId { get; set; }
     }
 }

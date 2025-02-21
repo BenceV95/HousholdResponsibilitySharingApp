@@ -1,7 +1,7 @@
 "use client";
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { apiDelete } from '../../../(utils)/api';
+import { apiDelete } from '../../../../(utils)/api';
 import './DeleteUser.css';
 
 const DeleteUser = () => {

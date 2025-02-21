@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_db_HRSA
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: householdresponsibility
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./HouseholdResponsibilityAppServer
+    container_name: aspnet_backend_HRSA
+    depends_on:
+      - postgres
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=householdresponsibility;Username=myuser;Password=mypassword"
+    ports:
+      - "5000:8080"
+    restart: always
+    
+
+  frontend:
+    build: ./HouseholdResponsibilityApp_Frontend
+    container_name: nextjs_frontend_HRSA
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_BACKEND_URL: "/api"
+    ports:
+      - "3000:3000"
+    restart: always
+
+volumes:
+  postgres_data:
+

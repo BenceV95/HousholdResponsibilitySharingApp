@@ -17,7 +17,9 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
         {
             try
             {
-                return await _context.Users.ToListAsync();
+                return await _context.Users
+                    .Include(u => u.Household)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -25,23 +27,15 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
             }
         }
 
-        public async Task<User> GetUserByIdAsync(int userId)
+
+        public async Task<User> GetUserByIdAsync(string userId)
         {
-            try
-            {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
 
-                if (user == null)
-                {
-                    throw new KeyNotFoundException($"User with ID {userId} not found.");
-                }
+            var user = await _context.Users
+                .Include(u => u.Household)
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
-                return user;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Database error: Unable to fetch user by ID.");
-            }
+            return user ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
         }
 
         public async Task AddUserAsync(User user)
@@ -63,7 +57,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
 
             int affectedRows = await _context.SaveChangesAsync();
 
-            if (affectedRows == 0) throw new KeyNotFoundException($"User with ID {user.UserId} not found.");
+            if (affectedRows == 0) throw new KeyNotFoundException($"User with ID {user.Id} not found.");
         }
 
         /*public async Task DeleteUserAsync(int userId)
@@ -79,9 +73,9 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
         }
         */
 
-        public async Task DeleteUserAsync(int userId)
+        public async Task DeleteUserAsync(string userId)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user == null)
             {

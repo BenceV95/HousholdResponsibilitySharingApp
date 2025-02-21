@@ -80,6 +80,26 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
             var user = await _userRepository.GetUserByIdAsync(taskCreateRequest.CreatedById);
             var household = await _householdRepository.GetHouseholdByIdAsync(taskCreateRequest.HouseholdId);
 
+            if (user == null)
+            {
+                throw new Exception("User not found!");
+            }
+            if (household == null)
+            {
+                throw new Exception("Household not found!");
+            }
+
+            // Checks whether the user belongs to the correct household
+            if (user.Household == null || user.Household.HouseholdId != household.HouseholdId)
+            {
+                throw new Exception("You do not belong to this household!");
+            }
+
+            // Checks whether the selected group belongs to the specified household
+            if (group.Household == null || group.Household.HouseholdId != household.HouseholdId)
+            {
+                throw new Exception("The selected group does not belong to your household!");
+            }
 
 
             return new HouseholdTask()
@@ -100,12 +120,27 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
                 TaskId = taskModel.TaskId,
                 Title = taskModel.Title,
                 Description = taskModel.Description,
-                UserId = taskModel.CreatedBy.UserId,
+                UserId = taskModel.CreatedBy.Id,
                 CreatedAt = taskModel.CreatedAt,
                 GroupId = taskModel.Group.GroupId,
                 Priority = taskModel.Priority,
+                HouseholdId = taskModel.Household.HouseholdId
             };
         }
 
+
+        public async Task<IEnumerable<HouseholdTaskDTO>> GetallTasksByHouseholdIdAsync(int householdId)
+        {
+            List<HouseholdTaskDTO> taskDTOs = new List<HouseholdTaskDTO>();
+            var filteredTasks = await _householdTaskRepository.GetallTasksByHouseholdIdAsync(householdId);
+
+
+            foreach (var task in filteredTasks)
+            {
+                taskDTOs.Add(ConvertModelToDTO(task));
+            }
+
+            return taskDTOs;
+        }
     }
 }

@@ -21,32 +21,31 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
 
             return users.Select(user => new UserResponseDto
             {
-                UserResponseDtoId = user.UserId,
-                Username = user.Username,
+                UserResponseDtoId = user.Id,
+                Username = user.UserName,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                IsAdmin = user.IsAdmin,
+                //IsAdmin = user.IsAdmin, roletabléből majd
                 CreatedAt = user.CreatedAt,
-                HouseholdId = user.HouseholdId
+                HouseholdId = user.Household?.HouseholdId
             }).ToList();
 
         }
 
-        public async Task<UserResponseDto> GetUserByIdAsync(int userId)
+        public async Task<UserResponseDto> GetUserByIdAsync(string userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
 
             return new UserResponseDto
             {
-                UserResponseDtoId = user.UserId,
-                Username = user.Username,
+                UserResponseDtoId = user.Id,
+                Username = user.UserName,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                IsAdmin = user.IsAdmin,
+                //IsAdmin = user.IsAdmin,
                 CreatedAt = user.CreatedAt,
-                HouseholdId = user.HouseholdId
             };
         }
 
@@ -54,7 +53,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
         {
             var user = new User
             {
-                Username = userDto.Username,
+                UserName = userDto.Username,
                 Email = userDto.Email,
                 FirstName = userDto.FirstName,
                 LastName = userDto.LastName,
@@ -65,11 +64,11 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
             await _userRepository.AddUserAsync(user);
         }
 
-        public async Task UpdateUserAsync(int userId, UserDto userDto)
+        public async Task UpdateUserAsync(string userId, UserDto userDto)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
 
-            user.Username = userDto.Username;
+            user.UserName = userDto.Username;
             user.Email = userDto.Email;
             user.FirstName = userDto.FirstName;
             user.LastName = userDto.LastName;
@@ -78,7 +77,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
             await _userRepository.UpdateUserAsync(user);
         }
 
-        public async Task DeleteUserAsync(int userId)
+        public async Task DeleteUserAsync(string userId)
         {
             await _userRepository.DeleteUserAsync(userId);
         }

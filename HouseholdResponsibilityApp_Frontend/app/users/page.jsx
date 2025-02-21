@@ -1,6 +1,6 @@
 "use client";
 import { useState } from 'react';
-import { apiPost, apiFetch, apiPut, apiDelete } from '../(utils)/api';
+import { apiPost, apiFetch, apiPut, apiDelete } from '../../(utils)/api';
 import './users.css';
 import CreateUser from '../components/Users/CreateUser/CreateUser';
 import GetUsers from '../components/Users/GetUsers/GetUsers';

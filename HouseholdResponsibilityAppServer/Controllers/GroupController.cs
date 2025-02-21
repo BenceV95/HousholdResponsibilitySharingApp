@@ -50,7 +50,7 @@ public class GroupController : ControllerBase
         try
         {
             await _groupService.CreateGroupAsync(postGroupDto);
-            return Ok();
+            return Ok(new { message = "Group created successfully" });
         }
         catch (Exception ex)
         {

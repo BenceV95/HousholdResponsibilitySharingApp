@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { apiFetch } from '../../../(utils)/api';
+import { apiFetch } from '../../../../(utils)/api';
 import './GetUsers.css';
 
 const GetUsers = () => {

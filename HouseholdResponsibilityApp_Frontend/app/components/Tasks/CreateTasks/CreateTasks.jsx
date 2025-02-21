@@ -1,91 +1,115 @@
 "use client";
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { apiFetch, apiPut, apiPost, apiDelete } from '../../../(utils)/api';
-import './CreateTasks.css';
-import uuidv4 from '../../../(utils)/uuidv4';
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { apiFetch, apiPost } from "../../../../(utils)/api";
+import "./CreateTasks.css";
+import { useAuth } from "../../AuthContext/AuthProvider";
 
 const CreateTasks = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const [message, setMessage] = useState('');
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
+  const [message, setMessage] = useState("");
 
+  const { user } = useAuth();
 
-    const onSubmit = async (data) => {
+  const [groups, setGroups] = useState([]);
 
-        const taskData = {
-            title: data.title,
-            description: data.description,
-            createdbyid: data.createdBy,
-            groupid: data.groupId,
-            priority: data.priority || false,
-            householdid: data.householdId
-        };
-
-        console.log(taskData);
-
-        try {
-            let postedForm = await apiPost("/task", taskData);
-            console.log(postedForm);
-            setMessage('Successfully posted form data !');
-
-        } catch (error) {
-            console.log(error);
-            setMessage('An error occurred while posting the task');
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const groupList = await apiFetch("/groups");
+        
+        if (user) {
+          const filteredGroups = groupList.filter(
+            (g) => Number(g.householdId) === Number(user.householdId)
+          );
+          setGroups(filteredGroups);
         }
+      } catch (err) {
+        console.error("Error:", err);
+      }
+    }
+
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    register("createdBy", { required: "Created By is required" });
+    register("householdId", { required: "Household ID is required" });
+  }, [register]);
+
+  useEffect(() => {
+    if (user) {
+      setValue("createdBy", user.userId);
+      setValue("householdId", user.householdId || 0);
+    }
+  }, [user, setValue]);
+
+  const onSubmit = async (formData) => {
+    const taskData = {
+      title: formData.title,
+      description: formData.description,
+      createdById: formData.createdBy,
+      groupId: Number(formData.groupId),
+      priority: formData.priority || false,
+      householdId: Number(formData.householdId),
     };
 
-    return (
-        <form onSubmit={handleSubmit(onSubmit)} className="task-form">
-            <label htmlFor="title">Title:</label>
-            <input
-                type="text"
-                id="title"
-                {...register('title', { required: 'Title is required' })}
-            />
-            {errors.title && <span>{errors.title.message}</span>}
+    try {
+      const posted = await apiPost("/task", taskData);
+      setMessage(`Successfully posted task! New Task ID: ${posted}`);
+    } catch (error) {
+      console.error(error);
+      setMessage("An error occurred while posting the task");
+    }
+  };
 
-            <label htmlFor="description">Description:</label>
-            <textarea
-                id="description"
-                {...register('description')}
-            />
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="task-form">
+      <label htmlFor="title">Title:</label>
+      <input
+        type="text"
+        id="title"
+        {...register("title", { required: "Title is required" })}
+      />
+      {errors.title && <span>{errors.title.message}</span>}
 
-            <label htmlFor="createdBy">Created By (User ID):</label>
-            <input
-                type="number"
-                id="createdBy"
-                {...register('createdBy', { required: 'Created By is required' })}
-            />
-            {errors.created_by && <span>{errors.created_by.message}</span>}
+      <label htmlFor="description">Description:</label>
+      <textarea id="description" {...register("description")} />
 
-            <label htmlFor="groupId">Group ID:</label>
-            <input
-                type="number"
-                id="groupId"
-                {...register('groupId', { required: 'Group ID is required' })}
-            />
-            {errors.groupId && <span>{errors.groupId.message}</span>}
+      <label htmlFor="groupId">Group:</label>
+      <select
+        id="groupId"
+        {...register("groupId", { required: "Group ID is required" })}
+        defaultValue=""
+      >
+        <option value="" disabled>
+          Select group
+        </option>
+        {groups.map((g) => (
+          <option key={g.groupResponseDtoId} value={g.groupResponseDtoId}>
+            {g.name}
+          </option>
+        ))}
+      </select>
+      {errors.groupId && <span>{errors.groupId.message}</span>}
 
-            <label htmlFor="householdId">Household ID:</label>
-            <input
-                type="number"
-                id="householdId"
-                {...register('householdId', { required: 'Household ID is required' })}
-            />
-            {errors.householdId && <span>{errors.householdId.message}</span>}
+      <label htmlFor="priority">Priority:</label>
+      <input type="checkbox" id="priority" {...register("priority")} />
 
-            <label htmlFor="priority">Priority:</label>
-            <input
-                type="checkbox"
-                id="priority"
-                {...register('priority')}
-            />
-
-            <button type="submit" className='btn btn-success'>Submit</button>
-            {message && <p>{message}</p>}
-        </form>
-    );
+      <button type="submit" className="btn btn-success">
+        Submit
+      </button>
+      {message && <p>{message}</p>}
+    </form>
+  );
 };
 
 export default CreateTasks;
