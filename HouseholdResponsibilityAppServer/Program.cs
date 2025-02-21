@@ -108,7 +108,7 @@ namespace HouseholdResponsibilityAppServer
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
-            {  
+            {
 
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -178,7 +178,7 @@ namespace HouseholdResponsibilityAppServer
                         options.Password.RequireLowercase = false;
                     })
                     .AddRoles<IdentityRole>() //Enable Identity roles 
-                    .AddEntityFrameworkStores<HouseholdResponsibilityAppContext>(); 
+                    .AddEntityFrameworkStores<HouseholdResponsibilityAppContext>();
             }
 
         }

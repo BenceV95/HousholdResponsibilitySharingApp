@@ -16,7 +16,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
         private readonly IAuthService _authenticationService;
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
-        const int _expirationTimeInMinutes = 10;
+        const int _expirationTimeInMinutes = 60;
 
         public AuthController(IAuthService authenticationService, IUserRepository userRepository, ITokenService tokenService)
         {

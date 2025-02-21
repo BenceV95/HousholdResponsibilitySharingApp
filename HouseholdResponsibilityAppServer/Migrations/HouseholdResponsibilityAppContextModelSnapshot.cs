@@ -489,7 +489,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
                     b.HasOne("HouseholdResponsibilityAppServer.Models.Users.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CreatedByUser");

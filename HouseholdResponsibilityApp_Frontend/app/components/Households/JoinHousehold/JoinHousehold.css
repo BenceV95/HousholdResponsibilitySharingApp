@@ -1,17 +1,17 @@
-.create-household {
+.join-household {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 1rem;
 }
-.create-household form {
+.join-household form {
     display: flex;
     flex-direction: column;
     
 }
 
-.create-household form input {
+.join-household form input {
     padding: 1rem;
     border-radius: 5px;
     border: 1px solid #ccc;

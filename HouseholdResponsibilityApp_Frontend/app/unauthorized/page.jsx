@@ -1,5 +1,6 @@
 import Link from "next/link"
 import authorizeUser from "../../(utils)/authorizeUser"
+import './Unauthorized.css';
 
 export default async function Unauthorized() {
 
@@ -7,9 +8,8 @@ export default async function Unauthorized() {
 
 
     return (
-        <div>
+        <div className="Unauthorized">
             <h1>Unauthorized</h1>
-            <h2>asd</h2>
             <Link className="btn btn-primary" href={"/"}>Go Home
             </Link>
         </div>
