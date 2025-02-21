@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        console.log("user: ", user)
+        // console.log("user: ", user)
     }, [user])
 
 
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
             try {
                 const response = await fetch("/auth/user", { credentials: "include" });
                 const userData = await response.json();
-                console.log("user data from fetch: ", userData)
+                // console.log("user data from fetch: ", userData)
 
 
                 setUser(userData);
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
 
             // for error checking purposes i had to modify so we can check response here
             const jsonResponse = await responseFromLogin.json();
-            console.log(jsonResponse);
+            // console.log(jsonResponse);
             
             if (!responseFromLogin.ok) {
 

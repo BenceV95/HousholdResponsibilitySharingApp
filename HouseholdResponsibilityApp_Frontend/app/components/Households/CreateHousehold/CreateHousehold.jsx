@@ -1,25 +1,29 @@
 "use client";
 import { useState } from "react";
-import { useAuth } from "../../AuthContext/AuthProvider"; 
+import { useAuth } from "../../AuthContext/AuthProvider";
 import "./CreateHousehold.css";
-import { apiPost } from "../../../../(utils)/api";
+import { apiFetch, apiPost } from "../../../../(utils)/api";
 
 export default function CreateHousehold() {
   const [householdName, setHouseholdName] = useState("");
   const { user, setUser } = useAuth();
 
   async function sendHouseholdCreateRequest(e) {
-    e.preventDefault(); 
+    e.preventDefault();
     if (householdName && user) {
       try {
         const payload = {
           name: householdName,
-          userId: user.userId, 
+          userId: user.userId,
         };
-        const householdId = await apiPost("/household", payload);
-        let tempUser = user;
-        tempUser.householdId = householdId;
-        setUser(tempUser) // temp solution until token renew method is implemented - may not even work lol
+        await apiPost("/household", payload);
+
+        //refresh the user token, to store the newly created households id
+
+        // so this works, it assigns a new token but its not refreshing the user global state... just if i hit reload page
+       const refreshResult =  await apiFetch("/Auth/refresh")
+
+       console.log("refreshResult", refreshResult)
       } catch (e) {
         alert(e);
       }

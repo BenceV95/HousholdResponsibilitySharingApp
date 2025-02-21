@@ -63,18 +63,19 @@ public class HouseholdController : ControllerBase
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (householdDto.UserId != userId)
             {
+
                 return Forbid();
             }
 
             var createdHousehold = await _householdService.CreateHouseholdAsync(householdDto);
 
             return Ok(createdHousehold.HouseholdId); // return the created household id
+
         }
         catch (Exception ex)
         {
-            //Console.Error.WriteLine(ex.Message);
-            
-            return BadRequest("An error occurred while creating household.\n"+ex.Message);
+
+            return BadRequest("An error occurred while creating household.\n" + ex.Message);
         }
     }
 

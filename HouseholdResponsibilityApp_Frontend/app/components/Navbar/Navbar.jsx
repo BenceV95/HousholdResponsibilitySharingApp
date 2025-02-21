@@ -52,9 +52,6 @@ const Navbar = () => {
                         </>
                 }
             </nav>
-            <div>
-                <h2 style={{ textAlign: "center" }}>{user ? "van user: " + user.userName : "nincs user"}</h2>
-            </div>
         </header>
     )
 }

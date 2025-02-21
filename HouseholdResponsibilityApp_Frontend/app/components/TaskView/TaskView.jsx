@@ -26,21 +26,27 @@ export default function WeeklyCalendar() {
     const [tasks, setTasks] = useState([]);
     const [tasksToDisplay, setTasksToDisplay] = useState([]);
     const [events, setEvents] = useState([]);
+    
+    //this is for debugging purposes only
+    useEffect(() => {
+        // console.log("tasks", tasks)
+        console.log("scheduledTasks", scheduledTasks)
+        // console.log("tasksToDisplay", tasksToDisplay)
+        // console.log("user", user)
+    }, [tasks, scheduledTasks, tasksToDisplay, user])
+    
 
 
     useEffect(() => {
-        console.log("tasks", tasks)
-        console.log("scheduledTasks", scheduledTasks)
-        console.log("tasksToDisplay", tasksToDisplay)
-        console.log("user", user)
-    }, [tasks, scheduledTasks, tasksToDisplay, user])
+        setEvents(tasksToDisplay)
+    }, [tasksToDisplay]);
 
 
-
+    // fetch the household tasks and the scheduled tasks
     useEffect(() => {
         try {
             async function getHouseholdTasks() {
-                if (user) {
+                if (user?.householdId) {
                     const data = await apiFetch(`/tasks/filtered/${user.householdId}`) // and this should return only the tasks in the given household final version should be -> user.householdId
                     setTasks(data)
                 }
@@ -58,9 +64,10 @@ export default function WeeklyCalendar() {
         } catch (e) {
             console.log(e)
         }
-
+        
     }, [user])
-
+    
+    //set the 
     useEffect(() => {
         setTasksToDisplay(fetchTasks());
     }, [tasks, scheduledTasks]);
@@ -77,15 +84,12 @@ export default function WeeklyCalendar() {
                     description: template.description,
                     start: new Date(scheduledTask.eventDate),
                     end: addHours(new Date(scheduledTask.eventDate), 1),
-                    assignedTo: "user4"
+                    assignedTo: scheduledTask.assignedToUserId,
                 }
                 : null;
         }).filter(task => task !== null);
     };
 
-    useEffect(() => {
-        setEvents(tasksToDisplay)
-    }, [tasksToDisplay]);
 
 
     // const events = tasksToDisplay.map(task => ({
@@ -106,11 +110,12 @@ export default function WeeklyCalendar() {
     // ];
 
     //maybe we can make a color picker, and store the preferred one in the db. idk
+    //for now, lets just use hardcoded values
     const getEventStyle = (event) => {
         const colors = {
-            test4: "#FF5733",   // Red
-            Bob: "#33FF57",     // Green
-            Charlie: "#3357FF"  // Blue
+            "0086ad72-5f23-497f-b183-5bc00158628c": "#FF5733",   // Red
+            "195731ee-d2f9-430a-9792-06f573cd754d": "#33FF57",     // Green
+            "666ae7c3-582f-4707-9938-27580f0cde18": "#3357FF"  // Blue
         };
 
         return {
@@ -133,7 +138,7 @@ export default function WeeklyCalendar() {
                 selectable
                 eventPropGetter={getEventStyle}
                 localizer={localizer}
-                onSelectEvent={(e) => { alert(`Task start:${e.start} \n Task name: ${e.title}`) }}
+                onSelectEvent={(e) => { alert(`Description:${e.description} \n Task name: ${e.title}`) }}
                 events={events}
                 startAccessor="start"
                 endAccessor="end"

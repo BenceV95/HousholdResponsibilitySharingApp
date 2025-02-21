@@ -1,7 +1,9 @@
 ﻿using HouseholdResponsibilityAppServer.Contracts;
+using HouseholdResponsibilityAppServer.Repositories.UserRepo;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -12,11 +14,15 @@ namespace HouseholdResponsibilityAppServer.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authenticationService;
+        private readonly IUserRepository _userRepository;
+        private readonly ITokenService _tokenService;
         const int _expirationTimeInMinutes = 10;
 
-        public AuthController(IAuthService authenticationService)
+        public AuthController(IAuthService authenticationService, IUserRepository userRepository, ITokenService tokenService)
         {
             _authenticationService = authenticationService;
+            _userRepository = userRepository;
+            _tokenService = tokenService;
         }
 
         [HttpPost("Register")]
@@ -101,7 +107,42 @@ namespace HouseholdResponsibilityAppServer.Controllers
             return Ok(new { email, username, expirationUnix });
         }
 
+        [Authorize]
+        [HttpGet("refresh")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "User"; // just a fallback if we cannot get the user's role
+            if (userId == null) return Unauthorized();
 
+            // Fetch updated user details (now including HouseholdId)
+            var user = await _userRepository.GetUserByIdAsync(userId);
+
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+
+            Response.Cookies.Delete("token"); // Ensure old token is removed before adding the new one
+
+
+
+            // Generate new token with updated HouseholdId
+            var token = _tokenService.CreateToken(user, userRole);
+
+
+            Response.Cookies.Append("token", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTime.UtcNow.AddMinutes(_expirationTimeInMinutes)
+            });
+
+            return Ok(new { message = "Token refreshed successfully" });
+        }
 
 
     }

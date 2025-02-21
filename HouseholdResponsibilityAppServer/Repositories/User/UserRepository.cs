@@ -18,7 +18,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
             try
             {
                 return await _context.Users
-                    .Include(u => u.Household) // Betölti a kapcsolódó Household entitást
+                    .Include(u => u.Household)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -30,6 +30,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
 
         public async Task<User> GetUserByIdAsync(string userId)
         {
+
             var user = await _context.Users
                 .Include(u => u.Household)
                 .FirstOrDefaultAsync(u => u.Id == userId);

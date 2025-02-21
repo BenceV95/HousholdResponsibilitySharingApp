@@ -29,7 +29,8 @@ const AssignTasks = () => {
         const userList = await apiFetch("/users");
         console.log(userList);
         
-        if (user) {
+         // this was bugged, cause all the household id's are "" by default, so they matched!. so we need the extra .householdId check not just the user
+        if (user?.householdId) {
           const filteredTasks = taskList.filter(
             (task) => Number(task.householdId) === Number(user.householdId)
           );

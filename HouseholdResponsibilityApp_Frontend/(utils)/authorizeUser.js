@@ -4,19 +4,18 @@ import { cookies } from 'next/headers';
 
 export default async function authorizeUser() {
     const clientCookies = await cookies();
-    console.log(clientCookies)
+
     const token = clientCookies.get('token')?.value;
 
-    // console.log("token", token)
 
-console.log("token", token);
+    //we should ditch this idea, and make the backend authenticate us!
 
     if (token) {
         try {
+
             // Decode the token and extract the payload
             const decodedToken = jwtDecode(token); // `token.value` is the actual JWT string
 
-            console.log("decoded token:", decodedToken)
 
             const userName = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
             const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
@@ -24,11 +23,8 @@ console.log("token", token);
             const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
             const householdId = decodedToken["householdId"];
 
-
-            // console.log('Decoded token:', decodedToken);
-            // console.log(userName)
-            // console.log(email)
-            // console.log(role)
+            console.log("username from token", userName)
+            console.log("householdID from the token", householdId)
             return {
                 userName,
                 email,
@@ -38,6 +34,7 @@ console.log("token", token);
             }
         } catch (error) {
             console.error('Error decoding token:', error);
+            return null;
         }
     } else {
         console.log('No token found');
