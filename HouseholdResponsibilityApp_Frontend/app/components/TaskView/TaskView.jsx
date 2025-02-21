@@ -26,17 +26,23 @@ export default function WeeklyCalendar() {
     const [tasks, setTasks] = useState([]);
     const [tasksToDisplay, setTasksToDisplay] = useState([]);
     const [events, setEvents] = useState([]);
-
-
+    
+    //this is for debugging purposes only
     useEffect(() => {
         // console.log("tasks", tasks)
         console.log("scheduledTasks", scheduledTasks)
         // console.log("tasksToDisplay", tasksToDisplay)
         // console.log("user", user)
     }, [tasks, scheduledTasks, tasksToDisplay, user])
+    
 
 
+    useEffect(() => {
+        setEvents(tasksToDisplay)
+    }, [tasksToDisplay]);
 
+
+    // fetch the household tasks and the scheduled tasks
     useEffect(() => {
         try {
             async function getHouseholdTasks() {
@@ -58,9 +64,10 @@ export default function WeeklyCalendar() {
         } catch (e) {
             console.log(e)
         }
-
+        
     }, [user])
-
+    
+    //set the 
     useEffect(() => {
         setTasksToDisplay(fetchTasks());
     }, [tasks, scheduledTasks]);
@@ -83,9 +90,6 @@ export default function WeeklyCalendar() {
         }).filter(task => task !== null);
     };
 
-    useEffect(() => {
-        setEvents(tasksToDisplay)
-    }, [tasksToDisplay]);
 
 
     // const events = tasksToDisplay.map(task => ({
@@ -109,9 +113,9 @@ export default function WeeklyCalendar() {
     //for now, lets just use hardcoded values
     const getEventStyle = (event) => {
         const colors = {
-            "5f3efa51-a8ad-49b2-8416-02a3f7606942": "#FF5733",   // Red
-            "78b330d6-6152-4d46-8887-a74746639479": "#33FF57",     // Green
-            "8efced8c-1071-4393-ba95-9d8673676f4a": "#3357FF"  // Blue
+            "0086ad72-5f23-497f-b183-5bc00158628c": "#FF5733",   // Red
+            "195731ee-d2f9-430a-9792-06f573cd754d": "#33FF57",     // Green
+            "666ae7c3-582f-4707-9938-27580f0cde18": "#3357FF"  // Blue
         };
 
         return {

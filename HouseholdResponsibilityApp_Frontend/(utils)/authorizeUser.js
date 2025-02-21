@@ -8,6 +8,8 @@ export default async function authorizeUser() {
     const token = clientCookies.get('token')?.value;
 
 
+    //we should ditch this idea, and make the backend authenticate us!
+
     if (token) {
         try {
 
