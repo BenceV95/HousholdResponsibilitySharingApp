@@ -1,4 +1,5 @@
-﻿using HouseholdResponsibilityAppServer.Models;
+﻿using System.Diagnostics;
+using HouseholdResponsibilityAppServer.Models;
 using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Models.Users;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
@@ -44,7 +45,7 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdService
             };
         }
 
-        public async Task CreateHouseholdAsync(HouseholdDto householdDto)
+        public async Task<Household> CreateHouseholdAsync(HouseholdDto householdDto)
         {
             // Check if the user already has a household
             var user = await _userRepository.GetUserByIdAsync(householdDto.UserId);
@@ -66,6 +67,36 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdService
             
             user.Household = householdFromDB;
             await _userRepository.UpdateUserAsync(user);
+
+            return householdFromDB;
+        }
+
+        public async Task JoinHousehold(int id, string userId)
+        {
+            Debug.WriteLine("\nHouseholdService\n");
+            var household = await _householdRepository.GetHouseholdByIdAsync(id);
+            Debug.WriteLine($"\n{household.HouseholdId}\n");
+            
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            Debug.WriteLine($"\n{user.Id}\n");
+            
+
+            if (user == null || household == null)
+            {
+                throw new KeyNotFoundException("User or household not found.");
+            }
+            Debug.WriteLine($"\n{user.Id}\n{household.HouseholdId}");
+            // Check if the user is already part of the household
+            if (household.Users.Any(u => u.Id == userId))
+            {
+                throw new InvalidOperationException("User is already a member of the household.");
+            }
+            household.Users.Add(user);
+            user.Household = household;
+
+            await _userRepository.UpdateUserAsync(user);
+            await _householdRepository.UpdateHouseholdAsync(household);
+
         }
 
         public async Task UpdateHouseholdAsync(int householdId, HouseholdDto householdDto)

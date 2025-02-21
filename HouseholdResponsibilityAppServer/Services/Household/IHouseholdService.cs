@@ -8,7 +8,8 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdService
     {
         Task<IEnumerable<HouseholdResponseDto>> GetAllHouseholdsAsync();
         Task<HouseholdResponseDto> GetHouseholdByIdAsync(int id);
-        Task CreateHouseholdAsync(HouseholdDto householdDto);
+        Task<Household> CreateHouseholdAsync(HouseholdDto householdDto);
+        Task JoinHousehold(int id, string userId);
         Task UpdateHouseholdAsync(int id, HouseholdDto householdDto);
         Task DeleteHouseholdAsync(int id);
     }

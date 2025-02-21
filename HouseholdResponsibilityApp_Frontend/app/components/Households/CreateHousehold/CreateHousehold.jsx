@@ -6,7 +6,7 @@ import { apiFetch, apiPost } from "../../../../(utils)/api";
 
 export default function CreateHousehold() {
   const [householdName, setHouseholdName] = useState("");
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
 
   async function sendHouseholdCreateRequest(e) {
     e.preventDefault();

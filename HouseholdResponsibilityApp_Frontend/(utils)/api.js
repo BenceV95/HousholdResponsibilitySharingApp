@@ -54,9 +54,6 @@ export async function apiPost(endpoint, data) {
     body: JSON.stringify(data)
   });
 
-  // console.log("stringified", JSON.stringify(data));
-  // console.log("response", response);
-  
   if (!response.ok) {
     throw new Error("API request failed");
   }
