@@ -15,14 +15,14 @@ export async function apiFetch(endpoint) {
     },
   });
 
-  const data = await response.json()
+  const parsedResponse = await response.json()
 
   if (!response.ok) {
 
-    throw new Error("API request failed", data.message);
+    throw new Error("API request failed", parsedResponse.message);
   }
 
-  return data;
+  return parsedResponse;
 }
 
 /* 
@@ -40,14 +40,14 @@ export async function apiPut(endpoint, data) {
   });
 
 
-  const data = await response.json()
+  const parsedResponse = await response.json()
 
   if (!response.ok) {
 
-    throw new Error("API request failed", data.message);
+    throw new Error("API request failed", parsedResponse.message);
   }
 
-  return data;
+  return parsedResponse;
 }
 
 export async function apiPost(endpoint, data) {
@@ -61,14 +61,14 @@ export async function apiPost(endpoint, data) {
   });
 
 
-  const data = await response.json()
+ const parsedResponse = await response.json()
 
   if (!response.ok) {
 
-    throw new Error("API request failed", data.message);
+    throw new Error("API request failed", parsedResponse.message);
   }
 
-  return data;
+  return parsedResponse;
 }
 
 export async function apiDelete(endpoint) {
