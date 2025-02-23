@@ -87,11 +87,19 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
             await _groupRepository.DeleteGroupAsync(groupId);
         }
 
-        public async Task<IEnumerable<TaskGroup>> GetGroupsByHouseholdIdAsync(UserClaims userClaims)
+        public async Task<IEnumerable<GroupResponseDto>> GetGroupsByHouseholdIdAsync(UserClaims userClaims)
         {
             var groups = await _groupRepository.GetAllGroupsAsync();
 
-            return groups.Where(group => group.Household.HouseholdId == int.Parse(userClaims.HouseholdId));
+
+            return groups
+                .Where(group => group.Household.HouseholdId == int.Parse(userClaims.HouseholdId))
+                .Select(group => new GroupResponseDto
+                {
+                    GroupResponseDtoId = group.GroupId,
+                    Name = group.Name,
+                    HouseholdId = group.Household.HouseholdId
+                }).ToList();
         }
 
 

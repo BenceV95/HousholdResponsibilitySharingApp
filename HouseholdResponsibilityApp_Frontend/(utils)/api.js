@@ -15,13 +15,13 @@ export async function apiFetch(endpoint) {
     },
   });
 
-  const parsedResponse = await response.json()
-
   if (!response.ok) {
-
-    throw new Error("API request failed", parsedResponse.message);
+    const errorMsg = await response.text();
+    console.log("response text", errorMsg);
+    throw new Error(errorMsg);
   }
 
+  const parsedResponse = await response.json()
   return parsedResponse;
 }
 
