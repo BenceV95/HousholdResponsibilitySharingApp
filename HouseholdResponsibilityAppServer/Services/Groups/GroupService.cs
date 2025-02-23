@@ -56,7 +56,7 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
             // get the household id form the claims (its a nullable string) so we have to parse it (if user is not in  a household, should be null, and throw an exception)
             var isNumber = int.TryParse(userClaims.HouseholdId, out int householdId);
 
-            if(!isNumber)
+            if (!isNumber)
             {
                 throw new ArgumentException("Cannot create group, user is not in a household!");
             }
@@ -86,6 +86,14 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
         {
             await _groupRepository.DeleteGroupAsync(groupId);
         }
+
+        public async Task<IEnumerable<TaskGroup>> GetGroupsByHouseholdIdAsync(UserClaims userClaims)
+        {
+            var groups = await _groupRepository.GetAllGroupsAsync();
+
+            return groups.Where(group => group.Household.HouseholdId == int.Parse(userClaims.HouseholdId));
+        }
+
 
     }
 }

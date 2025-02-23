@@ -100,4 +100,25 @@ public class GroupController : ControllerBase
             return NotFound("An error occurred while deleting group.");
         }
     }
+
+
+    [Authorize]
+    [HttpGet("/groups/my-household")]
+    public async Task<ActionResult> GetGroupsByHouseholdID()
+    {
+        try
+        {
+            var userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+            var groups = await _groupService.GetGroupsByHouseholdIdAsync(userClaims);
+
+            return Ok(groups);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+
+            return BadRequest("An error occurred while retrieving groups.");
+        }
+    }
 }
