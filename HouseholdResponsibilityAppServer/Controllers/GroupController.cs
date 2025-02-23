@@ -1,15 +1,21 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Groups;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.Groups;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 public class GroupController : ControllerBase
 {
     private readonly IGroupService _groupService;
+    private readonly IAuthService _authService;
+    private readonly ILogger<GroupController> _logger;
 
-    public GroupController(IGroupService groupService)
+    public GroupController(IGroupService groupService, IAuthService authService, ILogger<GroupController> logger)
     {
         _groupService = groupService;
+        _authService = authService;
+        _logger = logger;
     }
 
     [HttpGet("/groups")]
@@ -44,19 +50,22 @@ public class GroupController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost("/group")]
     public async Task<ActionResult> CreateGroup([FromBody] PostGroupDto postGroupDto)
     {
         try
         {
-            await _groupService.CreateGroupAsync(postGroupDto);
+            UserClaims userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+            await _groupService.CreateGroupAsync(postGroupDto, userClaims);
             return Ok(new { message = "Group created successfully" });
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while creating group.");
+            return BadRequest(ex.Message);
         }
     }
 

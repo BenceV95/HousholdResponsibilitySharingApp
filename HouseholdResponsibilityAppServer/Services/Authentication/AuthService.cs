@@ -3,6 +3,7 @@ using HouseholdResponsibilityAppServer.Contracts;
 using HouseholdResponsibilityAppServer.Models.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace HouseholdResponsibilityAppServer.Services.Authentication
 {
@@ -78,10 +79,10 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             {
                 return InvalidPassword(email, managedUser.UserName);
             }
-            
+
             // this is for returning the household id
-             _context.Entry(managedUser).Reference(u => u.Household).Load();
-             
+            _context.Entry(managedUser).Reference(u => u.Household).Load();
+
             var accessToken = await _tokenService.CreateToken(managedUser);
 
             return new AuthResult(true, managedUser.Email, managedUser.UserName, accessToken, managedUser.Household?.HouseholdId);
@@ -101,5 +102,24 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             result.ErrorMessages.Add("Bad credentials", "Invalid password");
             return result;
         }
+
+        public  UserClaims GetClaimsFromHttpContext(HttpContext context)
+        {
+
+           string        userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = context.User;
+
+            var householdId = user.FindFirst("householdId")?.Value;
+
+            return new UserClaims
+            {
+                UserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                UserName = user.FindFirst(ClaimTypes.Name)?.Value,
+                Email = user.FindFirst(ClaimTypes.Email)?.Value,
+                HouseholdId = string.IsNullOrEmpty(householdId) ? null : householdId, // Null if empty
+                Roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList()
+            };
+        }
+
     }
 }

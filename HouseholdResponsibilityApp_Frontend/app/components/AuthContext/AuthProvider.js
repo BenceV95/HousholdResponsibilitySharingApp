@@ -18,12 +18,13 @@ export const AuthProvider = ({ children }) => {
 
     // set the user every page render/refresh
     useEffect(() => {
-        const storedUser = localStorage.getItem("userData");
+        const storedUser = sessionStorage.getItem("userData");
         setUser(storedUser)
     }, [])
 
-    function storeUserInLocalStorage(userData){
-        localStorage.setItem("userData", JSON.stringify(userData));
+    //store meta data in session storage, so if someone closes the browser, and reopens it, it wont look like they're already logged in
+    function storeUserInSessionStorage(userData){
+        sessionStorage.setItem("userData", JSON.stringify(userData));
     }
 
 
@@ -56,7 +57,7 @@ export const AuthProvider = ({ children }) => {
             console.log(jsonResponse)
 
             //this endpoint gives back an object with user meta data (username, email, householdId etc...)
-            storeUserInLocalStorage(jsonResponse)
+            storeUserInSessionStorage(jsonResponse)
             setUser(jsonResponse)
             return jsonResponse;
 
@@ -71,6 +72,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await apiPost("/Auth/Logout", {});
             setUser(null);
+            sessionStorage.removeItem("userData");
             router.push("/");
         } catch (err) {
             console.error("Logout error:", err);

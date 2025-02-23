@@ -53,7 +53,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.Groups
             }
             catch (Exception ex)
             {
-                throw new Exception("Database error: Unable to create group.");
+                throw new Exception(ex.Message);
             }
         }
 

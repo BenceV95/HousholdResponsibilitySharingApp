@@ -4,7 +4,7 @@ using HouseholdResponsibilityAppServer.Models.Groups;
 using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Repositories.Groups;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
-
+using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.HouseholdService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -50,14 +50,22 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
             };
         }
 
-        public async Task CreateGroupAsync(PostGroupDto postGroupDto)
+        public async Task CreateGroupAsync(PostGroupDto postGroupDto, UserClaims userClaims)
         {
 
-            var household = await _householdRepository.GetHouseholdByIdAsync(postGroupDto.HouseholdId);
+            // get the household id form the claims (its a nullable string) so we have to parse it (if user is not in  a household, should be null, and throw an exception)
+            var isNumber = int.TryParse(userClaims.HouseholdId, out int householdId);
+
+            if(!isNumber)
+            {
+                throw new ArgumentException("Cannot create group, user is not in a household!");
+            }
+
+            var household = await _householdRepository.GetHouseholdByIdAsync(householdId);
 
             var group = new TaskGroup
             {
-                Name = postGroupDto.Name,
+                Name = postGroupDto.GroupName,
                 Household = household,
 
             };

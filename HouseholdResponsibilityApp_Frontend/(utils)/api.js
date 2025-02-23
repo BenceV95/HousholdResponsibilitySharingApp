@@ -54,6 +54,7 @@ export async function apiPost(endpoint, data) {
 
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -61,13 +62,13 @@ export async function apiPost(endpoint, data) {
   });
 
 
- const parsedResponse = await response.json()
-
   if (!response.ok) {
-
-    throw new Error("API request failed", parsedResponse.message);
+    const errorMsg = await response.text();
+    console.log("response text", errorMsg);
+    throw new Error(errorMsg);
   }
 
+  const parsedResponse = await response.json()
   return parsedResponse;
 }
 
