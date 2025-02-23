@@ -13,5 +13,6 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
         public Task<ScheduledTaskDTO> GetByIdAsync(int scheduledTaskId);
 
         public Task<ScheduledTaskDTO> UpdateScheduledTaskAsync(CreateScheduledTaskRequest updateRequest, UserClaims userClaims, int taskId);
+        public Task<IEnumerable<ScheduledTaskDTO>> GetAllScheduledByHouseholdIdAsync(UserClaims userClaims);
     }
 }

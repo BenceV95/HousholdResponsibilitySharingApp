@@ -50,7 +50,7 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
             return ConvertModelToDTO(scheduledTaskModel);
         }
 
-        public async Task<ScheduledTaskDTO> UpdateScheduledTaskAsync(CreateScheduledTaskRequest updateRequest,UserClaims userClaims ,int taskId)
+        public async Task<ScheduledTaskDTO> UpdateScheduledTaskAsync(CreateScheduledTaskRequest updateRequest, UserClaims userClaims, int taskId)
         {
             var scheduledTaskModel = await ConvertRequestToModel(updateRequest, userClaims);
 
@@ -115,5 +115,20 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
                 Repeat = scheduledTaskModel.Repeat,
             };
         }
+
+
+
+        public async Task<IEnumerable<ScheduledTaskDTO>> GetAllScheduledByHouseholdIdAsync(UserClaims userClaims)
+        {
+
+            int householdId = int.Parse(userClaims.HouseholdId);
+            
+            var fillteredTasks = await _scheduledTasksRepository.GetScheduledTasksByHouseholdIdAsync(householdId);
+
+
+            return fillteredTasks.Select(task => ConvertModelToDTO(task)).ToList();
+        }
+
+
     }
 }
