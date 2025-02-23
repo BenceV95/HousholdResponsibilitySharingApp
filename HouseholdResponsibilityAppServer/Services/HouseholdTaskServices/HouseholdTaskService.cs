@@ -4,6 +4,7 @@ using HouseholdResponsibilityAppServer.Repositories.Groups;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdTasks;
 using HouseholdResponsibilityAppServer.Repositories.UserRepo;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.Groups;
 using HouseholdResponsibilityAppServer.Services.UserService;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -31,10 +32,10 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
             _householdRepository = householdRepository;
         }
 
-        public async Task<HouseholdTaskDTO> AddTaskAsync(CreateHouseholdTaskRequest taskCreateRequest)
+        public async Task<HouseholdTaskDTO> AddTaskAsync(CreateHouseholdTaskRequest taskCreateRequest, UserClaims userClaims)
         {
             //convert request to modell
-            var taskModel = await ConvertRequestToModel(taskCreateRequest);
+            var taskModel = await ConvertRequestToModel(taskCreateRequest, userClaims);
             //add the modell to db
             var addedModel = await _householdTaskRepository.AddTaskAsync(taskModel);
             //convert the added model to dto, and return it
@@ -65,20 +66,20 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
         }
 
         // made with create request, no update request at the moment
-        public async Task<HouseholdTaskDTO> UpdateTaskAsync(CreateHouseholdTaskRequest updateRequest, int id)
+        public async Task<HouseholdTaskDTO> UpdateTaskAsync(CreateHouseholdTaskRequest updateRequest, UserClaims userClaims, int id)
         {
-            var taskModel = await ConvertRequestToModel(updateRequest);
+            var taskModel = await ConvertRequestToModel(updateRequest, userClaims);
 
             var updatedModel = await _householdTaskRepository.UpdateTaskAsync(taskModel, id);
             return ConvertModelToDTO(updatedModel);
         }
 
 
-        private async Task<HouseholdTask> ConvertRequestToModel(CreateHouseholdTaskRequest taskCreateRequest)
+        private async Task<HouseholdTask> ConvertRequestToModel(CreateHouseholdTaskRequest taskCreateRequest, UserClaims userClaims)
         {
             var group = await _groupRepository.GetGroupByIdAsync(taskCreateRequest.GroupId);
-            var user = await _userRepository.GetUserByIdAsync(taskCreateRequest.CreatedById);
-            var household = await _householdRepository.GetHouseholdByIdAsync(taskCreateRequest.HouseholdId);
+            var user = await _userRepository.GetUserByIdAsync(userClaims.UserId);
+            var household = await _householdRepository.GetHouseholdByIdAsync(int.Parse(userClaims.HouseholdId));
 
             if (user == null)
             {

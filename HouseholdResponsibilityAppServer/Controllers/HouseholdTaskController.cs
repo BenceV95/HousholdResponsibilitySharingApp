@@ -1,4 +1,5 @@
 ﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.HouseholdTaskServices;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -10,9 +11,11 @@ namespace HouseholdResponsibilityAppServer.Controllers
     public class HouseholdTaskController : ControllerBase
     {
         IHouseholdTaskService _householdTaskService;
-        public HouseholdTaskController(IHouseholdTaskService householdTaskService)
+        private readonly IAuthService _authService;
+        public HouseholdTaskController(IHouseholdTaskService householdTaskService, IAuthService authService)
         {
             _householdTaskService = householdTaskService;
+            _authService = authService;
         }
 
 
@@ -70,7 +73,9 @@ namespace HouseholdResponsibilityAppServer.Controllers
         {
             try
             {
-                var task = await _householdTaskService.AddTaskAsync(createRequest);
+                UserClaims userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+                var task = await _householdTaskService.AddTaskAsync(createRequest, userClaims);
                 return Ok(task.TaskId);
 
             }
@@ -87,7 +92,9 @@ namespace HouseholdResponsibilityAppServer.Controllers
         {
             try
             {
-                var task = await _householdTaskService.UpdateTaskAsync(updateRequest, taskId);
+                UserClaims userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+                var task = await _householdTaskService.UpdateTaskAsync(updateRequest, userClaims, taskId);
                 return Ok(task);
             }
             catch (Exception ex)

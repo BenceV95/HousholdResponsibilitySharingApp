@@ -110,25 +110,17 @@ namespace HouseholdResponsibilityAppServer.Controllers
         }
 
 
-          // call this endpoint from the frontend after the token needs to be updated
+        // call this endpoint from the frontend after the token needs to be updated
         [Authorize]
         [HttpGet("update-token")]
         public async Task<IActionResult> RefreshToken()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-
-
-            if (userId == null) return Unauthorized(); // since this endpoint is protected [Authorize] userId and user should never be null
+            UserClaims userClaims = _authenticationService.GetClaimsFromHttpContext(HttpContext);
 
             // Fetch updated user details (now including HouseholdId)
-            var user = await _userRepository.GetUserByIdAsync(userId);
+            var user = await _userRepository.GetUserByIdAsync(userClaims.UserId);
 
-
-            if (user == null)
-            {
-                return Unauthorized();
-            }
 
 
             Response.Cookies.Delete("token"); // Ensure old token is removed before adding the new one
@@ -153,46 +145,3 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
     }
 }
-
-
-
-//try
-//{
-//    if (UserHelper.GetUserId(HttpContext, out var userId, out var unauthorized))
-//        return unauthorized;
-
-//    Console.WriteLine(userId);
-
-//    var accounts = await _accountService.GetAll(userId);
-//    return Ok(accounts);
-//}
-//catch (Exception ex)
-//{
-//    Console.WriteLine(ex.Message);
-//    return BadRequest(ex.Message);
-//}
-
-
-
-
-//using System.Security.Claims;
-//using Microsoft.AspNetCore.Mvc;
-
-//namespace Aurum.Utils;
-
-//public static class UserHelper
-//{
-//    public static bool GetUserId(HttpContext context, out string? userId, out IActionResult? unauthorized)
-//    {
-//        userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-//        if (userId != null)
-//        {
-//            unauthorized = null;
-//            return false;
-//        }
-
-//        unauthorized = new UnauthorizedResult();
-//        return true;
-//    }
-//}
