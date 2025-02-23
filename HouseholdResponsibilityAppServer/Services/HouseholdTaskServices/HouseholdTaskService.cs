@@ -130,18 +130,16 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
         }
 
 
-        public async Task<IEnumerable<HouseholdTaskDTO>> GetallTasksByHouseholdIdAsync(int householdId)
+        public async Task<IEnumerable<HouseholdTaskDTO>> GetallTasksByHouseholdIdAsync(UserClaims userClaims)
         {
-            List<HouseholdTaskDTO> taskDTOs = new List<HouseholdTaskDTO>();
-            var filteredTasks = await _householdTaskRepository.GetallTasksByHouseholdIdAsync(householdId);
+            int householdId = int.Parse(userClaims.HouseholdId);
 
+            var tasks = await _householdTaskRepository.GetAllTasksAsync();
 
-            foreach (var task in filteredTasks)
-            {
-                taskDTOs.Add(ConvertModelToDTO(task));
-            }
+            return tasks
+                .Where(task => task.Household.HouseholdId == householdId)
+                .Select(task => ConvertModelToDTO(task)).ToList();
 
-            return taskDTOs;
         }
     }
 }

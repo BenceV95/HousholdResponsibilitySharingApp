@@ -1,5 +1,6 @@
 ﻿using HouseholdResponsibilityAppServer.Models;
 using HouseholdResponsibilityAppServer.Models.Users;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 
 
 namespace HouseholdResponsibilityAppServer.Services.UserService
@@ -11,5 +12,6 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
         Task CreateUserAsync(UserDto userDto);
         Task UpdateUserAsync(string id, UserDto userDto);
         Task DeleteUserAsync(string id);
+        public Task<IEnumerable<UserResponseDto>> GetAllUsersByHouseholdIdAsync(UserClaims userClaims);
     }
 }

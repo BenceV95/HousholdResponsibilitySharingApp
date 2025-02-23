@@ -17,6 +17,6 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
 
         public Task<HouseholdTaskDTO> UpdateTaskAsync(CreateHouseholdTaskRequest updateRequest, UserClaims userClaims, int id);
 
-        public Task<IEnumerable<HouseholdTaskDTO>> GetallTasksByHouseholdIdAsync(int householdId);
+        public Task<IEnumerable<HouseholdTaskDTO>> GetallTasksByHouseholdIdAsync(UserClaims userClaims);
     }
 }

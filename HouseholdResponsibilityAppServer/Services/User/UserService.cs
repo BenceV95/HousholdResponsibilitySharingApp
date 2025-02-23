@@ -1,5 +1,6 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Users;
 using HouseholdResponsibilityAppServer.Repositories.UserRepo;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace HouseholdResponsibilityAppServer.Services.UserService
@@ -80,6 +81,28 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
         public async Task DeleteUserAsync(string userId)
         {
             await _userRepository.DeleteUserAsync(userId);
+        }
+
+
+        public async Task<IEnumerable<UserResponseDto>> GetAllUsersByHouseholdIdAsync(UserClaims userClaims)
+        {
+            int householdId = int.Parse(userClaims.HouseholdId);
+
+            //it just occured to me, maybe I should make this logic in the repo, so the query filters, and we dont have to load all the users into memory
+            var users = await _userRepository.GetAllUsersAsync();
+
+            return users
+                .Where(user => user.Household?.HouseholdId == householdId)
+                .Select(user => new UserResponseDto
+                {
+                    UserResponseDtoId = user.Id,
+                    Username = user.UserName,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    CreatedAt = user.CreatedAt,
+                    HouseholdId = user.Household?.HouseholdId
+                }).ToList();
         }
 
     }

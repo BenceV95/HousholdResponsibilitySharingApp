@@ -1,5 +1,6 @@
 ﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
 using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.HouseholdTaskServices;
 using HouseholdResponsibilityAppServer.Services.ScheduledTaskServices;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,11 @@ namespace HouseholdResponsibilityAppServer.Controllers
     public class ScheduledTaskController : ControllerBase
     {
         IScheduledTaskService _scheduledTaskService;
-        public ScheduledTaskController(IScheduledTaskService scheduledTaskService)
+        private readonly IAuthService _authService;
+        public ScheduledTaskController(IScheduledTaskService scheduledTaskService, IAuthService authService)
         {
             _scheduledTaskService = scheduledTaskService;
+            _authService = authService;
         }
 
 
@@ -50,7 +53,9 @@ namespace HouseholdResponsibilityAppServer.Controllers
         {
             try
             {
-                var task = await _scheduledTaskService.AddScheduledTaskAsync(createRequest);
+                var userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+                var task = await _scheduledTaskService.AddScheduledTaskAsync(createRequest, userClaims);
                 return Ok(task.ScheduledTaskId);
 
             }
@@ -67,7 +72,9 @@ namespace HouseholdResponsibilityAppServer.Controllers
         {
             try
             {
-                var task = await _scheduledTaskService.UpdateScheduledTaskAsync(updateRequest, taskId);
+                var userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+                var task = await _scheduledTaskService.UpdateScheduledTaskAsync(updateRequest, userClaims, taskId);
                 return Ok(task);
             }
             catch (Exception ex)

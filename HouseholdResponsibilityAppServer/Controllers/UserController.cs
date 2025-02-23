@@ -1,5 +1,6 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Invitations;
 using HouseholdResponsibilityAppServer.Models.Users;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.Invitation;
 using HouseholdResponsibilityAppServer.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
@@ -12,10 +13,13 @@ public class UserController : ControllerBase
 
     private readonly IInvitationService _invitationService;
 
-    public UserController(IUserService userService, IInvitationService invitationService)
+    private readonly IAuthService _authService;
+
+    public UserController(IUserService userService, IInvitationService invitationService, IAuthService authService)
     {
         _userService = userService;
         _invitationService = invitationService;
+        _authService = authService;
     }
 
     [Authorize]
@@ -81,7 +85,7 @@ public class UserController : ControllerBase
 
             return BadRequest("An error occurred while updating user.");
         }
-        
+
     }
 
     [HttpDelete("/user/{userId}")]
@@ -114,5 +118,33 @@ public class UserController : ControllerBase
             return BadRequest("An error occurred while accepting the invitation.");
         }
     }
+
+    /// <summary>
+    /// Gives back all the users in the same household (household id is from the token.)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    [Authorize]
+    [HttpGet("/users/my-household")]
+    public async Task<ActionResult> GetUsersByHouseholdId()
+    {
+        try
+        {
+            var userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+            var filteredUsers = await _userService.GetAllUsersByHouseholdIdAsync(userClaims);
+
+            return Ok(filteredUsers);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+
+            return BadRequest("An error occurred while retrieving users.");
+        }
+    }
+
+
+
 
 }

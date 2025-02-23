@@ -23,14 +23,16 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
 
 
-        [HttpGet("filtered/{householdId}")]
-        public async Task<IActionResult> GetHouseholdTasksByHouseholdId(int householdId)
+        [HttpGet("/tasks/my-household")]
+        public async Task<IActionResult> GetHouseholdTasksByHouseholdId()
         {
             try
             {
-                var selectedTasks = await _householdTaskService.GetallTasksByHouseholdIdAsync(householdId);
+                var userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
 
-                return Ok(selectedTasks);
+                var filteredTasks = await _householdTaskService.GetallTasksByHouseholdIdAsync(userClaims);
+
+                return Ok(filteredTasks);
             }
             catch (Exception ex)
             {

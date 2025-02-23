@@ -76,15 +76,5 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
             return existingTask;
 
         }
-
-        public async Task<IEnumerable<HouseholdTask>> GetallTasksByHouseholdIdAsync(int householdId)
-        {
-            return await _dbContext.Tasks
-                .Include(t => t.CreatedBy)
-                .Include(t => t.Household)
-                .Include(t => t.Group)
-                .Where(task => task.Household.HouseholdId == householdId)
-                .ToListAsync();
-        }
     }
 }
