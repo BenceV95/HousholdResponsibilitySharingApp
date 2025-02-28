@@ -53,7 +53,7 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
         public async Task CreateGroupAsync(PostGroupDto postGroupDto, UserClaims userClaims)
         {
 
-            // get the household id form the claims (its a nullable string) so we have to parse it (if user is not in  a household, should be null, and throw an exception)
+            // get the household id form the claims (it's a nullable string) so we have to parse it (if user is not in  a household, should be null, and throw an exception)
             var isNumber = int.TryParse(userClaims.HouseholdId, out int householdId);
 
             if (!isNumber)
@@ -89,19 +89,25 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
 
         public async Task<IEnumerable<GroupResponseDto>> GetGroupsByHouseholdIdAsync(UserClaims userClaims)
         {
-            var groups = await _groupRepository.GetAllGroupsAsync();
+            
+            var householdId = int.Parse(userClaims.HouseholdId);
+            
+            var filteredGroups = await _groupRepository.GetGroupsByHouseholdId(householdId);
 
-
-            return groups
-                .Where(group => group.Household.HouseholdId == int.Parse(userClaims.HouseholdId))
-                .Select(group => new GroupResponseDto
-                {
-                    GroupResponseDtoId = group.GroupId,
-                    Name = group.Name,
-                    HouseholdId = group.Household.HouseholdId
-                }).ToList();
+            return filteredGroups.Select(group => ConvertModelToDto(group));
+            
         }
 
+        private GroupResponseDto ConvertModelToDto(TaskGroup taskGroup)
+        {
+            return new GroupResponseDto()
+            {
+                //for some reason, this is the task group's id
+                GroupResponseDtoId = taskGroup.GroupId,
+                Name = taskGroup.Name,
+                HouseholdId = taskGroup.Household.HouseholdId
+            };
+        }
 
     }
 }

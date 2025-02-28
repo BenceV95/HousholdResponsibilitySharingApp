@@ -91,6 +91,11 @@ namespace HouseholdResponsibilityAppServer.Repositories.Groups
             _context.Groups.Remove(group);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<TaskGroup>> GetGroupsByHouseholdId(int householdId)
+        {
+           return await _context.Groups.Include(g=> g.Household).Where(g => g.Household.HouseholdId == householdId).ToListAsync();
+        }
     }
 
 }

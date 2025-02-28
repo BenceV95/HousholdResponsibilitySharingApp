@@ -173,7 +173,7 @@ namespace HouseholdResponsibilityAppServer
                         options.SignIn.RequireConfirmedAccount = false;
                         options.User.RequireUniqueEmail = true;
                         options.Password.RequireDigit = false;
-                        options.Password.RequiredLength = 2; //for now it needs to be only 2 digits long
+                        options.Password.RequiredLength = 2; //for now, it needs to be only 2 digits long
                         options.Password.RequireNonAlphanumeric = false;
                         options.Password.RequireUppercase = false;
                         options.Password.RequireLowercase = false;

@@ -9,6 +9,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.Groups
         Task AddGroupAsync(TaskGroup group);
         Task UpdateGroupAsync(TaskGroup group);
         Task DeleteGroupAsync(int id);
+        Task<IEnumerable<TaskGroup>> GetGroupsByHouseholdId(int householdId);
     }
 
 }
