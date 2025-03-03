@@ -28,7 +28,7 @@ public class GroupController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
             return BadRequest("An error occurred while retrieving groups.");
         }
@@ -42,11 +42,15 @@ public class GroupController : ControllerBase
             var group = await _groupService.GetGroupByIdAsync(groupId);
             return Ok(group);
         }
+        catch (KeyNotFoundException)
+        {
+            return NotFound($"Group with ID {groupId} not found.");
+        }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while retrieving groups.");
+            return StatusCode(500,"An error occurred while retrieving groups.");
         }
     }
 
@@ -79,7 +83,7 @@ public class GroupController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
             return BadRequest("An error occurred while updating group.");
         }
@@ -95,7 +99,7 @@ public class GroupController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
             return NotFound("An error occurred while deleting group.");
         }
@@ -116,7 +120,7 @@ public class GroupController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
             return BadRequest("An error occurred while retrieving groups.");
         }
