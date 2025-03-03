@@ -3,7 +3,9 @@ using HouseholdResponsibilityAppServer.Context;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using System.Data.Common;
 
 namespace IntegrationTests
 {
@@ -18,14 +20,34 @@ namespace IntegrationTests
             {
 
 
+                //var dbContextDescriptor2 = services.SingleOrDefault(
+                //     d => d.ServiceType ==
+                //    typeof(IDbContextOptionsConfiguration<HouseholdResponsibilityAppContext>));
+                //    services.Remove(dbContextDescriptor2);
 
                 var dbContextDescriptor = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(DbContextOptions<HouseholdResponsibilityAppContext>));
+                     d => d.ServiceType ==
+                    typeof(IDbContextOptionsConfiguration<HouseholdResponsibilityAppContext>));
 
-                if (dbContextDescriptor != null)
-                {
-                    services.Remove(dbContextDescriptor);
-                }
+                     services.Remove(dbContextDescriptor);
+
+                        var dbConnectionDescriptor = services.SingleOrDefault(
+                    d => d.ServiceType ==
+                        typeof(DbConnection));
+
+                     services.Remove(dbConnectionDescriptor);
+
+
+
+
+
+                //var dbContextDescriptor = services.SingleOrDefault(
+                //    d => d.ServiceType == typeof(DbContextOptions<HouseholdResponsibilityAppContext>));
+
+                //if (dbContextDescriptor != null)
+                //{
+                //    services.Remove(dbContextDescriptor);
+                //}
 
 
 
