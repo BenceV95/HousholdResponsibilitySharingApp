@@ -109,7 +109,7 @@ namespace HouseholdResponsibilityAppServer
 
 
             if (app.Environment.IsDevelopment())
-            {  
+            {
 
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -179,7 +179,7 @@ namespace HouseholdResponsibilityAppServer
                         options.Password.RequireLowercase = false;
                     })
                     .AddRoles<IdentityRole>() //Enable Identity roles 
-                    .AddEntityFrameworkStores<HouseholdResponsibilityAppContext>(); 
+                    .AddEntityFrameworkStores<HouseholdResponsibilityAppContext>();
             }
 
         }

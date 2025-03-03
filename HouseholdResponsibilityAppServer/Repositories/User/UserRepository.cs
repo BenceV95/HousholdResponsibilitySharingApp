@@ -1,4 +1,5 @@
-﻿using HouseholdResponsibilityAppServer.Context;
+﻿using System.Diagnostics;
+using HouseholdResponsibilityAppServer.Context;
 using HouseholdResponsibilityAppServer.Models.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -76,7 +77,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
         public async Task DeleteUserAsync(string userId)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-
+            Debug.WriteLine($"\n\n{user.Id}\n\n");
             if (user == null)
             {
                 throw new KeyNotFoundException($"User with ID {userId} not found.");

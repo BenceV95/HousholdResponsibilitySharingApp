@@ -30,7 +30,8 @@ namespace HouseholdResponsibilityAppServer.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            //HouseholdTask
+
+            // HouseholdTask
             modelBuilder.Entity<HouseholdTask>()
                 .HasKey(t => t.TaskId); // Primary Key
 
@@ -55,12 +56,11 @@ namespace HouseholdResponsibilityAppServer.Context
                 .HasOne(t => t.Group) // Foreign key to Group
                 .WithMany();
 
-
             modelBuilder.Entity<HouseholdTask>()
                 .HasOne(t => t.Household)
                 .WithMany(h => h.HouseholdTasks);
 
-            //ScheduledTask
+            // ScheduledTask
             modelBuilder.Entity<ScheduledTask>(entity =>
             {
                 // Primary Key
@@ -106,55 +106,37 @@ namespace HouseholdResponsibilityAppServer.Context
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            //modelBuilder.Entity<User>()
-            //    .HasOne(u => u.Role)
-            //    .WithMany();
-
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
             modelBuilder.Entity<User>()
-            .HasIndex(u => u.UserName)
-            .IsUnique();
+                .HasIndex(u => u.UserName)
+                .IsUnique();
 
             modelBuilder.Entity<Household>()
                 .HasOne(h => h.CreatedByUser)
                 .WithMany()
                 .IsRequired(true)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict); // Prevent deletion of User if they created a Household
 
             modelBuilder.Entity<TaskGroup>()
                 .HasOne(tg => tg.Household)
                 .WithMany(h => h.Groups)
                 .OnDelete(DeleteBehavior.Cascade);
 
-
-            /*
-            modelBuilder.Entity<TaskGroup>()
-                .HasData(TaskGroup.CreateDefaultGroups());
-
-            modelBuilder.Entity<Household>()
-                .HasData(TaskGroup.CreateDefaultGroups());
-            */
-
             modelBuilder.Entity<History>()
-               .HasOne(h => h.ScheduledTask) // Foreign Key relationship
-               .WithMany();
+                .HasOne(h => h.ScheduledTask) // Foreign Key relationship
+                .WithMany();
 
             modelBuilder.Entity<History>()
                 .HasOne(h => h.CompletedBy) // Foreign key to Group
                 .WithMany();
 
-
             modelBuilder.Entity<History>()
                 .HasOne(h => h.Household)
                 .WithMany(h => h.Histories)
-                .OnDelete(DeleteBehavior.Cascade); 
-
-
-
-
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
 

@@ -10,9 +10,11 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
 {
     public class TokenService : ITokenService
     {
-        private const int ExpirationMinutes = 10;
+
+        private const int ExpirationMinutes = 60;
         private readonly IConfiguration _configuration;
         private readonly UserManager<User> _userManager;
+
 
         public TokenService(IConfiguration configuration, UserManager<User> userManager)
         {
