@@ -15,30 +15,17 @@ export const AuthProvider = ({ children }) => {
 
     const [user, setUser] = useState(null);
 
+
+    // set the user every page render/refresh
     useEffect(() => {
-        // console.log("user: ", user)
-    }, [user])
-
-
-    //set the user every page render/refresh
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await fetch("/auth/user", { credentials: "include" });
-                const userData = await response.json();
-                // console.log("user data from fetch: ", userData)
-
-
-                setUser(userData);
-            } catch (error) {
-                console.error("Failed to fetch user:", error);
-                setUser(null);
-            }
-        };
-
-        fetchUser();
+        const storedUser = sessionStorage.getItem("userData");
+        setUser(storedUser)
     }, [])
 
+    //store meta data in session storage, so if someone closes the browser, and reopens it, it wont look like they're already logged in
+    function storeUserInSessionStorage(userData){
+        sessionStorage.setItem("userData", JSON.stringify(userData));
+    }
 
 
 
@@ -67,12 +54,11 @@ export const AuthProvider = ({ children }) => {
                 throw new Error(errorString);
             }
 
-            //set the user globally from the token
-            const response = await fetch("/auth/user");
+            console.log(jsonResponse)
 
-            const userData = await response.json();
-            
-            setUser(userData);
+            //this endpoint gives back an object with user meta data (username, email, householdId etc...)
+            storeUserInSessionStorage(jsonResponse)
+            setUser(jsonResponse)
             return jsonResponse;
 
         } catch (error) {
@@ -86,6 +72,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await apiPost("/Auth/Logout", {});
             setUser(null);
+            sessionStorage.removeItem("userData");
             router.push("/");
         } catch (err) {
             console.error("Logout error:", err);

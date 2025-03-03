@@ -3,6 +3,7 @@ using HouseholdResponsibilityAppServer.Contracts;
 using HouseholdResponsibilityAppServer.Models.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace HouseholdResponsibilityAppServer.Services.Authentication
 {
@@ -43,19 +44,19 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             var roleExists = await _roleManager.RoleExistsAsync(role);
             if (!roleExists)
             {
-                return new AuthResult(false, request.Email, request.Username, "" , "", null)
+                return new AuthResult(false, request.Email, request.Username, "", null)
                 {
                     ErrorMessages = { { "RoleError", "The specified role does not exist." } }
                 };
             }
 
             await _userManager.AddToRoleAsync(user, role);
-            return new AuthResult(true, request.Email, request.Username, "", "", null);
+            return new AuthResult(true, request.Email, request.Username, "", null);
         }
 
         private static AuthResult FailedRegistration(IdentityResult result, string email, string username)
         {
-            var authResult = new AuthResult(false, email, username, "", "", null);
+            var authResult = new AuthResult(false, email, username, "", null);
 
             foreach (var error in result.Errors)
             {
@@ -78,29 +79,47 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             {
                 return InvalidPassword(email, managedUser.UserName);
             }
-            
-            // this is for returning the household id
-             _context.Entry(managedUser).Reference(u => u.Household).Load();
-             
-            var roles = await _userManager.GetRolesAsync(managedUser);
-            var accessToken = _tokenService.CreateToken(managedUser, roles.FirstOrDefault());
 
-            return new AuthResult(true, managedUser.Email, managedUser.UserName, accessToken, managedUser.Id, managedUser.Household?.HouseholdId);
+            // this is for returning the household id
+            _context.Entry(managedUser).Reference(u => u.Household).Load();
+
+            var accessToken = await _tokenService.CreateToken(managedUser);
+
+            return new AuthResult(true, managedUser.Email, managedUser.UserName, accessToken, managedUser.Household?.HouseholdId);
         }
 
 
         private static AuthResult InvalidEmail(string email)
         {
-            var result = new AuthResult(false, email, "", "", "", null);
+            var result = new AuthResult(false, email, "", "", null);
             result.ErrorMessages.Add("Bad credentials", "Invalid email");
             return result;
         }
 
         private static AuthResult InvalidPassword(string email, string userName)
         {
-            var result = new AuthResult(false, email, userName, "", "", null);
+            var result = new AuthResult(false, email, userName, "", null);
             result.ErrorMessages.Add("Bad credentials", "Invalid password");
             return result;
         }
+
+        public  UserClaims GetClaimsFromHttpContext(HttpContext context)
+        {
+
+           string        userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = context.User;
+
+            var householdId = user.FindFirst("householdId")?.Value;
+
+            return new UserClaims
+            {
+                UserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                UserName = user.FindFirst(ClaimTypes.Name)?.Value,
+                Email = user.FindFirst(ClaimTypes.Email)?.Value,
+                HouseholdId = string.IsNullOrEmpty(householdId) ? null : householdId, // Null if empty
+                Roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList()
+            };
+        }
+
     }
 }

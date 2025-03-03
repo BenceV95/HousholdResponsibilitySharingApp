@@ -18,8 +18,7 @@ export default function CreateHousehold() {
     if (householdName && user) {
       try {
         const payload = {
-          name: householdName,
-          userId: user.userId,
+          householdName: householdName,
         };
 
         const householdId = await apiPost("/household", payload);
@@ -29,7 +28,7 @@ export default function CreateHousehold() {
         //refresh the user token, to store the newly created households id
 
         // so this works, it assigns a new token but its not refreshing the user global state... just if i hit reload page
-       const refreshResult =  await apiFetch("/Auth/refresh")
+       const refreshResult =  await apiFetch("/Auth/update-token")
 
        console.log("refreshResult", refreshResult)
        
