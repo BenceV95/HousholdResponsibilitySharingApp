@@ -87,11 +87,37 @@ namespace HouseholdResponsibilityAppServerTests.UnitTests.Services
         }
 
         [Fact]
-        public async Task CreateGroupAsync_ThrowsArgumentException_WhenHouseholdIdIsNotANumber()
+        public async Task CreateGroupAsync_WithExistingName_Throws()
+        {
+            // Arrange
+            var postGroupDto = new PostGroupDto { GroupName = "TestGroup2" };
+            var userClaims = new UserClaims { HouseholdId = "1" };
+            var user1 = new User { UserName = "TestUser1" };
+            var household1 = new Household { HouseholdId = 1, CreatedAt = DateTime.Now, CreatedByUser = user1 };
+
+            var testTaskGroup = new List<TaskGroup>
+            {
+                new() { GroupId = 1, Household = household1, Name = "TestGroup1" },
+                new() { GroupId = 2, Household = household1, Name = "TestGroup2" }
+            };
+
+            _householdRepositoryMock.Setup(repo => repo.GetHouseholdByIdAsync(1)).ReturnsAsync(household1);
+            _groupRepositoryMock.Setup(repo => repo.GetGroupsByHouseholdId(1)).ReturnsAsync(testTaskGroup);
+
+            // Act
+
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _groupService.CreateGroupAsync(postGroupDto, userClaims));
+            
+            // Assert
+            Assert.Equal($"Group with name: {postGroupDto.GroupName} already exists !",exception.Message);
+        }
+
+        [Fact]
+        public async Task CreateGroupAsync_ThrowsArgumentException_WhenUserIsNotInAHousehold()
         {
             // Arrange
             var postGroupDto = new PostGroupDto { GroupName = "Test Group" };
-            var userClaims = new UserClaims { HouseholdId = "NotANumber" };
+            var userClaims = new UserClaims { HouseholdId = null };
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ArgumentException>(() => _groupService.CreateGroupAsync(postGroupDto, userClaims));
@@ -102,12 +128,19 @@ namespace HouseholdResponsibilityAppServerTests.UnitTests.Services
         public async Task UpdateGroupAsync_UpdatesGroup()
         {
             // Arrange
-            var group = new TaskGroup { GroupId = 1, Name = "OldName" };
+            var user1 = new User { UserName = "TestUser1" };
+            var household1 = new Household { HouseholdId = 1, CreatedAt = DateTime.Now, CreatedByUser = user1 };
+            var testTaskGroup = new List<TaskGroup>
+            {
+                new() { GroupId = 1, Household = household1, Name = "TestGroup1" },
+                new() { GroupId = 2, Household = household1, Name = "TestGroup2" }
+            };
             var groupDto = new GroupDto { Name = "NewName" };
-            _groupRepositoryMock.Setup(repo => repo.GetGroupByIdAsync(1)).ReturnsAsync(group);
+            var userClaims = new UserClaims { HouseholdId = "1" };
+            _groupRepositoryMock.Setup(repo => repo.GetGroupsByHouseholdId(1)).ReturnsAsync(testTaskGroup);
 
             // Act
-            await _groupService.UpdateGroupAsync(1, groupDto);
+            await _groupService.UpdateGroupAsync(1, groupDto, userClaims);
 
             // Assert
             _groupRepositoryMock.Verify(repo => repo.UpdateGroupAsync(It.Is<TaskGroup>(g => g.Name == "NewName")), Times.Once);
@@ -120,13 +153,15 @@ namespace HouseholdResponsibilityAppServerTests.UnitTests.Services
             var group = new TaskGroup { GroupId = 1, Name = "OldName" };
             var groupDto = new GroupDto { Name = " " };
             var groupDto1 = new GroupDto { Name = "" };
+            var userClaims = new UserClaims { HouseholdId = "1" };
 
             _groupRepositoryMock.Setup(repo => repo.GetGroupByIdAsync(1)).ReturnsAsync(group);
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _groupService.UpdateGroupAsync(1, groupDto));
-            var exception1 = await Assert.ThrowsAsync<ArgumentException>(() => _groupService.UpdateGroupAsync(1, groupDto1));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _groupService.UpdateGroupAsync(1, groupDto,userClaims));
+            var exception1 = await Assert.ThrowsAsync<ArgumentException>(() => _groupService.UpdateGroupAsync(1, groupDto1,userClaims));
         }
+
 
         [Fact]
         public async Task DeleteGroupAsync_DeletesGroup()

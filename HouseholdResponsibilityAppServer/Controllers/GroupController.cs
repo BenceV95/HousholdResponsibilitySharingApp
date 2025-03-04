@@ -65,6 +65,10 @@ public class GroupController : ControllerBase
             await _groupService.CreateGroupAsync(postGroupDto, userClaims);
             return Ok(new { message = "Group created successfully" });
         }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
@@ -78,7 +82,9 @@ public class GroupController : ControllerBase
     {
         try
         {
-            await _groupService.UpdateGroupAsync(groupId, groupDto);
+            UserClaims userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+            await _groupService.UpdateGroupAsync(groupId, groupDto, userClaims);
             return NoContent();
         }
         catch (ArgumentException e)

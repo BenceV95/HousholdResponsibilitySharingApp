@@ -9,7 +9,6 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
 {
     public class HistoryService : IHistoryService
     {
-
         private readonly IHistoryRepository _historiesRepository;
         private readonly IScheduledTasksRepository _scheduledTasksRepository;
         private readonly IUserRepository _userRepository;
@@ -20,7 +19,6 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
             _historiesRepository = historiesRepository;
             _userRepository = userRepository;
         }
-
 
         public async Task<HistoryDTO> AddHistoryAsync(CreateHistoryRequest historyCreateRequest)
         {
@@ -61,8 +59,6 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
             return ConvertModelToDTO(updatedModel);
         }
 
-
-
         private async Task<History> ConvertRequestToModel(CreateHistoryRequest historyCreateRequest)
         {
             var scheduledTask = await _scheduledTasksRepository.GetByIdAsync(historyCreateRequest.ScheduledTaskId);
@@ -78,6 +74,7 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
                 CompletedBy = completedBy,
             };
         }
+
         private HistoryDTO ConvertModelToDTO(History historyModel)
         {
             return new HistoryDTO()
@@ -90,6 +87,5 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
 
             };
         }
-
     }
 }
