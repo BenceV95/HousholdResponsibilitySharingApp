@@ -13,28 +13,46 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
 {
     public class HouseholdTaskService : IHouseholdTaskService
     {
-        private readonly IUserService _userService;
-        private readonly IGroupService _groupService;
         private readonly IHouseholdTasksRepository _householdTaskRepository;
         private readonly IUserRepository _userRepository;
         private readonly IGroupRepository _groupRepository;
         private readonly IHouseholdRepository _householdRepository;
 
 
-        public HouseholdTaskService(IUserService userService, IHouseholdTasksRepository householdTaskRepository,
-            IGroupService householdGroupService, IUserRepository userRepository, IGroupRepository groupRepository,
+        public HouseholdTaskService(
+            IHouseholdTasksRepository householdTaskRepository,
+            IUserRepository userRepository,
+            IGroupRepository groupRepository,
             IHouseholdRepository householdRepository)
         {
-            _userService = userService;
-            _groupService = householdGroupService;
             _householdTaskRepository = householdTaskRepository;
             _userRepository = userRepository;
             _groupRepository = groupRepository;
             _householdRepository = householdRepository;
         }
 
-        public async Task<HouseholdTaskDTO> AddTaskAsync(CreateHouseholdTaskRequest taskCreateRequest,
-            UserClaims userClaims)
+        public async Task<IEnumerable<HouseholdTaskDTO>> GetallTasksAsync()
+        {
+            var taskModels = await _householdTaskRepository.GetAllTasksAsync();
+            return taskModels.Select(ConvertModelToDTO);
+        }
+
+        public async Task<HouseholdTaskDTO> GetByIdAsync(int taskId)
+        {
+            var taskModel = await _householdTaskRepository.GetByIdAsync(taskId);
+            return ConvertModelToDTO(taskModel);
+        }
+
+        public async Task<IEnumerable<HouseholdTaskDTO>> GetallTasksByHouseholdIdAsync(UserClaims userClaims)
+        {
+            int householdId = int.Parse(userClaims.HouseholdId);
+
+            var filteredTasks = await _householdTaskRepository.GetAllTasksByHouseholdIdAsync(householdId);
+
+            return filteredTasks.Select(ConvertModelToDTO);
+        }
+
+        public async Task<HouseholdTaskDTO> AddTaskAsync(CreateHouseholdTaskRequest taskCreateRequest, UserClaims userClaims)
         {
             //convert request to modell
             var taskModel = await ConvertRequestToModel(taskCreateRequest, userClaims);
@@ -44,34 +62,8 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
             return ConvertModelToDTO(addedModel);
         }
 
-
-        public async Task<IEnumerable<HouseholdTaskDTO>> GetallTasksAsync()
-        {
-            List<HouseholdTaskDTO> taskDTOs = new List<HouseholdTaskDTO>();
-            var taskModels = await _householdTaskRepository.GetAllTasksAsync();
-            foreach (var task in taskModels)
-            {
-                taskDTOs.Add(ConvertModelToDTO(task));
-            }
-
-            return taskDTOs;
-        }
-
-        public async Task DeleteTaskByIdAsync(int taskId)
-        {
-            //To consider: should i make the modell here, and pass that?
-            await _householdTaskRepository.DeleteTaskByIdAsync(taskId);
-        }
-
-        public async Task<HouseholdTaskDTO> GetByIdAsync(int taskId)
-        {
-            var taskModel = await _householdTaskRepository.GetByIdAsync(taskId);
-            return ConvertModelToDTO(taskModel);
-        }
-
         // made with create request, no update request at the moment
-        public async Task<HouseholdTaskDTO> UpdateTaskAsync(CreateHouseholdTaskRequest updateRequest,
-            UserClaims userClaims, int id)
+        public async Task<HouseholdTaskDTO> UpdateTaskAsync(CreateHouseholdTaskRequest updateRequest, UserClaims userClaims, int id)
         {
             var taskModel = await ConvertRequestToModel(updateRequest, userClaims);
 
@@ -79,9 +71,13 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
             return ConvertModelToDTO(updatedModel);
         }
 
+        public async Task DeleteTaskByIdAsync(int taskId)
+        {
+            await _householdTaskRepository.DeleteTaskByIdAsync(taskId);
+        }
 
-        private async Task<HouseholdTask> ConvertRequestToModel(CreateHouseholdTaskRequest taskCreateRequest,
-            UserClaims userClaims)
+
+        private async Task<HouseholdTask> ConvertRequestToModel(CreateHouseholdTaskRequest taskCreateRequest, UserClaims userClaims)
         {
             var group = await _groupRepository.GetGroupByIdAsync(taskCreateRequest.GroupId);
             var user = await _userRepository.GetUserByIdAsync(userClaims.UserId);
@@ -89,24 +85,24 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
 
             if (user == null)
             {
-                throw new Exception("User not found!");
+                throw new KeyNotFoundException("User not found!");
             }
 
             if (household == null)
             {
-                throw new Exception("Household not found!");
+                throw new KeyNotFoundException("Household not found!");
             }
 
             // Checks whether the user belongs to the correct household
             if (user.Household == null || user.Household.HouseholdId != household.HouseholdId)
             {
-                throw new Exception("You do not belong to this household!");
+                throw new UnauthorizedAccessException("You do not belong to this household!");
             }
 
             // Checks whether the selected group belongs to the specified household
             if (group.Household == null || group.Household.HouseholdId != household.HouseholdId)
             {
-                throw new Exception("The selected group does not belong to your household!");
+                throw new UnauthorizedAccessException("The selected group does not belong to your household!");
             }
 
 
@@ -128,22 +124,13 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices
                 TaskId = taskModel.TaskId,
                 Title = taskModel.Title,
                 Description = taskModel.Description,
-                UserId = taskModel.CreatedBy.Id,
+                UserId = taskModel.CreatedBy?.Id ?? string.Empty,
                 CreatedAt = taskModel.CreatedAt,
-                GroupId = taskModel.Group.GroupId,
+                GroupId = taskModel.Group?.GroupId ?? 0,
                 Priority = taskModel.Priority,
-                HouseholdId = taskModel.Household.HouseholdId
+                HouseholdId = taskModel.Household?.HouseholdId ?? 0
             };
         }
 
-
-        public async Task<IEnumerable<HouseholdTaskDTO>> GetallTasksByHouseholdIdAsync(UserClaims userClaims)
-        {
-            int householdId = int.Parse(userClaims.HouseholdId);
-
-            var filteredTasks = await _householdTaskRepository.GetAllTasksByHouseholdIdAsync(householdId);
-
-            return filteredTasks.Select(task => ConvertModelToDTO(task));
-        }
     }
 }

@@ -31,7 +31,6 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
                 .ToListAsync();
         }
 
-
         public async Task DeleteTaskByIdAsync(int taskId)
         {
             HouseholdTask householdTask = new() { TaskId = taskId };
@@ -40,7 +39,6 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
 
             await _dbContext.SaveChangesAsync();
         }
-
 
         public async Task<HouseholdTask> GetByIdAsync(int taskId)
         {
@@ -52,7 +50,6 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
 
             return householdTask ?? throw new KeyNotFoundException("No task was found with given Id!");
         }
-
 
         public async Task<HouseholdTask> UpdateTaskAsync(HouseholdTask householdTask, int id)
         {

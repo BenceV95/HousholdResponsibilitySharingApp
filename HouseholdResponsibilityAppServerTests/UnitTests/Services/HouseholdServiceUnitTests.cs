@@ -178,7 +178,6 @@ namespace HouseholdResponsibilityAppServerTests.UnitTests.Services
             Assert.Equal("User or household not found.",test.Message);
         }
 
-
         [Fact]
         public async Task UpdateHouseholdAsync_UpdatesHousehold()
         {
