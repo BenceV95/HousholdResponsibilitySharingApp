@@ -10,5 +10,6 @@ namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
         public Task DeleteScheduledTaskByIdAsync(int scheduledTaskId);
         public Task<ScheduledTask> GetByIdAsync(int scheduledTaskId);
         public Task<ScheduledTask> UpdateSheduledTaskAsync(ScheduledTask scheduledTask, int taskId);
+        public Task<IEnumerable<ScheduledTask>> GetScheduledTasksByHouseholdIdAsync(int householdId);
     }
 }

@@ -2,6 +2,7 @@
 using HouseholdResponsibilityAppServer.Repositories.HouseholdTasks;
 using HouseholdResponsibilityAppServer.Repositories.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Repositories.UserRepo;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 
 namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
 {
@@ -17,10 +18,10 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
             _userRepository = userRepository;
         }
 
-        public async Task<ScheduledTaskDTO> AddScheduledTaskAsync(CreateScheduledTaskRequest scheduledTaskCreateRequest)
+        public async Task<ScheduledTaskDTO> AddScheduledTaskAsync(CreateScheduledTaskRequest scheduledTaskCreateRequest, UserClaims userClaims)
         {
             //convert request to modell
-            var scheduledTaskModel = await ConvertRequestToModel(scheduledTaskCreateRequest);
+            var scheduledTaskModel = await ConvertRequestToModel(scheduledTaskCreateRequest, userClaims);
             //add the modell to db
             var addedModel = await _scheduledTasksRepository.AddScheduledTaskAsync(scheduledTaskModel);
             //convert the added model to dto, and return it
@@ -49,18 +50,18 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
             return ConvertModelToDTO(scheduledTaskModel);
         }
 
-        public async Task<ScheduledTaskDTO> UpdateScheduledTaskAsync(CreateScheduledTaskRequest updateRequest,int taskId)
+        public async Task<ScheduledTaskDTO> UpdateScheduledTaskAsync(CreateScheduledTaskRequest updateRequest, UserClaims userClaims, int taskId)
         {
-            var scheduledTaskModel = await ConvertRequestToModel(updateRequest);
+            var scheduledTaskModel = await ConvertRequestToModel(updateRequest, userClaims);
 
             var updatedModel = await _scheduledTasksRepository.UpdateSheduledTaskAsync(scheduledTaskModel, taskId);
             return ConvertModelToDTO(updatedModel);
         }
 
-        private async Task<ScheduledTask> ConvertRequestToModel(CreateScheduledTaskRequest scheduledTaskCreateRequest)
+        private async Task<ScheduledTask> ConvertRequestToModel(CreateScheduledTaskRequest scheduledTaskCreateRequest, UserClaims userClaims)
         {
             var task = await _householdTaskRepository.GetByIdAsync(scheduledTaskCreateRequest.HouseholdTaskId);
-            var createdByUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.CreatedByUserId);
+            var createdByUser = await _userRepository.GetUserByIdAsync(userClaims.UserId);
             var assignedToUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.AssignedToUserId);
 
             if (task == null)
@@ -114,5 +115,20 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
                 Repeat = scheduledTaskModel.Repeat,
             };
         }
+
+
+
+        public async Task<IEnumerable<ScheduledTaskDTO>> GetAllScheduledByHouseholdIdAsync(UserClaims userClaims)
+        {
+
+            int householdId = int.Parse(userClaims.HouseholdId);
+            
+            var fillteredTasks = await _scheduledTasksRepository.GetScheduledTasksByHouseholdIdAsync(householdId);
+
+
+            return fillteredTasks.Select(task => ConvertModelToDTO(task)).ToList();
+        }
+
+
     }
 }

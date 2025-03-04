@@ -5,6 +5,6 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
 {
     public interface ITokenService
     {
-        string CreateToken(User user, string role);
+        public Task<string> CreateToken(User user);
     }
 }

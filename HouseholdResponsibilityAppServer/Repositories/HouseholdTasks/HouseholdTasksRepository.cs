@@ -9,6 +9,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
     public class HouseholdTasksRepository : IHouseholdTasksRepository
     {
         private HouseholdResponsibilityAppContext _dbContext;
+
         public HouseholdTasksRepository(HouseholdResponsibilityAppContext dbContext)
         {
             _dbContext = dbContext;
@@ -29,7 +30,6 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
                 .Include(t => t.Group)
                 .ToListAsync();
         }
-
 
 
         public async Task DeleteTaskByIdAsync(int taskId)
@@ -54,10 +54,8 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
         }
 
 
-
         public async Task<HouseholdTask> UpdateTaskAsync(HouseholdTask householdTask, int id)
         {
-
             var existingTask = await _dbContext.Tasks.FindAsync(id);
             if (existingTask == null)
             {
@@ -74,16 +72,15 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
             await _dbContext.SaveChangesAsync();
 
             return existingTask;
-
         }
 
-        public async Task<IEnumerable<HouseholdTask>> GetallTasksByHouseholdIdAsync(int householdId)
+        public async Task<IEnumerable<HouseholdTask>> GetAllTasksByHouseholdIdAsync(int householdId)
         {
             return await _dbContext.Tasks
-                .Include(t => t.CreatedBy)
                 .Include(t => t.Household)
-                .Include(t => t.Group)
-                .Where(task => task.Household.HouseholdId == householdId)
+                .Include((t) => t.CreatedBy)
+                .Include((t) => t.Group)
+                .Where(t => t.Household.HouseholdId == householdId)
                 .ToListAsync();
         }
     }
