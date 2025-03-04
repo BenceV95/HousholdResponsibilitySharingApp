@@ -10,7 +10,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
         public Task DeleteTaskByIdAsync(int taskId);
         public Task<HouseholdTask> GetByIdAsync(int taskId);
         public Task<HouseholdTask> UpdateTaskAsync(HouseholdTask householdTask, int id);
-        public Task<IEnumerable<HouseholdTask>> GetAllTasksByHouseholdIdAsync(int householdId);
 
+        public Task<IEnumerable<HouseholdTask>> GetallTasksByHouseholdIdAsync(int householdId);
     }
 }

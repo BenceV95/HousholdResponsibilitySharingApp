@@ -1,6 +1,5 @@
 ﻿using HouseholdResponsibilityAppServer.Models;
 using HouseholdResponsibilityAppServer.Models.Groups;
-using HouseholdResponsibilityAppServer.Services.Authentication;
 
 
 namespace HouseholdResponsibilityAppServer.Services.Groups
@@ -9,9 +8,8 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
     {
         Task<IEnumerable<GroupResponseDto>> GetAllGroupsAsync();
         Task<GroupResponseDto> GetGroupByIdAsync(int id);
-        public Task CreateGroupAsync(PostGroupDto postGroupDto, UserClaims userClaims);
-        Task UpdateGroupAsync(int groupId, GroupDto groupDto);
-        Task DeleteGroupAsync(int groupId);
-        public Task<IEnumerable<GroupResponseDto>> GetGroupsByHouseholdIdAsync(UserClaims userClaims);
+        Task CreateGroupAsync(PostGroupDto postGroupDto);
+        Task UpdateGroupAsync(int id, GroupDto groupDto);
+        Task DeleteGroupAsync(int id);
     }
 }

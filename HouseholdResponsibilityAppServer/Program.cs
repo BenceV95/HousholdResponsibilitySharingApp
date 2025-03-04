@@ -100,14 +100,13 @@ namespace HouseholdResponsibilityAppServer
             builder.Services.AddScoped<IInvitationService, InvitationService>();
 
 
-
             AddAuth();
             AddIdentity();
 
 
             var app = builder.Build();
 
-
+            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
 
@@ -141,8 +140,8 @@ namespace HouseholdResponsibilityAppServer
                  options.TokenValidationParameters = new TokenValidationParameters()
                  {
                      ClockSkew = TimeSpan.Zero,
-                     ValidateIssuer = true,
-                     ValidateAudience = true,
+                     ValidateIssuer = true,    // kibocsátó ellenõrzése
+                     ValidateAudience = true,  // címzett ellenõrzése
                      ValidateLifetime = true,
                      ValidateIssuerSigningKey = true,
                      ValidIssuer = jwtSettings["ValidIssuer"],
@@ -150,7 +149,7 @@ namespace HouseholdResponsibilityAppServer
                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(issuerSigningKey)),
                  };
 
-
+                 // A token cookie-ból lesz kiolvasva ha a HTTP headersben nincs megadva.
                  options.Events = new JwtBearerEvents
                  {
                      OnMessageReceived = context =>
@@ -173,7 +172,7 @@ namespace HouseholdResponsibilityAppServer
                         options.SignIn.RequireConfirmedAccount = false;
                         options.User.RequireUniqueEmail = true;
                         options.Password.RequireDigit = false;
-                        options.Password.RequiredLength = 2; //for now, it needs to be only 2 digits long
+                        options.Password.RequiredLength = 6;
                         options.Password.RequireNonAlphanumeric = false;
                         options.Password.RequireUppercase = false;
                         options.Password.RequireLowercase = false;

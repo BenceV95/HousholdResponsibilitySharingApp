@@ -33,11 +33,11 @@ namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
 
         public async Task<IEnumerable<ScheduledTask>> GetAllScheduledTasksAsync()
         {
-            return _dbContext.ScheduledTasks
-                .Include(task => task.CreatedBy)
-                .Include(task => task.HouseholdTask)
-                .ThenInclude(ht => ht.Household)
-                .AsQueryable();
+            return await _dbContext.ScheduledTasks
+                .Include(t => t.AssignedTo)
+                .Include(t => t.HouseholdTask)
+                .Include(t => t.CreatedBy)
+                .ToListAsync();
         }
 
         public async Task<ScheduledTask> GetByIdAsync(int scheduledTaskId)
@@ -69,16 +69,6 @@ namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
 
             return existingTask;
 
-        }
-
-        public async Task<IEnumerable<ScheduledTask>> GetScheduledTasksByHouseholdIdAsync(int householdId)
-        {
-            return await _dbContext.ScheduledTasks
-                .Include(task => task.CreatedBy)
-                .Include(task => task.HouseholdTask)
-                    .ThenInclude(ht => ht.Household)
-                .Where(task => task.HouseholdTask.Household.HouseholdId == householdId)
-                .ToListAsync();
         }
     }
 }

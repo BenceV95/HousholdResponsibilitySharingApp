@@ -10,22 +10,12 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
 {
     public class TokenService : ITokenService
     {
-
         private const int ExpirationMinutes = 60;
-        private readonly IConfiguration _configuration;
-        private readonly UserManager<User> _userManager;
 
-
-        public TokenService(IConfiguration configuration, UserManager<User> userManager)
-        {
-            _configuration = configuration;
-            _userManager = userManager;
-        }
-
-        public async Task<string> CreateToken(User user)
+        public string CreateToken(User user, string role = null)
         {
             var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
-            var claims = await CreateClaimsAsync(user, expiration);
+            var claims = CreateClaims(user, role, expiration);
             var signingCredentials = CreateSigningCredentials();
             var token = CreateJwtToken(claims, signingCredentials, expiration);
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -34,33 +24,33 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
         private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials,
             DateTime expiration) =>
             new(
-                "apiWithAuthBackend",  //issuer    later get it from appsettings.json...
+                "apiWithAuthBackend",  //issuer
                 "apiWithAuthBackend", //audience
                 claims,
                 expires: expiration,
                 signingCredentials: credentials
             );
 
-        private async Task<List<Claim>> CreateClaimsAsync(User user, DateTime expiration)
+        private List<Claim> CreateClaims(User user, string? role, DateTime expiration)
         {
             var claims = new List<Claim>
            {
-                new(JwtRegisteredClaimNames.Sub, user.Id),
-                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(JwtRegisteredClaimNames.Sub, user.Id),//tulajdonos
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),//egyedi guid
+                //mikor lett kiadva a token
                 new(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(DateTime.UtcNow).ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Integer64),
                 new(ClaimTypes.NameIdentifier, user.Id),
                 new(ClaimTypes.Name, user.UserName),
                 new(ClaimTypes.Email, user.Email),
+                // Explicit "exp" claim hozzáadása:
                 new Claim("exp", ((DateTimeOffset)expiration).ToUnixTimeSeconds().ToString()),
+
            };
 
-            var householdId = user.Household?.HouseholdId.ToString() ?? ""; // cannot be null unfortunatelly
-            claims.Add(new Claim("householdId", householdId));
+            var householdIdValue = user.Household != null ? user.Household.HouseholdId.ToString() : ""; // cannot be null unfortunatelly
+            claims.Add(new Claim("householdId", householdIdValue));
 
-            var roles = await _userManager.GetRolesAsync(user);
-
-
-            foreach (var role in roles)
+            if (!string.IsNullOrEmpty(role))
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
@@ -71,11 +61,20 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
 
         private SigningCredentials CreateSigningCredentials()
         {
+            //Az aláíráshoz szükséges hitelesítő adatokat hozza létre(kulcs + algoritmus)
             return new SigningCredentials(
+                //  1️ Létrehozunk egy titkos kulcsot, amit a token aláírásához használunk.
+                //    - A SymmetricSecurityKey egy olyan kulcs,
+                //    amely ugyanazzal a titkos kulccsal írja alá és ellenőrzi a tokent.
                 new SymmetricSecurityKey(
-
-                    Encoding.UTF8.GetBytes(_configuration["Jwt:IssuerSigningKey"])
+                    //  2️ A titkos kulcsot szövegként (string) adjuk meg, de azt bájt tömbbé kell alakítani.
+                    //    - Encoding.UTF8.GetBytes() átalakítja a titkos kulcsot byte tömbbé,
+                    //    hogy a SymmetricSecurityKey elfogadja.
+                    Encoding.UTF8.GetBytes("!SomethingSecret!!SomethingSecret!")
                 ),
+                //  3️ Megadjuk, hogy milyen algoritmussal történjen az aláírás.
+                //    - Itt a HMAC SHA256-ot (HMAC-SHA256) használjuk, ami egy
+                //    biztonságos hash-alapú aláírási módszer.
                 SecurityAlgorithms.HmacSha256
             );
         }

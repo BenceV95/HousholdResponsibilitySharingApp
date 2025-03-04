@@ -1,5 +1,4 @@
 ﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
-using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.HouseholdTaskServices;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -11,11 +10,9 @@ namespace HouseholdResponsibilityAppServer.Controllers
     public class HouseholdTaskController : ControllerBase
     {
         IHouseholdTaskService _householdTaskService;
-        private readonly IAuthService _authService;
-        public HouseholdTaskController(IHouseholdTaskService householdTaskService, IAuthService authService)
+        public HouseholdTaskController(IHouseholdTaskService householdTaskService)
         {
             _householdTaskService = householdTaskService;
-            _authService = authService;
         }
 
 
@@ -23,16 +20,14 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
 
 
-        [HttpGet("/tasks/my-household")]
-        public async Task<IActionResult> GetHouseholdTasksByHouseholdId()
+        [HttpGet("filtered/{householdId}")]
+        public async Task<IActionResult> GetHouseholdTasksByHouseholdId(int householdId)
         {
             try
             {
-                var userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+                var selectedTasks = await _householdTaskService.GetallTasksByHouseholdIdAsync(householdId);
 
-                var filteredTasks = await _householdTaskService.GetallTasksByHouseholdIdAsync(userClaims);
-
-                return Ok(filteredTasks);
+                return Ok(selectedTasks);
             }
             catch (Exception ex)
             {
@@ -75,9 +70,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
         {
             try
             {
-                UserClaims userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
-
-                var task = await _householdTaskService.AddTaskAsync(createRequest, userClaims);
+                var task = await _householdTaskService.AddTaskAsync(createRequest);
                 return Ok(task.TaskId);
 
             }
@@ -94,9 +87,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
         {
             try
             {
-                UserClaims userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
-
-                var task = await _householdTaskService.UpdateTaskAsync(updateRequest, userClaims, taskId);
+                var task = await _householdTaskService.UpdateTaskAsync(updateRequest, taskId);
                 return Ok(task);
             }
             catch (Exception ex)

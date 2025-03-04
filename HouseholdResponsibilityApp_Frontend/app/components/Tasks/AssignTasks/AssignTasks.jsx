@@ -14,8 +14,8 @@ const AssignTasks = () => {
     clearErrors,
     formState: { errors },
   } = useForm();
-
-  const [resultMessage, setResultMessage] = useState(null);
+  
+  const [success, setSuccess] = useState(null);
   const [specificTimeSelected, setSpecificTimeSelected] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [users, setUsers] = useState([]);
@@ -25,23 +25,41 @@ const AssignTasks = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        //this gives back only the tasks that belong in the users' household
-        const taskList = await apiFetch("/tasks/my-household");
-        const userList = await apiFetch("/users/my-household");
+        const taskList = await apiFetch("/tasks");
+        const userList = await apiFetch("/users");
         console.log(userList);
-        setTasks(taskList)
-        setUsers(userList)
+        
+         // this was bugged, cause all the household id's are "" by default, so they matched!. so we need the extra .householdId check not just the user
+        if (user?.householdId) {
+          const filteredTasks = taskList.filter(
+            (task) => Number(task.householdId) === Number(user.householdId)
+          );
 
+          const filteredUsers = userList.filter(
+            (u) => Number(u.householdId) === Number(user.householdId)
+          );
+
+          setTasks(filteredTasks);
+          setUsers(filteredUsers);
+        }
       } catch (err) {
-        console.log("error", err.message)
+        console.error("Error:", err);
       }
     }
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
 
+  useEffect(() => {
+    register("createdByUserId", { required: "Created By is required" });
+  }, [register]);
 
-    fetchData();
-  }, []);
-
-
+  useEffect(() => {
+    if (user) {
+      setValue("createdByUserId", user.userId);
+    }
+  }, [user, setValue]);
 
   const SelectSpecificTime = () => {
     setSpecificTimeSelected(!specificTimeSelected);
@@ -67,12 +85,12 @@ const AssignTasks = () => {
     clearErrors("event_date");
 
     try {
-      const response = await apiPost("/scheduled", modifiedData);
-      console.log(response);
-      setResultMessage("Task scheduled successfully!");
+      const promise = await apiPost("/scheduled", modifiedData);
+      console.log(promise);
+      setSuccess("Task scheduled successfully!");
     } catch (error) {
       console.error(error);
-      setResultMessage("Failed to schedule task.");
+      setSuccess("Failed to schedule task.");
     }
   };
 
@@ -153,7 +171,7 @@ const AssignTasks = () => {
           Submit
         </button>
       </form>
-      {resultMessage && <p className="result-message">{resultMessage}</p>}
+      {success && <p className="success">{success}</p>}
     </div>
   );
 };

@@ -4,7 +4,6 @@ using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Models.Users;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
 using HouseholdResponsibilityAppServer.Repositories.UserRepo;
-using HouseholdResponsibilityAppServer.Services.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace HouseholdResponsibilityAppServer.Services.HouseholdService
@@ -46,10 +45,10 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdService
             };
         }
 
-        public async Task<Household> CreateHouseholdAsync(HouseholdDto householdDto, UserClaims userClaims)
+        public async Task<Household> CreateHouseholdAsync(HouseholdDto householdDto)
         {
             // Check if the user already has a household
-            var user = await _userRepository.GetUserByIdAsync(userClaims.UserId);
+            var user = await _userRepository.GetUserByIdAsync(householdDto.UserId);
             if (user.Household != null)
             {
                 throw new InvalidOperationException("User already has a household.");
@@ -57,7 +56,7 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdService
             
             var household = new Household
             {
-                Name = householdDto.HouseholdName,
+                Name = householdDto.Name,
                 CreatedByUser = user,
                 CreatedAt = DateTime.UtcNow,
                 Users = new List<User>(){user}
@@ -104,7 +103,7 @@ namespace HouseholdResponsibilityAppServer.Services.HouseholdService
         {
             var household = await _householdRepository.GetHouseholdByIdAsync(householdId);
 
-            household.Name = householdDto.HouseholdName;
+            household.Name = householdDto.Name;
 
             await _householdRepository.UpdateHouseholdAsync(household);
         }

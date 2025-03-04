@@ -10,7 +10,8 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../../(utils)/api";
 import { addHours } from "date-fns";
-
+import { useSelectedLayoutSegment } from "next/navigation";
+import { useAuth } from "../AuthContext/AuthProvider";
 
 const locales = { "en-US": require("date-fns/locale/en-US") };
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
@@ -20,67 +21,93 @@ const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales
 //TODO : configure the backend to give back info acccording to user's token!
 
 export default function WeeklyCalendar() {
-    //we need tasks and scheduled tasks as well, since the task stores the title, description and the scheduled task contains the info when, and who must do it!
+    const { user } = useAuth();
     const [scheduledTasks, setScheduledTasks] = useState([]);
-    const [taskBlueprints, setTaskBlueprints] = useState([]);
+    const [tasks, setTasks] = useState([]);
+    const [tasksToDisplay, setTasksToDisplay] = useState([]);
     const [events, setEvents] = useState([]);
+    
+    //this is for debugging purposes only
+    useEffect(() => {
+        // console.log("tasks", tasks)
+        console.log("scheduledTasks", scheduledTasks)
+        // console.log("tasksToDisplay", tasksToDisplay)
+        // console.log("user", user)
+    }, [tasks, scheduledTasks, tasksToDisplay, user])
+    
 
 
+    useEffect(() => {
+        setEvents(tasksToDisplay)
+    }, [tasksToDisplay]);
+
+
+    // fetch the household tasks and the scheduled tasks
     useEffect(() => {
         try {
-            async function getScheduledTasks() {
-                const tasks = await apiFetch("/tasks/my-household");
-                const scheduleds = await apiFetch("/scheduleds/my-household")
-                console.log("scheduleds", scheduleds)
-                console.log("tasks", tasks)
-                setScheduledTasks(scheduleds)
-                setTaskBlueprints(tasks);
+            async function getHouseholdTasks() {
+                if (user?.householdId) {
+                    const data = await apiFetch(`/tasks/filtered/${user.householdId}`) // and this should return only the tasks in the given household final version should be -> user.householdId
+                    setTasks(data)
+                }
             }
-            getScheduledTasks();
-            console.log("scheduledTasks: ", scheduledTasks)
 
+
+            async function getScheduledTasks() {
+                //todo : make backend enpoint to filter scheduled tasks on the task "blueprint"
+                //for now it'll filter on the frontend
+                const data = await apiFetch("/scheduleds");
+                setScheduledTasks(data)
+            }
+            getHouseholdTasks()
+            getScheduledTasks()
         } catch (e) {
-            console.log(e.message)
+            console.log(e)
         }
-
-    }, [])
-
-
-
-
+        
+    }, [user])
+    
+    //set the 
     useEffect(() => {
-        const converted = convertScheduledTasksToEvents()
-        console.log("converted", converted)
-        setEvents(converted)
-    }, [scheduledTasks])
+        setTasksToDisplay(fetchTasks());
+    }, [tasks, scheduledTasks]);
 
 
-
-
-
-    // we have to pair up the tasks and scheduled tasks
-    const convertScheduledTasksToEvents = () => {
+    const fetchTasks = () => {
         return scheduledTasks.map(scheduledTask => {
-
-            const taskBlueprint = taskBlueprints.find(task => task.taskId === scheduledTask.householdTaskId);
-
-            if (taskBlueprint) {
-                return {
+            const template = tasks.find(task => task.taskId === scheduledTask.householdTaskId);    // great naming convention
+            return template
+                ? {
+                    ...scheduledTask,
                     allDay: !scheduledTask.atSpecificTime,
-                    title: taskBlueprint.title,
-                    description: taskBlueprint.description,
+                    title: template.title,
+                    description: template.description,
                     start: new Date(scheduledTask.eventDate),
                     end: addHours(new Date(scheduledTask.eventDate), 1),
                     assignedTo: scheduledTask.assignedToUserId,
-                };
-            }
-
-            return null;
-        }).filter(event => event !== null);
+                }
+                : null;
+        }).filter(task => task !== null);
     };
 
 
 
+    // const events = tasksToDisplay.map(task => ({
+    //     title: task.title,
+    //     start: new Date(task.eventDate),
+    //     end: new Date(task.eventDate),
+    //     allDay: !task.atSpecificTime, // Ensures it spans the full day
+    // }));
+
+    // const events = [
+    //     { title: "🧹 Clean Kitchen", start: new Date("2025-02-18"), end: new Date("2025-02-18"), allDay: true, assignedTo: "Alice" },
+    //     { title: "🛒 Buy Groceries", start: new Date("2025-02-19"), end: new Date("2025-02-19"), allDay: false, assignedTo: "Bob" },
+    //     { title: "📦 Take Out Trash", start: new Date("2025-02-20"), end: new Date("2025-02-20"), allDay: false, assignedTo: "Chajrlie" },
+    //     { title: "📦 Take Out Trash", start: new Date("2025-02-20"), end: new Date("2025-02-20"), allDay: false, assignedTo: "Chajrlie" },
+    //     { title: "📦 Take Out Trash", start: new Date("2025-02-01"), end: new Date("2025-02-01"), allDay: false, assignedTo: "Chajrlie" },
+    //     { title: "📦 Take Out Trash", start: new Date("2025-02-01"), end: new Date("2025-02-01"), allDay: false, assignedTo: "Chajrlie" },
+    //     { title: "📦 Take Out Trash", start: new Date("2025-02-01"), end: new Date("2025-02-01"), allDay: false, assignedTo: "Chajrlie" },
+    // ];
 
     //maybe we can make a color picker, and store the preferred one in the db. idk
     //for now, lets just use hardcoded values
@@ -108,7 +135,8 @@ export default function WeeklyCalendar() {
     return (
         <div style={{ height: "40rem", width: "1000px", padding: "20px" }}>
             <Calendar
-                // eventPropGetter={getEventStyle}
+                selectable
+                eventPropGetter={getEventStyle}
                 localizer={localizer}
                 onSelectEvent={(e) => { alert(`Description:${e.description} \n Task name: ${e.title}`) }}
                 events={events}

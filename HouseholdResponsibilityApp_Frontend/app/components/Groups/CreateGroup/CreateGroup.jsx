@@ -8,25 +8,38 @@ const CreateGroup = () => {
   const {
     register,
     handleSubmit,
-    // setValue,
+    setValue,
     formState: { errors },
   } = useForm();
 
   const [message, setMessage] = useState("");
+  const { user } = useAuth();
 
+  useEffect(() => {
+    register("userId", { required: "User ID is required" });
+    register("householdId", { required: "Household ID is required" });
+  }, [register]);
+
+  useEffect(() => {
+    if (user) {
+      setValue("userId", user.userId);
+      setValue("householdId", user.householdId || 0);
+    }
+  }, [user, setValue]);
 
   const onSubmit = async (formData) => {
-    console.log("submit stuff")
     const groupData = {
-      groupName: formData.name,
+      name: formData.name,
+      userId: formData.userId,
+      householdId: Number(formData.householdId),
     };
 
     try {
       await apiPost("/group", groupData);
       setMessage(`Successfully created group: ${formData.name}`);
     } catch (error) {
-      // we shouldnt just drop a random msg saying error while creating a grup. we should give an exact reason why it failed
-      setMessage(error.message);
+      console.error(error);
+      setMessage("An error occurred while creating the group");
     }
   };
 

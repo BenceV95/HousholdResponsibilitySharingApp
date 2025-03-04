@@ -16,9 +16,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
         private readonly IAuthService _authenticationService;
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
-
         const int _expirationTimeInMinutes = 60;
-
 
         public AuthController(IAuthService authenticationService, IUserRepository userRepository, ITokenService tokenService)
         {
@@ -68,7 +66,6 @@ namespace HouseholdResponsibilityAppServer.Controllers
                 return BadRequest(ModelState);
             }
 
-            //when the user logs in, add cookies, and to the cookie add the token
 
             Response.Cookies.Append("token", result.Token, new CookieOptions
             {
@@ -78,8 +75,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
                 Expires = DateTime.UtcNow.AddMinutes(_expirationTimeInMinutes)
             });
 
-            //here we should just send back meta data that we want to display on the front end (user Id we dont need, cause on subsequent request we get it from the token);
-            return Ok(new AuthResponse(result.Email, result.UserName, result.HouseholdId));
+            return Ok(new AuthResponse(result.Email, result.UserName, result.Token, result.UserId, result.HouseholdId));
         }
 
         [HttpPost("Logout")]
@@ -92,7 +88,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
 
         [Authorize]
-        [HttpGet("/authenticate")]
+        [HttpGet("Me")]
         public IActionResult Me()
         {
             var user = HttpContext.User;
@@ -111,18 +107,22 @@ namespace HouseholdResponsibilityAppServer.Controllers
             return Ok(new { email, username, expirationUnix });
         }
 
-
-        // call this endpoint from the frontend after the token needs to be updated
         [Authorize]
-        [HttpGet("update-token")]
+        [HttpGet("refresh")]
         public async Task<IActionResult> RefreshToken()
         {
-
-            UserClaims userClaims = _authenticationService.GetClaimsFromHttpContext(HttpContext);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "User"; // just a fallback if we cannot get the user's role
+            if (userId == null) return Unauthorized();
 
             // Fetch updated user details (now including HouseholdId)
-            var user = await _userRepository.GetUserByIdAsync(userClaims.UserId);
+            var user = await _userRepository.GetUserByIdAsync(userId);
 
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
 
 
             Response.Cookies.Delete("token"); // Ensure old token is removed before adding the new one
@@ -130,7 +130,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
 
             // Generate new token with updated HouseholdId
-            var token = await _tokenService.CreateToken(user);
+            var token = _tokenService.CreateToken(user, userRole);
 
 
             Response.Cookies.Append("token", token, new CookieOptions

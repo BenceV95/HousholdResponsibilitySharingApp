@@ -3,7 +3,6 @@ using System.Security.Claims;
 using HouseholdResponsibilityAppServer.Models;
 using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Models.Invitations;
-using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.HouseholdService;
 using HouseholdResponsibilityAppServer.Services.Invitation;
 using Microsoft.AspNetCore.Authorization;
@@ -16,13 +15,10 @@ public class HouseholdController : ControllerBase
 
     private readonly IInvitationService _invitationService;
 
-    private readonly IAuthService _authService;
-
-    public HouseholdController(IHouseholdService householdService, IInvitationService invitationService, IAuthService authService)
+    public HouseholdController(IHouseholdService householdService, IInvitationService invitationService)
     {
         _householdService = householdService;
         _invitationService = invitationService;
-        _authService = authService;
     }
 
     [HttpGet("/households")]
@@ -63,9 +59,15 @@ public class HouseholdController : ControllerBase
     {
         try
         {
-            UserClaims userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+            // checking for if the user is the same as the one who is creating the household
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (householdDto.UserId != userId)
+            {
 
-            var createdHousehold = await _householdService.CreateHouseholdAsync(householdDto, userClaims);
+                return Forbid();
+            }
+
+            var createdHousehold = await _householdService.CreateHouseholdAsync(householdDto);
 
             return Ok(createdHousehold.HouseholdId); // return the created household id
 

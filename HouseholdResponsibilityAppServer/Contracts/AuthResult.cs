@@ -5,6 +5,7 @@
      string Email,
      string UserName,
      string Token,
+     string UserId,
      int? HouseholdId)
     {
         //Error code - error message

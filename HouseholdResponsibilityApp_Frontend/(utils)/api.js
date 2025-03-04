@@ -1,12 +1,11 @@
-const BACKEND_URL = "/api";
-
-//we should make our fetches uniform, and make the backend send unform error messages as well!
-//also, not just saying API request failed, cause we wont know what exactly went wrong
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 /* 
 usage: apiFetch("/tasks")
 */
 export async function apiFetch(endpoint) {
+  console.log(`${BACKEND_URL}${endpoint}`);
+
 
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {
     method: "GET",
@@ -16,13 +15,12 @@ export async function apiFetch(endpoint) {
   });
 
   if (!response.ok) {
-    const errorMsg = await response.text();
-    console.log("response text", errorMsg);
-    throw new Error(errorMsg);
+    throw new Error("API request failed");
   }
 
-  const parsedResponse = await response.json()
-  return parsedResponse;
+  console.log(`data arrived from: ${BACKEND_URL}${endpoint}`);
+
+  return await response.json();
 }
 
 /* 
@@ -39,40 +37,32 @@ export async function apiPut(endpoint, data) {
     body: JSON.stringify(data)
   });
 
-
-  const parsedResponse = await response.json()
-
   if (!response.ok) {
-
-    throw new Error("API request failed", parsedResponse.message);
+    throw new Error("API request failed");
   }
-
-  return parsedResponse;
+  return await response.json();
 }
 
 export async function apiPost(endpoint, data) {
+  console.log(`${BACKEND_URL}${endpoint}`);
 
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {
     method: "POST",
-    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data)
   });
 
-
   if (!response.ok) {
-    const errorMsg = await response.text();
-    console.log("response text", errorMsg);
-    throw new Error(errorMsg);
+    throw new Error("API request failed");
   }
 
-  const parsedResponse = await response.json()
-  return parsedResponse;
+  return await response.json();
 }
 
 export async function apiDelete(endpoint) {
+  console.log(`${BACKEND_URL}${endpoint}`);
 
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {
     method: "DELETE",
