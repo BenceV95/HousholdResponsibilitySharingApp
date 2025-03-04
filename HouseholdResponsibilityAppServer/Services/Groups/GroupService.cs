@@ -74,6 +74,11 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
 
         public async Task UpdateGroupAsync(int groupId, GroupDto groupDto)
         {
+            if (groupDto.Name.Length < 1 || groupDto.Name == " ")
+            {
+                throw new ArgumentException("Name can not be empty !");
+            }
+
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
 
             group.Name = groupDto.Name;

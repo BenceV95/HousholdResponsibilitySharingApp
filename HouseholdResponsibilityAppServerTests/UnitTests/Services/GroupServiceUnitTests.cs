@@ -114,6 +114,21 @@ namespace HouseholdResponsibilityAppServerTests.UnitTests.Services
         }
 
         [Fact]
+        public async Task UpdateGroupAsync_WithIncorrectName_ThrowException()
+        {
+            // Arrange
+            var group = new TaskGroup { GroupId = 1, Name = "OldName" };
+            var groupDto = new GroupDto { Name = " " };
+            var groupDto1 = new GroupDto { Name = "" };
+
+            _groupRepositoryMock.Setup(repo => repo.GetGroupByIdAsync(1)).ReturnsAsync(group);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _groupService.UpdateGroupAsync(1, groupDto));
+            var exception1 = await Assert.ThrowsAsync<ArgumentException>(() => _groupService.UpdateGroupAsync(1, groupDto1));
+        }
+
+        [Fact]
         public async Task DeleteGroupAsync_DeletesGroup()
         {
             // Act

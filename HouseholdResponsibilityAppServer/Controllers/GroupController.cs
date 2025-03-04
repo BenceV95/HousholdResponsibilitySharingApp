@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
+[Authorize]
 public class GroupController : ControllerBase
 {
     private readonly IGroupService _groupService;
@@ -30,7 +31,7 @@ public class GroupController : ControllerBase
         {
             _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while retrieving groups.");
+            return StatusCode(500, new { Message = "An error occurred while retrieving all groups." });
         }
     }
 
@@ -42,19 +43,18 @@ public class GroupController : ControllerBase
             var group = await _groupService.GetGroupByIdAsync(groupId);
             return Ok(group);
         }
-        catch (KeyNotFoundException)
+        catch (KeyNotFoundException e)
         {
-            return NotFound($"Group with ID {groupId} not found.");
+            return NotFound(e.Message);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
 
-            return StatusCode(500,"An error occurred while retrieving groups.");
+            return StatusCode(500,new {Message = $"An error occurred while retrieving group with ID: {groupId}."});
         }
     }
 
-    [Authorize]
     [HttpPost("/group")]
     public async Task<ActionResult> CreateGroup([FromBody] PostGroupDto postGroupDto)
     {
@@ -69,7 +69,7 @@ public class GroupController : ControllerBase
         {
             _logger.LogError(ex.Message);
 
-            return BadRequest(ex.Message);
+            return StatusCode(500, new { Message = "An error occurred while creating groups." });
         }
     }
 
@@ -81,11 +81,15 @@ public class GroupController : ControllerBase
             await _groupService.UpdateGroupAsync(groupId, groupDto);
             return NoContent();
         }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { Message = e.Message});
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while updating group.");
+            return StatusCode(500,new { Message = "An error occurred while updating group."});
         }
     }
 
@@ -101,12 +105,11 @@ public class GroupController : ControllerBase
         {
             _logger.LogError(ex.Message);
 
-            return NotFound("An error occurred while deleting group.");
+            return StatusCode(500, new { Message = "An error occurred while deleting group."});
         }
     }
 
 
-    [Authorize]
     [HttpGet("/groups/my-household")]
     public async Task<ActionResult> GetGroupsByHouseholdID()
     {
@@ -122,7 +125,7 @@ public class GroupController : ControllerBase
         {
             _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while retrieving groups.");
+            return StatusCode(500, new { Message = "An error occurred while retrieving groups."});
         }
     }
 }
