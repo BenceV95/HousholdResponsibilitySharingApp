@@ -122,8 +122,8 @@ namespace HouseholdResponsibilityAppServer
             authenticationSeeder.AddRoles();
             authenticationSeeder.AddAdmin();
             // Apply pending migrations
-            var db = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
-            db.Database.Migrate();
+            //var db = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
+            //db.Database.Migrate(); why, we update db manually
 
             app.UseRouting();
             app.UseAuthentication();
