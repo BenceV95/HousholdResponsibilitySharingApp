@@ -108,21 +108,26 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
             };
 
         }
-        
+
         private ScheduledTaskDTO ConvertModelToDTO(ScheduledTask scheduledTaskModel)
         {
+            if (scheduledTaskModel == null)
+            {
+                throw new ArgumentNullException(nameof(scheduledTaskModel), "ScheduledTask model cannot be null");
+            }
+
             return new ScheduledTaskDTO()
             {
                 ScheduledTaskId = scheduledTaskModel.ScheduledTaskId,
-                HouseholdTaskId = scheduledTaskModel.HouseholdTask.TaskId,
+                HouseholdTaskId = scheduledTaskModel.HouseholdTask?.TaskId ?? 0,
                 CreatedByUserId = scheduledTaskModel.CreatedBy?.Id ?? string.Empty,
-                AssignedToUserId = scheduledTaskModel.AssignedTo.Id,
+                AssignedToUserId = scheduledTaskModel.AssignedTo?.Id ?? string.Empty,
                 EventDate = scheduledTaskModel.EventDate,
                 CreatedAt = scheduledTaskModel.CreatedAt,
                 AtSpecificTime = scheduledTaskModel.AtSpecificTime,
                 Repeat = scheduledTaskModel.Repeat,
             };
         }
-        
+
     }
 }
