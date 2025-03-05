@@ -13,7 +13,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
     const router = useRouter();
 
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({});;
 
     useEffect(() => {
         // console.log("user: ", user)
@@ -26,10 +26,9 @@ export const AuthProvider = ({ children }) => {
             try {
                 const response = await fetch("/auth/user", { credentials: "include" });
                 const userData = await response.json();
+                setUser(userData || {});
                 // console.log("user data from fetch: ", userData)
 
-
-                setUser(userData);
             } catch (error) {
                 console.error("Failed to fetch user:", error);
                 setUser(null);
