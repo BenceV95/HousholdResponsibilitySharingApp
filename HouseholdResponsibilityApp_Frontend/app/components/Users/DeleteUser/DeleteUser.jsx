@@ -1,32 +1,50 @@
 "use client";
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { apiDelete } from '../../../../(utils)/api';
-import './DeleteUser.css';
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { apiDelete } from "../../../../(utils)/api";
+import "./DeleteUser.css";
 
 const DeleteUser = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const [message, setMessage] = useState('');
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const [responseMessage, setResponseMessage] = useState(""); 
+  const [isError, setIsError] = useState(false); 
+  const [loading, setLoading] = useState(false); 
 
-    const onSubmit = async (data) => {
-        try {
-            await apiDelete(`/user/${data.userId}`);
-            setMessage('User deleted successfully!');
-        } catch (error) {
-            setMessage('An error occurred while deleting the user');
-        }
-    };
+  const onSubmit = async (data) => {
+    setResponseMessage("");
+    setIsError(false);
+    setLoading(true);
 
-    return (
-        <form onSubmit={handleSubmit(onSubmit)} className="user-form">
-            <label htmlFor="userId">User ID:</label>
-            <input type="number" id="userId" {...register('userId', { required: 'User ID is required' })} />
-            {errors.userId && <span>{errors.userId.message}</span>}
+    try {
+      const response = await apiDelete(`/user/${data.userId}`);
+      setResponseMessage(response?.Message || "User deleted successfully!"); 
+    } catch (error) {
+      setIsError(true);
+      setResponseMessage(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            <button type="submit" className='btn btn-danger'>Delete</button>
-            {message && <p>{message}</p>}
-        </form>
-    );
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="user-form">
+      <label htmlFor="userId">User ID:</label>
+      <input
+        type="text"
+        id="userId"
+        {...register("userId", { required: "User ID is required" })}
+      />
+      {errors.userId && <span>{errors.userId.message}</span>}
+
+      <button type="submit" className="btn btn-danger" disabled={loading}>
+        {loading ? "Deleting..." : "Delete"}
+      </button>
+
+      {responseMessage && (
+        <p className={isError ? "error" : "success"}>{responseMessage}</p>
+      )}
+    </form>
+  );
 };
 
 export default DeleteUser;
