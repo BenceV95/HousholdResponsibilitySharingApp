@@ -30,6 +30,8 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
 
         public async Task<ScheduledTaskDTO> AddScheduledTaskAsync(CreateScheduledTaskRequest scheduledTaskCreateRequest, UserClaims userClaims)
         {
+            ArgumentNullException.ThrowIfNull(scheduledTaskCreateRequest);
+
             //convert request to modell
             var scheduledTaskModel = await ConvertRequestToModel(scheduledTaskCreateRequest, userClaims);
             //add the modell to db
@@ -68,33 +70,32 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
         private async Task<ScheduledTask> ConvertRequestToModel(CreateScheduledTaskRequest scheduledTaskCreateRequest, UserClaims userClaims)
         {
             var task = await _householdTaskRepository.GetByIdAsync(scheduledTaskCreateRequest.HouseholdTaskId);
-            var createdByUser = await _userRepository.GetUserByIdAsync(userClaims.UserId);
-            var assignedToUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.AssignedToUserId);
-
             if (task == null)
             {
                 throw new KeyNotFoundException("Household task not found!");
             }
+
+            var createdByUser = await _userRepository.GetUserByIdAsync(userClaims.UserId);
             if (createdByUser == null)
             {
                 throw new KeyNotFoundException("Created by user not found!");
             }
-            if (assignedToUser == null)
-            {
-                throw new KeyNotFoundException("Assigned to user not found!");
-            }
-
             // Checks whether the household associated with the task matches the createdByUser's household
             if (createdByUser.Household == null || createdByUser.Household.HouseholdId != task.Household.HouseholdId)
             {
                 throw new UnauthorizedAccessException("You do not belong to the same household as the task!");
+            }
+
+            var assignedToUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.AssignedToUserId);
+            if (assignedToUser == null)
+            {
+                throw new KeyNotFoundException("Assigned to user not found!");
             }
             // Checks whether the assignedToUser is also in the same household
             if (assignedToUser.Household == null || assignedToUser.Household.HouseholdId != task.Household.HouseholdId)
             {
                 throw new UnauthorizedAccessException("The user to assign the task to does not belong to the same household!");
             }
-
 
             return new ScheduledTask()
             {
@@ -106,7 +107,6 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
                 Repeat = scheduledTaskCreateRequest.Repeat,
 
             };
-
         }
 
         private ScheduledTaskDTO ConvertModelToDTO(ScheduledTask scheduledTaskModel)
