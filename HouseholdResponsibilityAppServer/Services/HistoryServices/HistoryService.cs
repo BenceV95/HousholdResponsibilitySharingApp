@@ -36,13 +36,8 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
 
         public async Task<IEnumerable<HistoryDTO>> GetallHistoriesAsync()
         {
-            List<HistoryDTO> historyDTOs = new List<HistoryDTO>();
             var historyModels = await _historiesRepository.GetAllHistoriesAsync();
-            foreach (var history in historyModels)
-            {
-                historyDTOs.Add(ConvertModelToDTO(history));
-            }
-            return historyDTOs;
+            return historyModels.Select(ConvertModelToDTO);
         }
 
         public async Task<HistoryDTO> GetByIdAsync(int historyId)
@@ -62,9 +57,16 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
         private async Task<History> ConvertRequestToModel(CreateHistoryRequest historyCreateRequest)
         {
             var scheduledTask = await _scheduledTasksRepository.GetByIdAsync(historyCreateRequest.ScheduledTaskId);
+            if (scheduledTask == null)
+            {
+                throw new KeyNotFoundException("Scheduled task not found !");
+            }
+
             var completedBy = await _userRepository.GetUserByIdAsync(historyCreateRequest.CompletedByUserId);
-
-
+            if (completedBy == null)
+            {
+                throw new KeyNotFoundException("User not found !");
+            }
 
             return new History()
             {
@@ -80,9 +82,9 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
             return new HistoryDTO()
             {
                 HistoryId = historyModel.HistoryId,
-                CompletedByUserId = historyModel.CompletedBy.Id,
+                CompletedByUserId = historyModel.CompletedBy?.Id ?? string.Empty,
                 CompletedAt = historyModel.CompletedAt,
-                ScheduledTaskId = historyModel.ScheduledTask.ScheduledTaskId,
+                ScheduledTaskId = historyModel.ScheduledTask?.ScheduledTaskId ?? 0,
                 Outcome = historyModel.Outcome,
 
             };
