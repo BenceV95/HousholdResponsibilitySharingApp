@@ -141,6 +141,7 @@ namespace IntegrationTests
                 Assert.Contains("Cannot create group, user is not in a household!", result.ToString());
             }
 
+            //later i'd like this to work with seeded users, thats why this big commented out part is here.
 
             //[Fact]
             //public async Task CreateGroup_ShouldReturnOk_WhenUserIsPartOfAHousehold()
@@ -211,11 +212,97 @@ namespace IntegrationTests
                 };
                 // create  a new task group
                 var response = await _client.PostAsJsonAsync("/group", postGroupDto);
-                Console.WriteLine(response.ToString());
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
                 var result = await response.Content.ReadFromJsonAsync<object>();
                 Assert.Contains("Group created successfully", result.ToString());
+            }
+
+
+            [Fact]
+            public async Task GetGroupsByHouseholdId_ShouldReturnOk_WhenUserIsPartOfAHousehold()
+            {
+                string email = "testUser1@gmail.com";
+                string password = "password";
+                string username = "username";
+                string firstName = "John";
+                string lastName = "Doe";
+
+                // register the user
+                var registerResponse = await RegisterUser(email, username, password, firstName, lastName);
+                registerResponse.EnsureSuccessStatusCode();
+
+
+                //log in the user
+                var loginResponse = await LoginUser(email, password);
+                loginResponse.EnsureSuccessStatusCode();
+
+
+                loginResponse.EnsureSuccessStatusCode();
+
+                AttachAuthCookies(loginResponse);
+
+                // create the household
+                var createHousehold = await CreateHousehold("household");
+
+                //refresh the household id in the token
+                var refreshResponse = await RefreshToken();
+
+                AttachAuthCookies(refreshResponse);
+
+                //post a new task group
+                var postGroupDto = new PostGroupDto
+                {
+                    GroupName = "groupName"
+                };
+
+                // create  a new task group
+                var postGroupResponse = await _client.PostAsJsonAsync("/group", postGroupDto);
+                Assert.Equal(HttpStatusCode.OK, postGroupResponse.StatusCode);
+
+
+                //call the endpoint to get the groups associated with the user's household
+                var getGroupsResponse = await _client.GetAsync("/groups/my-household");
+
+                getGroupsResponse.EnsureSuccessStatusCode();
+
+                var groups = await getGroupsResponse.Content.ReadFromJsonAsync<IEnumerable<GroupDto>>();
+
+
+                Assert.Contains(groups, group => group.Name == "groupName");
+            }
+
+            [Fact]
+            public async Task GetGroupsByHouseholdID_ShouldReturnInternalServerError_WhenUserIsNotInHousehold()
+            {
+                string email = "testUser1@gmail.com";
+                string password = "password";
+                string username = "username";
+                string firstName = "John";
+                string lastName = "Doe";
+
+                // register the user
+                var registerResponse = await RegisterUser(email, username, password, firstName, lastName);
+                registerResponse.EnsureSuccessStatusCode();
+
+
+                //log in the user
+                var loginResponse = await LoginUser(email, password);
+                loginResponse.EnsureSuccessStatusCode();
+
+                AttachAuthCookies(loginResponse);
+
+
+                var response = await _client.GetAsync("/groups/my-household");
+
+
+                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var errorResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseContent);
+
+                // we have  a custom error for this! "cannot create group, user is not in a household", atm i dont want to rewrite the controller, but later we should.
+                Assert.Equal(errorResponse["message"], "An error occurred while retrieving groups.");
             }
 
 
