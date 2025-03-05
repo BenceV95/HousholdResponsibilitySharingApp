@@ -1,32 +1,62 @@
-.getTasks {
+.getTasks-container {
+    background: #2c2c2c; 
+    border-radius: 12px;
+    padding: 2rem;
+    width: 80%;
+    max-width: 90%;
+    margin: 2rem auto;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+  }
+  
+  .getTasks-container h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: #ffc107; 
+  }
+  
+  .getDataButton {
+    margin-bottom: 1.5rem;
+  }
+  
+  .getDataButton .btn {
+    font-weight: bold;
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+  
+  .taskCards {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: solid white 2px;
-    border-radius: 10px;
-    padding: 1rem;
-}
-
-.getDataButton {
-    display: flex;
-    justify-content: center;
-    padding: 0.2rem;
-    border-bottom: solid white 2px;
-    width: 100%;
-}
-
-.display {
-    display:flex;
-    flex-direction: row;
     flex-wrap: wrap;
     gap: 1rem;
-}
-
-.taskData {
+    justify-content: center;
+  }
+  
+  .taskCard {
     background-color: #424242;
     border-radius: 10px;
     padding: 1rem;
-    margin-top: 1rem;
-    min-width: fit-content;
-}
+    min-width: 220px;
+    max-width: 300px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    transition: transform 0.3s ease;
+  }
+  
+  .taskCard:hover {
+    transform: translateY(-3px);
+  }
+  
+  @media (max-width: 600px) {
+    .getTasks-container {
+      width: 95%;
+      padding: 1rem;
+    }
+  
+    .taskCards {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  
