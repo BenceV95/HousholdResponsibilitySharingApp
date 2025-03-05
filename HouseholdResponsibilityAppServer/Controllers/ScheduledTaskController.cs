@@ -9,16 +9,23 @@ using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace HouseholdResponsibilityAppServer.Controllers
 {
+    [Authorize]
     [Route("/scheduleds")]
     [ApiController]
     public class ScheduledTaskController : ControllerBase
     {
-        IScheduledTaskService _scheduledTaskService;
+        private readonly IScheduledTaskService _scheduledTaskService;
         private readonly IAuthService _authService;
-        public ScheduledTaskController(IScheduledTaskService scheduledTaskService, IAuthService authService)
+        private readonly ILogger<GroupController> _logger;
+
+        public ScheduledTaskController(
+            IScheduledTaskService scheduledTaskService,
+            IAuthService authService,
+            ILogger<GroupController> logger)
         {
             _scheduledTaskService = scheduledTaskService;
             _authService = authService;
+            _logger = logger;
         }
 
 
@@ -32,7 +39,9 @@ namespace HouseholdResponsibilityAppServer.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                _logger.LogError(ex.Message);
+
+                return StatusCode(500, new { Message = "An error occurred while retrieving all Scheduled Tasks." });
             }
         }
 
@@ -46,7 +55,9 @@ namespace HouseholdResponsibilityAppServer.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                _logger.LogError(ex.Message);
+
+                return StatusCode(500, new { Message = "An error occurred while retrieving Scheduled Task." });
             }
         }
 
@@ -63,7 +74,9 @@ namespace HouseholdResponsibilityAppServer.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _logger.LogError(ex.Message);
+
+                return StatusCode(500, new { Message = "An error occurred while retrieving posting Scheduled Task." });
             }
 
         }
@@ -81,7 +94,9 @@ namespace HouseholdResponsibilityAppServer.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _logger.LogError(ex.Message);
+
+                return StatusCode(500, new { Message = "An error occurred while updating Scheduled Task." });
             }
         }
 
@@ -95,7 +110,9 @@ namespace HouseholdResponsibilityAppServer.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _logger.LogError(ex.Message);
+
+                return StatusCode(500, new { Message = "An error occurred while deleting Scheduled Task." });
             }
         }
 
@@ -104,7 +121,6 @@ namespace HouseholdResponsibilityAppServer.Controllers
         /// This endpoint gives back all the scheduleds tasks, which belong to the same household
         /// </summary>
         /// <returns></returns>
-        [Authorize]
         [HttpGet("/scheduleds/my-household")]
         public async Task<IActionResult> GetAllScheduledsByHousehold()
         {
@@ -118,7 +134,9 @@ namespace HouseholdResponsibilityAppServer.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                _logger.LogError(ex.Message);
+
+                return StatusCode(500, new { Message = "An error occurred while retrieving all Scheduled Tasks." });
             }
         }
 
