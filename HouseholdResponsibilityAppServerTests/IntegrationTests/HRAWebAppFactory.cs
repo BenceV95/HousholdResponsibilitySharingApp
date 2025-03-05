@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Data.Common;
 
 namespace IntegrationTests
@@ -47,60 +48,69 @@ namespace IntegrationTests
                 //Since DbContexts are scoped services, we create a scope
                 using var scope = services.BuildServiceProvider().CreateScope();
 
+
+
                 //We use this scope to request the registered dbcontexts, and initialize the schemas
                 var householdContext = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
                 householdContext.Database.EnsureDeleted();
                 householdContext.Database.EnsureCreated();
 
-
-                // seed users to the in memory db.
-
-                //for some reason, this doesnt seem to work
-
-                var userWithNoHousehold = new User
-                {
-                    Email = "userWithNoHousehold@gmail.com",
-                    UserName = "userWithNoHousehold",
-                    FirstName = "John",
-                    LastName = "Doe",
-                    Household = null,
-                    PasswordHash = "password"
-                };
+                await AddUsersToInMemoryDb(scope);
 
 
-                householdContext.Users.Add(userWithNoHousehold);
-                householdContext.SaveChanges();
-
-
-                var userWithHousehold = new User
-                {
-                    Email = "userWithHousehold@gmail.com",
-                    NormalizedEmail = "userWithHousehold@gmail.com",
-                    UserName = "userWithHousehold",
-                    FirstName = "John",
-                    LastName = "Doe",
-                    Household = null,
-                    PasswordHash = "password"
-                };
-                //add  a household to the user
-                userWithHousehold.Household = new Household()
-                {
-                    Name = "Household",
-                    CreatedByUser = userWithHousehold,
-                    CreatedAt = DateTime.UtcNow,
-                    Groups = null,
-                    Histories = null,
-                    HouseholdId = 1,
-                    HouseholdTasks = null,
-                    Users = null,
-                };
-
-
-
-                householdContext.Users.Add(userWithHousehold);
-                householdContext.SaveChanges();
 
             });
+        }
+
+
+        private async Task AddUsersToInMemoryDb(IServiceScope scope)
+        {
+            var householdContext = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
+            using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+            // seed users to the in memory db.
+
+            var userWithNoHousehold = new User
+            {
+                Email = "userWithNoHousehold@gmail.com",
+                UserName = "userWithNoHousehold",
+                FirstName = "John",
+                LastName = "Doe",
+                Household = null,
+                PasswordHash = "password"
+            };
+
+
+            var userWithHousehold = new User
+            {
+                Email = "userWithHousehold@gmail.com",
+                NormalizedEmail = "userWithHousehold@gmail.com",
+                UserName = "userWithHousehold",
+                FirstName = "John",
+                LastName = "Doe",
+                Household = null,
+                PasswordHash = "password"
+            };
+
+            //add  a household to the user
+            userWithHousehold.Household = new Household()
+            {
+                Name = "Household",
+                CreatedByUser = userWithHousehold,
+                CreatedAt = DateTime.UtcNow,
+                Groups = null,
+                Histories = null,
+                HouseholdId = 1,
+                HouseholdTasks = null,
+                Users = null,
+            };
+
+
+            var resultUserWithNoHousehold = await userManager.CreateAsync(userWithNoHousehold, "password");
+            var resultUserWithHousehold = await userManager.CreateAsync(userWithHousehold, "password");
+
+            await householdContext.SaveChangesAsync();
+
         }
     }
 }
