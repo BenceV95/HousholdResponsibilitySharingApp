@@ -3,16 +3,12 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { apiPost } from "../../../../(utils)/api";
 import { useAuth } from "../../AuthContext/AuthProvider";
+import "./CreateGroup.css"; 
 
-const CreateGroup = () => {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
-
-  const [message, setMessage] = useState("");
+export default function CreateGroup() {
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const [responseMessage, setResponseMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -28,6 +24,9 @@ const CreateGroup = () => {
   }, [user, setValue]);
 
   const onSubmit = async (formData) => {
+    setResponseMessage("");
+    setIsError(false);
+
     const groupData = {
       name: formData.name,
       userId: formData.userId,
@@ -36,30 +35,38 @@ const CreateGroup = () => {
 
     try {
       await apiPost("/group", groupData);
-      setMessage(`Successfully created group: ${formData.name}`);
+      setResponseMessage(`Successfully created group: ${formData.name}`);
     } catch (error) {
       console.error(error);
-      setMessage("An error occurred while creating the group");
+      setIsError(true);
+      setResponseMessage(error.message);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="group-form">
-      <label htmlFor="name">Group Name:</label>
-      <input
-        type="text"
-        id="name"
-        {...register("name", { required: "Group name is required" })}
-      />
-      {errors.name && <span>{errors.name.message}</span>}
+    <div className="create-group-container">
+      <h2>Create Group</h2>
 
-      <button type="submit" className="btn btn-success">
-        Create Group
-      </button>
+      <form onSubmit={handleSubmit(onSubmit)} className="create-group-form">
+        <div className="form-group">
+          <label htmlFor="name">Group Name:</label>
+          <input
+            type="text"
+            id="name"
+            placeholder="Enter group name..."
+            {...register("name", { required: "Group name is required" })}
+          />
+          {errors.name && <span className="error">{errors.name.message}</span>}
+        </div>
 
-      {message && <p>{message}</p>}
-    </form>
+        <button type="submit" className="btn btn-success">
+          Create Group
+        </button>
+
+        {responseMessage && (
+          <p className={isError ? "error" : "success"}>{responseMessage}</p>
+        )}
+      </form>
+    </div>
   );
-};
-
-export default CreateGroup;
+}
