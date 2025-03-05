@@ -121,9 +121,12 @@ namespace HouseholdResponsibilityAppServer
             var authenticationSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
             authenticationSeeder.AddRoles();
             authenticationSeeder.AddAdmin();
+
+            /*
             // Apply pending migrations
             var db = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
             db.Database.Migrate();
+            */
 
             app.UseRouting();
             app.UseAuthentication();
