@@ -22,6 +22,10 @@ namespace IntegrationTests
         {
             private readonly HRAWebAppFactory _app;
             private readonly HttpClient _client;
+            private readonly string _userWithHouseholdEmail = "userWithHousehold@gmail.com"; //pre-seeded user
+            private readonly string _userWithoutHouseholdEmail = "userWithNoHousehold@gmail.com";
+            private readonly string _userPassword = "password";
+            //private readonly HttpResponseMessage _loginResponse; maybe save this, so we dont have to login always
 
 
             public TaskGroupControllerIntegrationTest()
@@ -37,52 +41,6 @@ namespace IntegrationTests
 
             }
 
-            private async Task<int> CreateHousehold(string householdName)
-            {
-                var householdDto = new HouseholdDto
-                {
-                    HouseholdName = householdName
-                };
-
-                var response = await _client.PostAsJsonAsync("/household", householdDto);
-
-
-                response.EnsureSuccessStatusCode();
-                var householdId = await response.Content.ReadFromJsonAsync<int>();
-
-
-                return householdId;
-            }
-
-            private async Task<HttpResponseMessage> RefreshToken()
-            {
-                var response = await _client.GetAsync("/Auth/update-token");
-
-                response.EnsureSuccessStatusCode();
-
-                return response;
-
-            }
-
-
-
-            /// <summary>
-            /// This method registers a user with given data.
-            /// </summary>
-            /// <returns></returns>
-            private async Task<HttpResponseMessage> RegisterUser(string email, string username, string password, string firstName, string lastName)
-            {
-                var registerRequest = new
-                {
-                    Email = email,
-                    Username = username,
-                    Password = password,
-                    FirstName = firstName,
-                    LastName = lastName,
-                };
-
-                return await _client.PostAsJsonAsync("/Auth/Register", registerRequest);
-            }
 
             /// <summary>
             /// Logs in a user with given email and password.
@@ -114,16 +72,7 @@ namespace IntegrationTests
             public async Task CreateGroup_ShouldReturnBadRequest_WhenUserIsNotPartOfAHousehold()
             {
 
-                string email = "testUser1@gmail.com";
-                string password = "password";
-                string username = "username";
-                string firstName = "John";
-                string lastName = "Doe";
-
-                var registerResponse = await RegisterUser(email, username, password, firstName, lastName);
-                registerResponse.EnsureSuccessStatusCode();
-
-                var loginResponse = await LoginUser(email, password);
+                var loginResponse = await LoginUser(_userWithoutHouseholdEmail, _userPassword);
                 loginResponse.EnsureSuccessStatusCode();
 
 
@@ -141,114 +90,43 @@ namespace IntegrationTests
                 Assert.Contains("Cannot create group, user is not in a household!", result.ToString());
             }
 
-            //later i'd like this to work with seeded users, thats why this big commented out part is here.
-
-            //[Fact]
-            //public async Task CreateGroup_ShouldReturnOk_WhenUserIsPartOfAHousehold()
-            //{
-
-            //    string email = "userWithHousehold@gmail.com"; //pre-seeded user
-            //    string password = "password";
-
-            //    var loginResponse = await LoginUser(email, password);
-
-            //    var responseContent = await loginResponse.Content.ReadAsStringAsync();
-            //    var errorResponse = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(responseContent);
-            //    loginResponse.EnsureSuccessStatusCode();
-
-
-            //    AttachAuthCookies(loginResponse);
-
-            //    var postGroupDto = new PostGroupDto
-            //    {
-            //        GroupName = "groupName"
-            //    };
-
-            //    var response = await _client.PostAsJsonAsync("/group", postGroupDto);
-            //    Console.WriteLine(response.ToString());
-            //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            //    var result = await response.Content.ReadFromJsonAsync<object>();
-            //    Assert.Contains("Cannot create group, user is not in a household!", result.ToString());
-            //}
-
 
             [Fact]
             public async Task CreateGroup_ShouldReturnOk_WhenUserIsPartOfAHousehold()
             {
 
-                string email = "testUser1@gmail.com";
-                string password = "password";
-                string username = "username";
-                string firstName = "John";
-                string lastName = "Doe";
-
-                // register the user
-                var registerResponse = await RegisterUser(email, username, password, firstName, lastName);
-                registerResponse.EnsureSuccessStatusCode();
-
-
-                //log in the user
-                var loginResponse = await LoginUser(email, password);
-                loginResponse.EnsureSuccessStatusCode();
-
+                var loginResponse = await LoginUser(_userWithHouseholdEmail, _userPassword);
 
                 loginResponse.EnsureSuccessStatusCode();
 
                 AttachAuthCookies(loginResponse);
-
-                // create the household
-                var createHousehold = await CreateHousehold("household");
-
-                //refresh the household id in the token
-                var refreshResponse = await RefreshToken();
-
-                AttachAuthCookies(refreshResponse);
-
 
                 var postGroupDto = new PostGroupDto
                 {
                     GroupName = "groupName"
                 };
-                // create  a new task group
+
                 var response = await _client.PostAsJsonAsync("/group", postGroupDto);
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-                var result = await response.Content.ReadFromJsonAsync<object>();
-                Assert.Contains("Group created successfully", result.ToString());
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var successResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseContent);
+
+                Assert.Equal(successResponse["message"], "Group created successfully");
             }
+
+
 
 
             [Fact]
             public async Task GetGroupsByHouseholdId_ShouldReturnOk_WhenUserIsPartOfAHousehold()
             {
-                string email = "testUser1@gmail.com";
-                string password = "password";
-                string username = "username";
-                string firstName = "John";
-                string lastName = "Doe";
-
-                // register the user
-                var registerResponse = await RegisterUser(email, username, password, firstName, lastName);
-                registerResponse.EnsureSuccessStatusCode();
 
 
-                //log in the user
-                var loginResponse = await LoginUser(email, password);
-                loginResponse.EnsureSuccessStatusCode();
-
-
+                var loginResponse = await LoginUser(_userWithHouseholdEmail, _userPassword);
                 loginResponse.EnsureSuccessStatusCode();
 
                 AttachAuthCookies(loginResponse);
-
-                // create the household
-                var createHousehold = await CreateHousehold("household");
-
-                //refresh the household id in the token
-                var refreshResponse = await RefreshToken();
-
-                AttachAuthCookies(refreshResponse);
 
                 //post a new task group
                 var postGroupDto = new PostGroupDto
@@ -275,19 +153,10 @@ namespace IntegrationTests
             [Fact]
             public async Task GetGroupsByHouseholdID_ShouldReturnInternalServerError_WhenUserIsNotInHousehold()
             {
-                string email = "testUser1@gmail.com";
-                string password = "password";
-                string username = "username";
-                string firstName = "John";
-                string lastName = "Doe";
-
-                // register the user
-                var registerResponse = await RegisterUser(email, username, password, firstName, lastName);
-                registerResponse.EnsureSuccessStatusCode();
 
 
                 //log in the user
-                var loginResponse = await LoginUser(email, password);
+                var loginResponse = await LoginUser(_userWithoutHouseholdEmail, _userPassword);
                 loginResponse.EnsureSuccessStatusCode();
 
                 AttachAuthCookies(loginResponse);
@@ -295,13 +164,11 @@ namespace IntegrationTests
 
                 var response = await _client.GetAsync("/groups/my-household");
 
-
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
 
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var errorResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseContent);
 
-                // we have  a custom error for this! "cannot create group, user is not in a household", atm i dont want to rewrite the controller, but later we should.
                 Assert.Equal(errorResponse["message"], "An error occurred while retrieving groups.");
             }
 
