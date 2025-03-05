@@ -7,34 +7,26 @@ import { apiPost } from "../../(utils)/api.js";
 import "./Register.css";
 
 export default function Register() {
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
-  const [error, setError] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const router = useRouter();
 
   const onSubmit = async (data) => {
+    setResponseMessage("");
+    setIsError(false);
     setLoading(true);
-    console.log(data);
 
     try {
       const response = await apiPost("/Auth/Register", data);
-      setResponseMessage("Registration successful. Please log in.");
-      //router.push("/login");
+      setResponseMessage(response.Message || "Registration successful. Please log in.");
     } catch (error) {
-      console.error(error);
-      setError(true);
-      setResponseMessage("An error occurred. Please try again later. "+error);
+      setIsError(true);
+      setResponseMessage(error.message); 
     } finally {
       setLoading(false);
-      
     }
   };
 
@@ -42,7 +34,6 @@ export default function Register() {
     <div className="register-container">
       <h2>Register</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-
         <div className="form-group">
           <label>First Name</label>
           <input {...register("firstName", { required: "First Name is required" })} />
@@ -73,15 +64,16 @@ export default function Register() {
           {errors.password && <p className="error-message">{errors.password.message}</p>}
         </div>
 
-        <button type="submit" disabled={loading || responseMessage} className="btn btn-primary">
+        <button type="submit" disabled={loading} className="btn btn-primary">
           {loading ? "Registering..." : "Register"}
         </button>
-
       </form>
 
-      {responseMessage && (<div className="response-message">
-        <p style={{color: error ? "red" : "#28a745"}}> {responseMessage}</p>
-      </div>)}
+      {responseMessage && (
+        <div className="response-message">
+          <p style={{ color: isError ? "red" : "green" }}>{responseMessage}</p>
+        </div>
+      )}
 
       <div className="login">
         <p>Already have an account?</p>
