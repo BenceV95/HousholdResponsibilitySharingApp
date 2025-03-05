@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { apiFetch, apiDelete } from "../../../../(utils)/api";
 import Loading from "../../../../(utils)/Loading";
+import "./AssignedTask.css"; 
 
 export default function AssignedTask() {
   const [scheduledTasks, setScheduledTasks] = useState([]);
@@ -39,7 +40,7 @@ export default function AssignedTask() {
 
   function findUserName(userId) {
     const u = users.find((x) => x.userResponseDtoId === userId);
-    return u ? u.username : userId; 
+    return u ? u.username : userId;
   }
 
   function repeatToString(repeatNum) {
@@ -47,30 +48,31 @@ export default function AssignedTask() {
       case 0: return "Daily";
       case 1: return "Weekly";
       case 2: return "Monthly";
-      default: return "NoRepeat";
+      default: return "No Repeat";
     }
   }
 
   return (
-    <div className="viewAssignedTasks">
+    <div className="assignedTasks-container">
       <div className="getDataButton">
         <button onClick={getData} className="btn btn-primary">
           Get Data
         </button>
       </div>
+
       {loading ? (
         <Loading />
       ) : (
-        <div className="display">
+        <div className="assignedTaskCards">
           {scheduledTasks.map((dataEntry, i) => {
             const title = findTaskTitle(dataEntry.householdTaskId);
             const createdByName = findUserName(dataEntry.createdByUserId);
             const assignedName = findUserName(dataEntry.assignedToUserId);
             const repeatStr = repeatToString(dataEntry.repeat);
-            const eventDate = new Date(dataEntry.eventDate).toLocaleString(); 
+            const eventDate = new Date(dataEntry.eventDate).toLocaleString();
 
             return (
-              <div key={i} className="taskData">
+              <div key={i} className="assignedTaskCard">
                 <h3>{title}</h3>
                 <p>Created By: {createdByName}</p>
                 <p>Assigned To: {assignedName}</p>
