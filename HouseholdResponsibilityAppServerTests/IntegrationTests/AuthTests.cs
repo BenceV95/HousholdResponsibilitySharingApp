@@ -14,13 +14,13 @@ namespace IntegrationTests
     {
 
         [Collection("IntegrationTests")]
-        public class MyControllerIntegrationTest
+        public class AuthControllerIntegrationTest
         {
             private readonly HRAWebAppFactory _app;
             private readonly HttpClient _client;
 
 
-            public MyControllerIntegrationTest()
+            public AuthControllerIntegrationTest()
             {
 
 

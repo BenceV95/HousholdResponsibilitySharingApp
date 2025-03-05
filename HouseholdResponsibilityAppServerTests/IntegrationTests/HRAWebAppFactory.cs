@@ -1,6 +1,9 @@
 using HouseholdResponsibilityAppServer;
 using HouseholdResponsibilityAppServer.Context;
+using HouseholdResponsibilityAppServer.Models.Households;
+using HouseholdResponsibilityAppServer.Models.Users;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -19,36 +22,17 @@ namespace IntegrationTests
             builder.ConfigureServices(async services =>
             {
 
-
-                //var dbContextDescriptor2 = services.SingleOrDefault(
-                //     d => d.ServiceType ==
-                //    typeof(IDbContextOptionsConfiguration<HouseholdResponsibilityAppContext>));
-                //    services.Remove(dbContextDescriptor2);
-
                 var dbContextDescriptor = services.SingleOrDefault(
                      d => d.ServiceType ==
                     typeof(IDbContextOptionsConfiguration<HouseholdResponsibilityAppContext>));
 
-                     services.Remove(dbContextDescriptor);
+                services.Remove(dbContextDescriptor);
 
-                        var dbConnectionDescriptor = services.SingleOrDefault(
-                    d => d.ServiceType ==
-                        typeof(DbConnection));
+                var dbConnectionDescriptor = services.SingleOrDefault(
+            d => d.ServiceType ==
+                typeof(DbConnection));
 
-                     services.Remove(dbConnectionDescriptor);
-
-
-
-
-
-                //var dbContextDescriptor = services.SingleOrDefault(
-                //    d => d.ServiceType == typeof(DbContextOptions<HouseholdResponsibilityAppContext>));
-
-                //if (dbContextDescriptor != null)
-                //{
-                //    services.Remove(dbContextDescriptor);
-                //}
-
+                services.Remove(dbConnectionDescriptor);
 
 
                 //Add new DbContextOptions for our two contexts, this time with inmemory db 
@@ -69,8 +53,52 @@ namespace IntegrationTests
                 householdContext.Database.EnsureCreated();
 
 
-                //Here we could do more initializing if we wished (e.g. adding admin user)
+                // seed users to the in memory db.
 
+                //for some reason, this doesnt seem to work
+
+                var userWithNoHousehold = new User
+                {
+                    Email = "userWithNoHousehold@gmail.com",
+                    UserName = "userWithNoHousehold",
+                    FirstName = "John",
+                    LastName = "Doe",
+                    Household = null,
+                    PasswordHash = "password"
+                };
+
+
+                householdContext.Users.Add(userWithNoHousehold);
+                householdContext.SaveChanges();
+
+
+                var userWithHousehold = new User
+                {
+                    Email = "userWithHousehold@gmail.com",
+                    NormalizedEmail = "userWithHousehold@gmail.com",
+                    UserName = "userWithHousehold",
+                    FirstName = "John",
+                    LastName = "Doe",
+                    Household = null,
+                    PasswordHash = "password"
+                };
+                //add  a household to the user
+                userWithHousehold.Household = new Household()
+                {
+                    Name = "Household",
+                    CreatedByUser = userWithHousehold,
+                    CreatedAt = DateTime.UtcNow,
+                    Groups = null,
+                    Histories = null,
+                    HouseholdId = 1,
+                    HouseholdTasks = null,
+                    Users = null,
+                };
+
+
+
+                householdContext.Users.Add(userWithHousehold);
+                householdContext.SaveChanges();
 
             });
         }
