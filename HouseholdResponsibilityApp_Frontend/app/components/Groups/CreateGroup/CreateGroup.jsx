@@ -45,8 +45,6 @@ export default function CreateGroup() {
 
   return (
     <div className="create-group-container">
-      <h2>Create Group</h2>
-
       <form onSubmit={handleSubmit(onSubmit)} className="create-group-form">
         <div className="form-group">
           <label htmlFor="name">Group Name:</label>
