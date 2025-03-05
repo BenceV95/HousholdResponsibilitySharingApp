@@ -71,7 +71,7 @@ export default function Register() {
 
       {responseMessage && (
         <div className="response-message">
-          <p style={{ color: isError ? "red" : "green" }}>{responseMessage}</p>
+          <p style={{ color: isError ? "red" : "rgb(45, 226, 45)" }}>{responseMessage}</p>
         </div>
       )}
 
