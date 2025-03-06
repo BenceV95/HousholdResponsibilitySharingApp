@@ -20,7 +20,10 @@ namespace HouseholdResponsibilityAppServer.Controllers
         const int _expirationTimeInMinutes = 60;
 
 
-        public AuthController(IAuthService authenticationService, IUserRepository userRepository, ITokenService tokenService)
+        public AuthController(
+            IAuthService authenticationService,
+            IUserRepository userRepository,
+            ITokenService tokenService)
         {
             _authenticationService = authenticationService;
             _userRepository = userRepository;
@@ -78,7 +81,8 @@ namespace HouseholdResponsibilityAppServer.Controllers
                 Expires = DateTime.UtcNow.AddMinutes(_expirationTimeInMinutes)
             });
 
-            //here we should just send back meta data that we want to display on the front end (user Id we dont need, cause on subsequent request we get it from the token);
+            //here we should just send back meta data that we want to display on the front end
+            //(user Id we dont need, cause on subsequent request we get it from the token);
             return Ok(new AuthResponse(result.Email, result.UserName, result.HouseholdId));
         }
 
@@ -88,8 +92,6 @@ namespace HouseholdResponsibilityAppServer.Controllers
             Response.Cookies.Delete("token");
             return Ok(new { message = "Logout successful" });
         }
-
-
 
         [Authorize]
         [HttpGet("/authenticate")]
@@ -111,7 +113,6 @@ namespace HouseholdResponsibilityAppServer.Controllers
             return Ok(new { email, username, expirationUnix });
         }
 
-
         // call this endpoint from the frontend after the token needs to be updated
         [Authorize]
         [HttpGet("update-token")]
@@ -123,15 +124,10 @@ namespace HouseholdResponsibilityAppServer.Controllers
             // Fetch updated user details (now including HouseholdId)
             var user = await _userRepository.GetUserByIdAsync(userClaims.UserId);
 
-
-
             Response.Cookies.Delete("token"); // Ensure old token is removed before adding the new one
-
-
 
             // Generate new token with updated HouseholdId
             var token = await _tokenService.CreateToken(user);
-
 
             Response.Cookies.Append("token", token, new CookieOptions
             {
@@ -143,7 +139,5 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
             return Ok(new { message = "Token refreshed successfully" });
         }
-
-
     }
 }
