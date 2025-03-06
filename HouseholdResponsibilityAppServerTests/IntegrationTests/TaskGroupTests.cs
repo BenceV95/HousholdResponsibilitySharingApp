@@ -146,8 +146,11 @@ namespace IntegrationTests
 
                 var groups = await getGroupsResponse.Content.ReadFromJsonAsync<IEnumerable<GroupDto>>();
 
+                //should contain the pre seeded group as well
+                Assert.Equal(2, groups.Count());
 
                 Assert.Contains(groups, group => group.Name == "groupName");
+                Assert.Contains(groups, group => group.Name == "Pre Seeded Group");
             }
 
             [Fact]
@@ -172,7 +175,28 @@ namespace IntegrationTests
                 Assert.Equal(errorResponse["message"], "An error occurred while retrieving groups.");
             }
 
+            [Fact]
+            public async Task GetGroupById_ShouldReturnOk_WhenGroupExists()
+            {
+                const int preSeededGroupId = 1;
 
+                var loginResponse = await LoginUser(_userWithoutHouseholdEmail, _userPassword);
+                loginResponse.EnsureSuccessStatusCode();
+
+                AttachAuthCookies(loginResponse);
+
+                var response = await _client.GetAsync($"/group/{preSeededGroupId}");
+                response.EnsureSuccessStatusCode();
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var succesResponse = JsonConvert.DeserializeObject<GroupResponseDto>(responseContent);
+
+                Assert.Equal(succesResponse.Name, "Pre Seeded Group");
+                Assert.Equal(succesResponse.GroupResponseDtoId, 1);
+
+                Assert.Equal(succesResponse.HouseholdId, 1);
+
+            }
 
 
         }
