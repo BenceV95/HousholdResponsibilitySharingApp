@@ -14,22 +14,20 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Data.Common;
 
+
 namespace IntegrationTests
 {
     public class HRAWebAppFactory : WebApplicationFactory<Program>
     {
-
         private readonly string _dbName = Guid.NewGuid().ToString();
         private readonly string _userWithoutHouseholdId = "1";
         private readonly string _userWithHouseholdId = "2";
         public HouseholdResponsibilityAppContext InMemoryDbContext { get; private set; }
 
-
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureServices(async services =>
             {
-
                 var dbContextDescriptor = services.SingleOrDefault(
                      d => d.ServiceType ==
                     typeof(IDbContextOptionsConfiguration<HouseholdResponsibilityAppContext>));
@@ -42,37 +40,28 @@ namespace IntegrationTests
 
                 services.Remove(dbConnectionDescriptor);
 
-
                 //Add new DbContextOptions for our two contexts, this time with inmemory db 
                 services.AddDbContext<HouseholdResponsibilityAppContext>(options =>
                 {
                     options.UseInMemoryDatabase(_dbName);
                 });
 
-
-
                 //We will need to initialize our in memory databases. 
                 //Since DbContexts are scoped services, we create a scope
                 using var scope = services.BuildServiceProvider().CreateScope();
-
-
 
                 //We use this scope to request the registered dbcontexts, and initialize the schemas
                 var householdContext = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
                 householdContext.Database.EnsureDeleted();
                 householdContext.Database.EnsureCreated();
 
-
                 InMemoryDbContext = householdContext;
 
                 await AddUsersToInMemoryDb(scope);
                 //await AddHouseholdToInMemoryDb(scope);
 
-
-
             });
         }
-
 
         private async Task AddUsersToInMemoryDb(IServiceScope scope)
         {

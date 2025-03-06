@@ -1,8 +1,0 @@
-.rbc-event {
-    font-size: 14px !important;  /* Bigger text */
-    padding: 5px !important;     /* More spacing */
-    min-height: 40px !important; /* Make event blocks taller */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }

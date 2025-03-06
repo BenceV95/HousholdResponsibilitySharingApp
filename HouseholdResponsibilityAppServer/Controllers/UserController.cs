@@ -150,4 +150,20 @@ public class UserController : ControllerBase
         }
     }
     */
+
+
+
+    [HttpPut("/user/{userId}/leave-household")]
+    public async Task<ActionResult> LeaveHousehold(string userId)
+    {
+        try
+        {
+            await _userService.LeaveHouseholdAsync(userId);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { Message = "An error occurred while leaving the household." });
+        }
+    }
 }

@@ -83,6 +83,34 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
             await _userRepository.DeleteUserAsync(userId);
         }
 
+        public async Task LeaveHouseholdAsync(string userId)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            user.Household = null;
+
+            await _userRepository.UpdateUserAsync(user);
+        }
+
+
+        public async Task LeaveHouseholdAsync(string userId)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            user.Household = null;
+
+            await _userRepository.UpdateUserAsync(user);
+        }
 
         public async Task<IEnumerable<UserResponseDto>> GetAllUsersByHouseholdIdAsync(UserClaims userClaims)
         {
@@ -104,6 +132,5 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
                     HouseholdId = user.Household?.HouseholdId
                 }).ToList();
         }
-
     }
 }

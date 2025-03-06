@@ -1,4 +1,4 @@
-.getTasks-container {
+.assignedTasks-container {
     background: #2c2c2c; 
     border-radius: 12px;
     padding: 2rem;
@@ -10,7 +10,7 @@
     text-align: center;
   }
   
-  .getTasks-container h2 {
+  .assignedTasks-container h2 {
     margin-bottom: 1.5rem;
     font-size: 1.8rem;
     color: #ffc107; 
@@ -26,14 +26,14 @@
     font-size: 1rem;
   }
   
-  .taskCards {
+  .assignedTaskCards {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
     justify-content: center;
   }
   
-  .taskCard {
+  .assignedTaskCard {
     background-color: #424242;
     border-radius: 10px;
     padding: 1rem;
@@ -44,17 +44,22 @@
     transition: transform 0.3s ease;
   }
   
-  .taskCard:hover {
+  .assignedTaskCard:hover {
     transform: translateY(-3px);
   }
   
+  .assignedTaskCard h3 {
+    margin-bottom: 0.5rem;
+    color: #fff;
+  }
+  
   @media (max-width: 600px) {
-    .getTasks-container {
+    .assignedTasks-container {
       width: 95%;
       padding: 1rem;
     }
   
-    .taskCards {
+    .assignedTaskCards {
       flex-direction: column;
       align-items: center;
     }
