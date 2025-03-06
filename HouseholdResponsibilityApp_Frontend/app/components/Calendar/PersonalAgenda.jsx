@@ -21,19 +21,27 @@ export default function PersonalAgenda() {
     async function fetchUserTasks() {
       if (user?.userId) {
         const scheduledTasks = await apiFetch(`/scheduleds`);
-        const filteredTasks = scheduledTasks.filter(task => task.assignedToUserId === user.userId);
-        
+        const filteredTasks = scheduledTasks.filter(
+          (task) => task.assignedToUserId === user.userId
+        );
+
         const householdTasks = await apiFetch(`/tasks/filtered/${user.householdId}`);
-        const events = filteredTasks.map(scheduledTask => {
-          const template = householdTasks.find(task => task.taskId === scheduledTask.householdTaskId);
-          return template ? {
-            title: template.title,
-            start: new Date(scheduledTask.eventDate),
-            end: new Date(scheduledTask.eventDate),
-            allDay: !scheduledTask.atSpecificTime,
-            assignedTo: scheduledTask.assignedToUserId, 
-          } : null;
-        }).filter(event => event !== null);
+        const events = filteredTasks
+          .map((scheduledTask) => {
+            const template = householdTasks.find(
+              (task) => task.taskId === scheduledTask.householdTaskId
+            );
+            return template
+              ? {
+                  title: template.title,
+                  start: new Date(scheduledTask.eventDate),
+                  end: new Date(scheduledTask.eventDate),
+                  allDay: !scheduledTask.atSpecificTime,
+                  assignedTo: scheduledTask.assignedToUserId,
+                }
+              : null;
+          })
+          .filter((event) => event !== null);
 
         setTasks(events);
       }
@@ -44,33 +52,35 @@ export default function PersonalAgenda() {
 
   const getEventStyle = (event) => {
     const colors = {
-      "0086ad72-5f23-497f-b183-5bc00158628c": "#FF5733", 
-      "195731ee-d2f9-430a-9792-06f573cd754d": "#33FF57", 
-      "666ae7c3-582f-4707-9938-27580f0cde18": "#3357FF", 
+      "0086ad72-5f23-497f-b183-5bc00158628c": "#FF5733",
+      "195731ee-d2f9-430a-9792-06f573cd754d": "#33FF57",
+      "666ae7c3-582f-4707-9938-27580f0cde18": "#3357FF",
     };
 
     return {
       style: {
-        backgroundColor: colors[event.assignedTo] || "#999999", 
+        backgroundColor: colors[event.assignedTo] || "#999999",
         color: "white",
         borderRadius: "5px",
         padding: "5px",
         border: "none",
+        fontWeight: "bold",
+        fontSize: "16px",
       },
     };
   };
 
   return (
-    <div style={{ height: "40rem", width: "100%", padding: "20px" }}>
+    <div style={{ height: "30rem", width: "100%", padding: "30px" }}>
       <Calendar
         localizer={localizer}
         events={tasks}
-        eventPropGetter={getEventStyle} 
+        eventPropGetter={getEventStyle}
         startAccessor="start"
         endAccessor="end"
         defaultView={Views.AGENDA}
         views={["agenda"]}
-        toolbar={false} 
+        toolbar={false}
         style={{
           background: "#fff",
           borderRadius: "8px",

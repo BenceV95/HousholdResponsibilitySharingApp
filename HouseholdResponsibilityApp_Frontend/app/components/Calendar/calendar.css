@@ -34,7 +34,7 @@
   }
   
   .rbc-today {
-    background: rgba(0, 123, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
   }
   
   @media (prefers-color-scheme: dark) {
@@ -44,7 +44,7 @@
     }
   
     .rbc-toolbar {
-      background: #333;
+      background: #fffcfc;
     }
   
     .rbc-toolbar button {
@@ -72,5 +72,9 @@
       max-width: 98%;
       min-height: 400px;
     }
+  }
+
+  span{
+    color: black;
   }
   
