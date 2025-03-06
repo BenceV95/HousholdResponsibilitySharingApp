@@ -1,0 +1,38 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "development" ]
+  pull_request:
+    branches: [ "development" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore HouseholdResponsibilityAppServer/HouseholdResponsibilityAppServer.sln
+
+    - name: Debug - List Test Projects
+      run: ls -R SolarWatch/
+
+    - name: Add Test Project if Missing
+      run: dotnet sln HouseholdResponsibilityAppServer/HouseholdResponsibilityAppServer.sln add HouseholdResponsibilityAppServerTests/HouseholdResponsibilityAppServerTests.csproj || true
+
+    - name: Build
+      run: dotnet build HouseholdResponsibilityAppServer/HouseholdResponsibilityAppServer.sln --no-restore --configuration Debug
+
+    - name: Debug - List Build Output
+      run: ls -R HouseholdResponsibilityAppServerTests/bin/Debug/net8.0/ || true
+
+    - name: Test
+      run: dotnet test HouseholdResponsibilityAppServerTests/HouseholdResponsibilityAppServerTests.csproj --no-build --verbosity normal
