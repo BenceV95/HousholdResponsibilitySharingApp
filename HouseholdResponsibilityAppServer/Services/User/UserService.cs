@@ -89,7 +89,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
 
             if (user == null)
             {
-                throw new Exception("User not found");
+                throw new KeyNotFoundException("User not found");
             }
 
             user.Household = null;

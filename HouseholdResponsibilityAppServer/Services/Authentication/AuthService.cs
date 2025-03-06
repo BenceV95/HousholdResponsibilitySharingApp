@@ -106,7 +106,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
         public  UserClaims GetClaimsFromHttpContext(HttpContext context)
         {
 
-           string        userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+           string userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var user = context.User;
 
             var householdId = user.FindFirst("householdId")?.Value;
