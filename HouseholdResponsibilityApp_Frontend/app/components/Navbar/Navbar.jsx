@@ -12,7 +12,7 @@ const Navbar = () => {
         <nav className='navbar'>
           <Link href='/'>
             <button className='btn btn-primary'>
-              <span>HOME</span>
+              HOME
             </button>
           </Link>
   
