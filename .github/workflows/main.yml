@@ -22,9 +22,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore HouseholdResponsibilityAppServer/HouseholdResponsibilityAppServer.sln
 
-    - name: Debug - List Test Projects
-      run: ls -R SolarWatch/
-
     - name: Add Test Project if Missing
       run: dotnet sln HouseholdResponsibilityAppServer/HouseholdResponsibilityAppServer.sln add HouseholdResponsibilityAppServerTests/HouseholdResponsibilityAppServerTests.csproj || true
 
