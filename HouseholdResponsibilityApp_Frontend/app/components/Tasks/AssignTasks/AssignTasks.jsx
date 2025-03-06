@@ -97,7 +97,6 @@ export default function AssignTasks() {
   return (
     <div className="assign-tasks-container">
       <form onSubmit={handleSubmit(onSubmit)} className="assign-tasks-form">
-        
         <div className="form-group">
           <label>Select Task:</label>
           <select
@@ -127,11 +126,16 @@ export default function AssignTasks() {
             <option value="">-- Select a User --</option>
             {users.map((u) => (
               <option key={u.userResponseDtoId} value={u.userResponseDtoId}>
-                {u.username === user.userName ? "Me" : u.username}
+                {u?.username === user?.userName
+                  ? "Me"
+                  : u?.username || "Unknown"}
               </option>
             ))}
           </select>
-          {errors.assignedToUserId && <p className="error">Assigned To is required</p>}
+
+          {errors.assignedToUserId && (
+            <p className="error">Assigned To is required</p>
+          )}
         </div>
 
         <div className="form-group repeat-frequency">
