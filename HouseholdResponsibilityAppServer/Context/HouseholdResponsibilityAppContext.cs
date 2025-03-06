@@ -74,7 +74,7 @@ namespace HouseholdResponsibilityAppServer.Context
                 // Foreign Key: CreatedBy (User who created the task)
                 entity.HasOne(st => st.CreatedBy)
                     .WithMany() // Assuming User does not have a ScheduledTask collection
-                    .OnDelete(DeleteBehavior.Restrict); // Prevent deletion of User if they created tasks
+                    .OnDelete(DeleteBehavior.SetNull); // Prevent deletion of User if they created tasks
 
                 // Foreign Key: AssignedTo (User assigned to the task)
                 entity.HasOne(st => st.AssignedTo)
@@ -113,6 +113,15 @@ namespace HouseholdResponsibilityAppServer.Context
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.UserName)
                 .IsUnique();
+
+            /*
+            modelBuilder.Entity<User>()
+               .HasOne(u => u.ScheduledTask) // Foreign Key relationship
+               .WithMany()
+               .OnDelete(DeleteBehavior.SetNull);
+            */
+
+            
 
             modelBuilder.Entity<Household>()
                 .HasOne(h => h.CreatedByUser)

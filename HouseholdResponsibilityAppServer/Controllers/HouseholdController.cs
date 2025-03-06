@@ -7,9 +7,10 @@ using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.HouseholdService;
 using HouseholdResponsibilityAppServer.Services.Invitation;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-[Authorize]
+//[Authorize]
 [ApiController]
 public class HouseholdController : ControllerBase
 {
@@ -76,6 +77,11 @@ public class HouseholdController : ControllerBase
             var createdHousehold = await _householdService.CreateHouseholdAsync(householdDto, userClaims);
 
             return Ok(createdHousehold.HouseholdId); // return the created household id
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex.Message);
+            return BadRequest(new { Message = ex.Message });
         }
         catch (Exception ex)
         {

@@ -109,6 +109,23 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpDelete("/user/delete-self")]
+    public async Task<ActionResult> DeleteSelf()
+    {
+        try
+        {
+            var user = _authService.GetClaimsFromHttpContext(HttpContext);
+            await _userService.DeleteUserAsync(user.UserId);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+
+            return StatusCode(500, new { Message = "An error occurred while deleting user." });
+        }
+    }
+
     /// <summary>
     /// Gives back all the users in the same household (household id is from the token.)
     /// </summary>
@@ -153,16 +170,25 @@ public class UserController : ControllerBase
 
 
 
-    [HttpPut("/user/{userId}/leave-household")]
-    public async Task<ActionResult> LeaveHousehold(string userId)
+    [HttpPut("/user/leave-household")]
+    public async Task<ActionResult> LeaveHousehold()
     {
         try
         {
-            await _userService.LeaveHouseholdAsync(userId);
+            var user = _authService.GetClaimsFromHttpContext(HttpContext);
+
+            _logger.LogError(user.UserId);
+
+            await _userService.LeaveHouseholdAsync(user.UserId);
             return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { Message = ex.Message });
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex.Message);
             return StatusCode(500, new { Message = "An error occurred while leaving the household." });
         }
     }
