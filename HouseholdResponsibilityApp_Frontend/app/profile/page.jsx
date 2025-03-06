@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../components/AuthContext/AuthProvider";
-import { apiFetch, apiDelete } from "../../(utils)/api";
-import CreateHousehold from "../components/Households/CreateHousehold/CreateHousehold";
-import JoinHousehold from "../components/Households/JoinHousehold/page";
+import { apiFetch, apiDelete, apiPut } from "../../(utils)/api";
+import CreateHouseholdModal from "../components/Households/CreateHousehold/CreateHouseholdModal";
+import JoinHouseholdModal from "../components/Households/JoinHousehold/JoinHouseholdModal";
 import Household from "../components/Households/Household/Household";
 import Loading from "../../(utils)/Loading";
 import "./Profile.css";
@@ -18,11 +18,13 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [succesFullyCreated, setSuccesFullyCreated] = useState(false);
+  const [succesFullyJoined, setSuccesFullyJoined] = useState(false);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isHouseholdModalOpen, setIsHouseholdModalOpen] = useState(false);
-
-  const [action, setAction] = useState(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
 
   useEffect(() => {
     async function getHousehold() {
@@ -42,28 +44,62 @@ export default function Profile() {
     if (user?.householdId) {
       getHousehold();
     }
-  }, [user]);
+  }, [user, succesFullyCreated, succesFullyJoined]);
 
   function handleProfileUpdated(updatedUser) {
     setResponseMessage("Profile updated successfully!");
   }
+
   function handleHouseholdNameChanged(updatedHousehold) {
     setHousehold(updatedHousehold);
     setResponseMessage("Household name changed successfully!");
   }
+
   const deleteAccount = async () => {
     if (!window.confirm("Are you sure you want to delete your account?")) {
       return;
     }
     try {
-      const response = await apiDelete(`/users/${user.userId}`);
-      setResponseMessage(response.Message || "Account deleted. Goodbye!");
+      const response = await apiDelete(`/user/${user.userId}`);
+      const message = response?.Message || "Account deleted successfully!";
+      alert(message);
       logout();
     } catch (error) {
       setIsError(true);
       setResponseMessage(error.message || "Error deleting account.");
     }
   };
+
+  const deleteHousehold = async () => {
+    if (!window.confirm("Are you sure you want to delete your household?")) {
+      return;
+    }
+    try {
+      await apiDelete(`/household/${user.householdId}`);
+      setUser({ ...user, householdId: null });
+      setHousehold(null);
+      alert("Household deleted successfully!");
+    } catch (error) {
+      setIsError(true);
+      setResponseMessage(error.message || "Error deleting household.");
+    }
+  };
+
+  const leaveHousehold = async () => {
+    if (!window.confirm("Are you sure you want to leave this household?")) {
+      return;
+    }
+    try {
+      await apiPut(`/user/${user.userId}/leave-household`, {});
+      setUser({ ...user, householdId: null });
+      setHousehold(null);
+      alert("You have left the household successfully!");
+    } catch (error) {
+      setIsError(true);
+      setResponseMessage(error.message || "Error leaving household.");
+    }
+  };
+  
 
   return (
     <div className="profile-page">
@@ -79,18 +115,24 @@ export default function Profile() {
             household ? (
               <>
                 <Household dataEntry={household} />
-                <button
-                  className="btn btn-danger"
-                  onClick={() => alert("Does not work yet")}
-                >
-                  Delete/Leave Household (WIP)
-                </button>
-                <button
-                  className="btn btn-warning"
-                  onClick={() => setIsHouseholdModalOpen(true)}
-                >
-                  Change Household Name
-                </button>
+
+                {household.createdByUsername === user?.userName ? (
+                  <>
+                    <button className="btn btn-danger" onClick={deleteHousehold}>
+                      Delete Household
+                    </button>
+                    <button
+                      className="btn btn-warning"
+                      onClick={() => setIsHouseholdModalOpen(true)}
+                    >
+                      Change Household Name
+                    </button>
+                  </>
+                ) : (
+                  <button className="btn btn-danger" onClick={leaveHousehold}>
+                    Leave Household
+                  </button>
+                )}
               </>
             ) : (
               loading && <Loading />
@@ -100,13 +142,13 @@ export default function Profile() {
               <h3>You are not part of any household.</h3>
               <button
                 className="btn btn-success"
-                onClick={() => setAction("create")}
+                onClick={() => setIsCreateModalOpen(true)}
               >
                 Create one
               </button>
               <button
                 className="btn btn-primary"
-                onClick={() => setAction("join")}
+                onClick={() => setIsJoinModalOpen(true)}
               >
                 Join a household
               </button>
@@ -142,15 +184,32 @@ export default function Profile() {
         onHouseholdNameChanged={handleHouseholdNameChanged}
       />
 
-      {action === "create" && <CreateHousehold />}
-      {action === "join" && <JoinHousehold />}
+      <CreateHouseholdModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        setSuccesFullyCreated={setSuccesFullyCreated}
+      />
+
+      <JoinHouseholdModal
+        isOpen={isJoinModalOpen}
+        onClose={() => setIsJoinModalOpen(false)}
+        setSuccesFullyJoined={setSuccesFullyJoined}
+      />
 
       <div className="notes">
         <ul>
-          <li>Add an option here that once the user has a household and if the admin then edit household.</li>
-          <li>User deletion is broken ATM both for users with or without household. <b>Must investigate</b></li>
-          <li>Refresh site once user has joined or created household else broken</li>
-          <li>We need to use PATCH for the user to edit their settings so only the necessary info needs to be sent/updated</li>
+          <li>
+            Add an option here that once the user has a household and if the admin then edit household.
+          </li>
+          <li>
+            User deletion is broken ATM both for users with or without household. <b>Must investigate</b>
+          </li>
+          <li>
+            Refresh site once user has joined or created household else broken
+          </li>
+          <li>
+            We need to use PATCH for the user to edit their settings so only the necessary info needs to be sent/updated
+          </li>
         </ul>
       </div>
     </div>
