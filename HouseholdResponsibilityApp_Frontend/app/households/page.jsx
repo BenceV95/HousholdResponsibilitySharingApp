@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react"
 import AllHouseholds from "../components/Households/AllHouseholds/AllHouseholds"
-import CreateHousehold from "../components/Households/CreateHousehold/CreateHousehold";
-import ChangeHouseholdName from "../components/Households/ChangeHouseholdName/ChangeHouseholdName";
-import JoinHousehold from "../components/Households/JoinHousehold/page";
+import CreateHousehold from "../components/Households/CreateHousehold/CreateHouseholdModal";
+import ChangeHouseholdName from "../components/Households/ChangeHouseholdNameModal/ChangeHouseholdName";
+import JoinHousehold from "../components/Households/JoinHousehold/JoinHouseholdModal";
 
 export default function Households() {
     const [action, setAction] = useState(null);

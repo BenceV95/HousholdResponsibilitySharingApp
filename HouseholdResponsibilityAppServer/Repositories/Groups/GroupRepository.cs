@@ -15,46 +15,27 @@ namespace HouseholdResponsibilityAppServer.Repositories.Groups
 
         public async Task<IEnumerable<TaskGroup>> GetAllGroupsAsync()
         {
-            try
-            {
-                return await _context.Groups.Include(g => g.Household).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Database error: Unable to fetch groups.");
-            }
+            return await _context.Groups.Include(g => g.Household).ToListAsync();
         }
 
         public async Task<TaskGroup> GetGroupByIdAsync(int groupId)
         {
-            try
-            {
-                var group = await _context.Groups.FirstOrDefaultAsync(g => g.GroupId == groupId);
+            var group = await _context.Groups
+                .Include(g => g.Household)
+                .FirstOrDefaultAsync(g => g.GroupId == groupId);
 
-                if (group == null)
-                {
-                    throw new KeyNotFoundException($"Group with ID {groupId} not found.");
-                }
-
-                return group;
-            }
-            catch (Exception ex)
+            if (group == null)
             {
-                throw new Exception("Database error: Unable to fetch group by ID.");
+                throw new KeyNotFoundException($"Group with ID {groupId} not found.");
             }
+
+            return group;
         }
 
         public async Task AddGroupAsync(TaskGroup group)
         {
-            try
-            {
-                await _context.Groups.AddAsync(group);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            await _context.Groups.AddAsync(group);
+            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateGroupAsync(TaskGroup group)
@@ -94,7 +75,10 @@ namespace HouseholdResponsibilityAppServer.Repositories.Groups
 
         public async Task<IEnumerable<TaskGroup>> GetGroupsByHouseholdId(int householdId)
         {
-           return await _context.Groups.Include(g=> g.Household).Where(g => g.Household.HouseholdId == householdId).ToListAsync();
+            return await _context.Groups
+                .Include(g => g.Household)
+                .Where(g => g.Household.HouseholdId == householdId)
+                .ToListAsync();
         }
     }
 

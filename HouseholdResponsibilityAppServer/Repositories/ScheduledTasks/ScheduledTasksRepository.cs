@@ -76,7 +76,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
             return await _dbContext.ScheduledTasks
                 .Include(task => task.CreatedBy)
                 .Include(task => task.HouseholdTask)
-                    .ThenInclude(ht => ht.Household)
+                .ThenInclude(ht => ht.Household)
                 .Where(task => task.HouseholdTask.Household.HouseholdId == householdId)
                 .ToListAsync();
         }

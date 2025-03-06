@@ -47,13 +47,14 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
             {
                 GroupResponseDtoId = group.GroupId,
                 Name = group.Name,
+                HouseholdId = group.Household.HouseholdId
             };
         }
 
         public async Task CreateGroupAsync(PostGroupDto postGroupDto, UserClaims userClaims)
         {
-
-            // get the household id form the claims (it's a nullable string) so we have to parse it (if user is not in  a household, should be null, and throw an exception)
+            // get the household id form the claims (it's a nullable string)
+            // so we have to parse it (if user is not in  a household, should be null, and throw an exception)
             var isNumber = int.TryParse(userClaims.HouseholdId, out int householdId);
 
             if (!isNumber)
@@ -62,6 +63,11 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
             }
 
             var household = await _householdRepository.GetHouseholdByIdAsync(householdId);
+            var checkForSameName = await _groupRepository.GetGroupsByHouseholdId(householdId);
+            if (checkForSameName.Any(g => g.Name == postGroupDto.GroupName))
+            {
+                throw new ArgumentException($"Group with name: {postGroupDto.GroupName} already exists !");
+            }
 
             var group = new TaskGroup
             {
@@ -73,13 +79,30 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
             await _groupRepository.AddGroupAsync(group);
         }
 
-        public async Task UpdateGroupAsync(int groupId, GroupDto groupDto)
+        public async Task UpdateGroupAsync(int groupId, GroupDto groupDto, UserClaims userClaims)
         {
-            var group = await _groupRepository.GetGroupByIdAsync(groupId);
+            var isNumber = int.TryParse(userClaims.HouseholdId, out int householdId);
 
-            group.Name = groupDto.Name;
+            if (!isNumber)
+            {
+                throw new ArgumentException("Cannot update group, user is not in a household!");
+            }
 
-            await _groupRepository.UpdateGroupAsync(group);
+            if (string.IsNullOrWhiteSpace(groupDto.Name))
+            {
+                throw new ArgumentException("Name can not be empty !");
+            }
+
+            var allGroupsByHouseholdId = await _groupRepository.GetGroupsByHouseholdId(householdId);
+            var findGroup = allGroupsByHouseholdId.FirstOrDefault(g => g.GroupId == groupId);
+            if (findGroup == null)
+            {
+                throw new ArgumentException($"Group with ID: {groupId} does not exists !");
+            }
+
+            findGroup.Name = groupDto.Name;
+
+            await _groupRepository.UpdateGroupAsync(findGroup);
         }
 
         public async Task DeleteGroupAsync(int groupId)
@@ -89,13 +112,16 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
 
         public async Task<IEnumerable<GroupResponseDto>> GetGroupsByHouseholdIdAsync(UserClaims userClaims)
         {
-            
+            if (string.IsNullOrEmpty(userClaims.HouseholdId))
+            {
+                throw new ArgumentException($"{userClaims.UserName} is not part of a household.");
+            }
+
             var householdId = int.Parse(userClaims.HouseholdId);
-            
+
             var filteredGroups = await _groupRepository.GetGroupsByHouseholdId(householdId);
 
             return filteredGroups.Select(group => ConvertModelToDto(group));
-            
         }
 
         private GroupResponseDto ConvertModelToDto(TaskGroup taskGroup)

@@ -7,22 +7,28 @@ using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.HouseholdService;
 using HouseholdResponsibilityAppServer.Services.Invitation;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
+//[Authorize]
 [ApiController]
 public class HouseholdController : ControllerBase
 {
     private readonly IHouseholdService _householdService;
-
     private readonly IInvitationService _invitationService;
-
     private readonly IAuthService _authService;
+    private readonly ILogger<GroupController> _logger;
 
-    public HouseholdController(IHouseholdService householdService, IInvitationService invitationService, IAuthService authService)
+    public HouseholdController(
+        IHouseholdService householdService,
+        IInvitationService invitationService,
+        IAuthService authService,
+        ILogger<GroupController> logger)
     {
         _householdService = householdService;
         _invitationService = invitationService;
         _authService = authService;
+        _logger = logger;
     }
 
     [HttpGet("/households")]
@@ -35,9 +41,9 @@ public class HouseholdController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while retrieving households.");
+            return StatusCode(500, new { Message = "An error occurred while retrieving all Households." });
         }
     }
 
@@ -49,15 +55,18 @@ public class HouseholdController : ControllerBase
             var household = await _householdService.GetHouseholdByIdAsync(householdId);
             return Ok(household);
         }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { Message = e.Message });
+        }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while retrieving household.");
+            return StatusCode(500, new { Message = "An error occurred while retrieving Household." });
         }
     }
 
-    [Authorize]
     [HttpPost("/household")]
     public async Task<ActionResult> CreateHousehold([FromBody] HouseholdDto householdDto)
     {
@@ -68,32 +77,38 @@ public class HouseholdController : ControllerBase
             var createdHousehold = await _householdService.CreateHouseholdAsync(householdDto, userClaims);
 
             return Ok(createdHousehold.HouseholdId); // return the created household id
-
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex.Message);
+            return BadRequest(new { Message = ex.Message });
         }
         catch (Exception ex)
         {
-
-            return BadRequest("An error occurred while creating household.\n" + ex.Message);
+            _logger.LogError(ex.Message);
+            return StatusCode(500, new { Message = "An error occurred while creating the Household." });
         }
     }
 
-    [Authorize]
     [HttpPost("/household/join")]
     public async Task<ActionResult> JoinHousehold([FromQuery]int id)
     {
-        // this is a temp solution for the demo, validation need to be implemented !!!!
         try
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            Debug.WriteLine(id + " - " + userId);
+
             await _householdService.JoinHousehold(id, userId);
 
             return Ok(new {Message = $"User: {userId} has joined household: {id}."});
         }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { Message = e.Message });
+        }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
-            return BadRequest("An error occurred while joining the household.\n"+ex.Message);
+            _logger.LogError(ex.Message);
+            return StatusCode(500, new { Message = $"An error occurred while joining Household with ID: {id}." });
         }
     }
 
@@ -106,11 +121,15 @@ public class HouseholdController : ControllerBase
             await _householdService.UpdateHouseholdAsync(householdId, householdDto);
             return NoContent();
         }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { Message = e.Message });
+        }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while updating household.");
+            return StatusCode(500, new { Message = "An error occurred while updating the Household." });
         }
     }
 
@@ -122,14 +141,20 @@ public class HouseholdController : ControllerBase
             await _householdService.DeleteHouseholdAsync(householdId);
             return NoContent();
         }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { Message = e.Message });
+        }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return NotFound("An error occurred while deleting household.");
+            return StatusCode(500, new { Message = "An error occurred while deleting the Household." });
         }
     }
 
+    // TODO: household invites to be implemented
+    /*
     [HttpPost("/household/{householdId}/invite")]
     public async Task<ActionResult> InviteUserToHousehold(int householdId, [FromBody] InviteUserDto inviteUserDto)
     {
@@ -140,9 +165,10 @@ public class HouseholdController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
-            return BadRequest("An error occurred while sending the invitation.");
+            _logger.LogError(ex.Message);
+            return StatusCode(500, new { Message = "An error occurred while creating the Invitation for Household." });
         }
     }
+    */
 
 }

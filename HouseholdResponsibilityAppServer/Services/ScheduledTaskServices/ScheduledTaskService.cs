@@ -18,8 +18,20 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
             _userRepository = userRepository;
         }
 
+        public async Task<IEnumerable<ScheduledTaskDTO>> GetAllScheduledByHouseholdIdAsync(UserClaims userClaims)
+        {
+
+            int householdId = int.Parse(userClaims.HouseholdId);
+
+            var filteredTasks = await _scheduledTasksRepository.GetScheduledTasksByHouseholdIdAsync(householdId);
+
+            return filteredTasks.Select(ConvertModelToDTO);
+        }
+
         public async Task<ScheduledTaskDTO> AddScheduledTaskAsync(CreateScheduledTaskRequest scheduledTaskCreateRequest, UserClaims userClaims)
         {
+            ArgumentNullException.ThrowIfNull(scheduledTaskCreateRequest);
+
             //convert request to modell
             var scheduledTaskModel = await ConvertRequestToModel(scheduledTaskCreateRequest, userClaims);
             //add the modell to db
@@ -35,13 +47,8 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
 
         public async Task<IEnumerable<ScheduledTaskDTO>> GetAllScheduledTasksAsync()
         {
-            List<ScheduledTaskDTO> scheduledTaskDTOs = new List<ScheduledTaskDTO>();
             var scheduledTaskModels = await _scheduledTasksRepository.GetAllScheduledTasksAsync();
-            foreach (var task in scheduledTaskModels)
-            {
-                scheduledTaskDTOs.Add(ConvertModelToDTO(task));
-            }
-            return scheduledTaskDTOs;
+            return scheduledTaskModels.Select(ConvertModelToDTO);
         }
 
         public async Task<ScheduledTaskDTO> GetByIdAsync(int scheduledTaskId)
@@ -58,36 +65,37 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
             return ConvertModelToDTO(updatedModel);
         }
 
+
+
         private async Task<ScheduledTask> ConvertRequestToModel(CreateScheduledTaskRequest scheduledTaskCreateRequest, UserClaims userClaims)
         {
             var task = await _householdTaskRepository.GetByIdAsync(scheduledTaskCreateRequest.HouseholdTaskId);
-            var createdByUser = await _userRepository.GetUserByIdAsync(userClaims.UserId);
-            var assignedToUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.AssignedToUserId);
-
             if (task == null)
             {
-                throw new Exception("Household task not found!");
-            }
-            if (createdByUser == null)
-            {
-                throw new Exception("Created by user not found!");
-            }
-            if (assignedToUser == null)
-            {
-                throw new Exception("Assigned to user not found!");
+                throw new KeyNotFoundException("Household task not found!");
             }
 
+            var createdByUser = await _userRepository.GetUserByIdAsync(userClaims.UserId);
+            if (createdByUser == null)
+            {
+                throw new KeyNotFoundException("Created by user not found!");
+            }
             // Checks whether the household associated with the task matches the createdByUser's household
             if (createdByUser.Household == null || createdByUser.Household.HouseholdId != task.Household.HouseholdId)
             {
-                throw new Exception("You do not belong to the same household as the task!");
+                throw new UnauthorizedAccessException("You do not belong to the same household as the task!");
+            }
+
+            var assignedToUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.AssignedToUserId);
+            if (assignedToUser == null)
+            {
+                throw new KeyNotFoundException("Assigned to user not found!");
             }
             // Checks whether the assignedToUser is also in the same household
             if (assignedToUser.Household == null || assignedToUser.Household.HouseholdId != task.Household.HouseholdId)
             {
-                throw new Exception("The user to assign the task to does not belong to the same household!");
+                throw new UnauthorizedAccessException("The user to assign the task to does not belong to the same household!");
             }
-
 
             return new ScheduledTask()
             {
@@ -99,36 +107,27 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
                 Repeat = scheduledTaskCreateRequest.Repeat,
 
             };
-
         }
+
         private ScheduledTaskDTO ConvertModelToDTO(ScheduledTask scheduledTaskModel)
         {
+            if (scheduledTaskModel == null)
+            {
+                throw new ArgumentNullException(nameof(scheduledTaskModel), "ScheduledTask model cannot be null");
+            }
+
             return new ScheduledTaskDTO()
             {
                 ScheduledTaskId = scheduledTaskModel.ScheduledTaskId,
-                HouseholdTaskId = scheduledTaskModel.HouseholdTask.TaskId,
-                CreatedByUserId = scheduledTaskModel.CreatedBy.Id,
-                AssignedToUserId = scheduledTaskModel.AssignedTo.Id,
+                HouseholdTaskId = scheduledTaskModel.HouseholdTask?.TaskId ?? 0,
+                CreatedByUserId = scheduledTaskModel.CreatedBy?.Id ?? string.Empty,
+                AssignedToUserId = scheduledTaskModel.AssignedTo?.Id ?? string.Empty,
                 EventDate = scheduledTaskModel.EventDate,
                 CreatedAt = scheduledTaskModel.CreatedAt,
                 AtSpecificTime = scheduledTaskModel.AtSpecificTime,
                 Repeat = scheduledTaskModel.Repeat,
             };
         }
-
-
-
-        public async Task<IEnumerable<ScheduledTaskDTO>> GetAllScheduledByHouseholdIdAsync(UserClaims userClaims)
-        {
-
-            int householdId = int.Parse(userClaims.HouseholdId);
-            
-            var fillteredTasks = await _scheduledTasksRepository.GetScheduledTasksByHouseholdIdAsync(householdId);
-
-
-            return fillteredTasks.Select(task => ConvertModelToDTO(task)).ToList();
-        }
-
 
     }
 }

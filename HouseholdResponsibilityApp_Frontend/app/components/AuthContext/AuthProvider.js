@@ -16,7 +16,8 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
 
-    // set the user every page render/refresh
+
+    //set the user every page render/refresh
     useEffect(() => {
         const storedUser = sessionStorage.getItem("userData");
         setUser(storedUser)

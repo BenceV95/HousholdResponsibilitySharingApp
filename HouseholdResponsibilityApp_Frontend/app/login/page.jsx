@@ -6,26 +6,28 @@ import Link from "next/link";
 import "./Login.css";
 
 export default function Login() {
-
   const { login } = useAuth();
-  const [error, setError] = useState("");
+  const [responseMessage, setResponseMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setResponseMessage("");
+    setIsError(false);
 
     const formData = new FormData(e.currentTarget);
-    const email = formData.get('email');
-    const password = formData.get('password');
+    const email = formData.get("email");
+    const password = formData.get("password");
 
     try {
       const response = await login(email, password);
-      router.push("/");
+      setResponseMessage(response.Message ||"Login successful! Redirecting...");
+      setTimeout(() => router.push("/"));
     } catch (error) {
-      setError(error.message);
-      console.log(error);
+      setIsError(true);
+      setResponseMessage(error.message);
     }
-
   };
 
   return (
@@ -43,7 +45,13 @@ export default function Login() {
 
         <button type="submit" className="btn btn-success">Login</button>
       </form>
-      {error && (<p className="loginError">{error}</p>)}
+
+      {responseMessage && (
+        <div className="response-message">
+          <p style={{ color: isError ? "red" : "green" }}>{responseMessage}</p>
+        </div>
+      )}
+
       <div className="register">
         <p>Don't have an account yet?</p>
         <Link href={"/register"} className="btn btn-primary">Register</Link>
