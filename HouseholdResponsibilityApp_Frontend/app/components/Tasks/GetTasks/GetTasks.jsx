@@ -4,12 +4,15 @@ import { apiDelete, apiFetch } from "../../../../(utils)/api";
 import "./GetTasks.css"; 
 import Loading from "../../../../(utils)/Loading";
 import Task from "../Task/Task";
+import { useAuth } from "../../../components/AuthContext/AuthProvider";
 
 export default function GetTasks() {
   const [tasks, setTasks] = useState([]);
   const [users, setUsers] = useState([]);
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const { user } = useAuth(); 
 
   const getData = async () => {
     setLoading(true);
@@ -37,8 +40,8 @@ export default function GetTasks() {
   };
 
   function findUsernameById(userId) {
-    const user = users.find((u) => u.userResponseDtoId === userId);
-    return user ? user.username : `User #${userId}`;
+    const userObj = users.find((u) => u.userResponseDtoId === userId);
+    return userObj ? userObj.username : `User #${userId}`;
   }
 
   function findGroupNameById(groupId) {
@@ -58,20 +61,25 @@ export default function GetTasks() {
         <Loading />
       ) : (
         <div className="taskCards">
-          {tasks.map((task) => {
-            const userName = findUsernameById(task.userId);
-            const groupName = findGroupNameById(task.groupId);
-            return (
-              <div key={task.taskId} className="taskCard">
-                <Task
-                  data={task}
-                  deleteTask={deleteTask}
-                  userName={userName}
-                  groupName={groupName}
-                />
-              </div>
-            );
-          })}
+          {tasks
+            .filter(
+              (task) =>
+                Number(task.householdId) === Number(user?.householdId)
+            )
+            .map((task) => {
+              const userName = findUsernameById(task.userId);
+              const groupName = findGroupNameById(task.groupId);
+              return (
+                <div key={task.taskId} className="taskCard">
+                  <Task
+                    data={task}
+                    deleteTask={deleteTask}
+                    userName={userName}
+                    groupName={groupName}
+                  />
+                </div>
+              );
+            })}
         </div>
       )}
     </div>
