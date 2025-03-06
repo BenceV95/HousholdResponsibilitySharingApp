@@ -1,12 +1,23 @@
-import Link from "next/link";
-import './root.css'
+"use client";
+import "./root.css";
+import { useAuth } from "./components/AuthContext/AuthProvider";
+import PersonalAgenda from "./components/Calendar/PersonalAgenda";
 
 export default function Home() {
+  const { user } = useAuth();
 
   return (
-    <div className="home">
-      <h1>Welcome to Household Responsibility Sharing App !</h1>
-      <p>With our App you can set up a household, invite your household members and delegate, assign responsibilities so that living together will be better.</p>
-    </div>
+    <main className="home">
+      <h1>🏡 Household Responsibility Sharing App</h1>
+      <p>
+        Set up a household, invite members, and assign responsibilities for a more organized and better living experience.
+      </p>
+      
+      {user && user.householdId && (
+        <div className="calendar-container">
+          <PersonalAgenda />
+        </div>
+      )}
+    </main>
   );
 }

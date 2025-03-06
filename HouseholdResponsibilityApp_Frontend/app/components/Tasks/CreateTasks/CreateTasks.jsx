@@ -1,81 +1,124 @@
 "use client";
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { apiFetch,apiPut } from '../../../(utils)/api';
-import './CreateTasks.css';
-import uuidv4 from '../../../(utils)/uuidv4';
+import { useForm } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { apiFetch, apiPost } from "../../../../(utils)/api";
+import "./CreateTasks.css";
+import { useAuth } from "../../AuthContext/AuthProvider"; //módosítás
 
-const CreateTasks = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const [message, setMessage] = useState('');
 
-    
+export default function CreateTasks() {
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const [responseMessage, setResponseMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [groups, setGroups] = useState([]);
+  const { user } = useAuth();
 
-    const onSubmit = async (data) => {
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const groupList = await apiFetch("/groups/my-household");
 
-        const taskData = {
-            [uuidv4()]: {
-                title: data.title,
-                description: data.description,
-                created_by: data.created_by,
-                group_id: data.group_id,
-                priority: data.priority || false,
-            }
-        };
+        setGroups(groupList)
 
-        try {
-            let postedForm = await apiPut("/tasks", taskData);
-            console.log(postedForm);
-            setMessage('Successfully posted form data !');
+      } catch (err) {
+        setIsError(true);
+        setResponseMessage("Failed to load groups.");
+      }
+    }
+    if (user) fetchData();
+  }, [user]);
 
-        } catch (error) {
-            console.log(error);
-            setMessage('An error occurred while posting the task');
-        }
+  /*
+  useEffect(() => {
+    register("createdBy", { required: "Created By is required" });
+    register("householdId", { required: "Household ID is required" });
+  }, [register]);
+
+  useEffect(() => {
+    if (user) {
+      setValue("createdBy", user.userId);
+      setValue("householdId", user.householdId || 0);
+    }
+  }, [user, setValue]);
+  */
+
+  const onSubmit = async (formData) => {
+    setResponseMessage("");
+    setIsError(false);
+
+    const taskData = {
+      title: formData.title,
+      description: formData.description,
+      groupId: Number(formData.groupId),
+      priority: formData.priority || false,
     };
 
-    return (
-        <form onSubmit={handleSubmit(onSubmit)} className="task-form">
-            <label htmlFor="title">Title:</label>
-            <input
-                type="text"
-                id="title"
-                {...register('title', { required: 'Title is required' })}
-            />
-            {errors.title && <span>{errors.title.message}</span>}
+    try {
+      const response = await apiPost("/task", taskData);
+      setResponseMessage(response?.Message || "Successfully created task!");
+    } catch (error) {
+      setIsError(true);
+      setResponseMessage(error.message);
+    }
+  };
 
-            <label htmlFor="description">Description:</label>
-            <textarea
-                id="description"
-                {...register('description')}
-            />
+  return (
+    <div className="create-task-container">
 
-            <label htmlFor="createdBy">Created By (User ID):</label>
-            <input
-                type="number"
-                id="createdBy"
-                {...register('created_by', { required: 'Created By is required' })}
-            />
-            {errors.created_by && <span>{errors.created_by.message}</span>}
+      <form onSubmit={handleSubmit(onSubmit)} className="create-task-form">
+        
+        <div className="form-group">
+          <label htmlFor="title">Task Title</label>
+          <input
+            type="text"
+            id="title"
+            placeholder="Enter a task title..."
+            {...register("title", { required: "Title is required" })}
+          />
+          {errors.title && <span className="error">{errors.title.message}</span>}
+        </div>
 
-            <label htmlFor="groupId">Group ID:</label>
-            <input
-                type="number"
-                id="groupId"
-                {...register('group_id')}
-            />
+        <div className="form-group">
+          <label htmlFor="description">Description</label>
+          <textarea
+            id="description"
+            placeholder="Enter task details..."
+            {...register("description")}
+          />
+        </div>
 
-            <label htmlFor="priority">Priority:</label>
-            <input
-                type="checkbox"
-                id="priority"
-                {...register('priority')}
-            />
+        <div className="form-group">
+          <label htmlFor="groupId">Group</label>
+          <select
+            id="groupId"
+            defaultValue=""
+            {...register("groupId", { required: "Group ID is required" })}
+          >
+            <option value="" disabled>Select group</option>
+            {groups.map((g) => (
+              <option key={g.groupResponseDtoId} value={g.groupResponseDtoId}>
+                {g.name}
+              </option>
+            ))}
+          </select>
+          {errors.groupId && <span className="error">{errors.groupId.message}</span>}
+        </div>
 
-            <button type="submit" className='btn btn-success'>Submit</button>
-            {message && <p>{message}</p>}
-        </form>
-    );
-};
+        <div className="form-group checkbox-group">
+          <label className="checkbox-label" htmlFor="priority">
+            <input type="checkbox" id="priority" {...register("priority")} />
+            Priority
+          </label>
+        </div>
 
-export default CreateTasks;
+        <div className="form-group submit-group">
+          <button type="submit" className="btn btn-success">Submit</button>
+        </div>
+
+        {responseMessage && (
+          <p className={isError ? "error" : "success"}>{responseMessage}</p>
+        )}
+      </form>
+    </div>
+  );
+}

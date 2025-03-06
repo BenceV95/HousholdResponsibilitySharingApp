@@ -2,9 +2,7 @@
 {
     public class PostGroupDto
     {
-        public string Name { get; set; }
-        public int HouseholdId { get; set; }
-
+        public string GroupName { get; set; }
 
     }
 }

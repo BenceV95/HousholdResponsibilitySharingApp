@@ -4,4 +4,24 @@
     gap: 2rem;
     justify-content: center;
     align-items: center;
-}
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .home h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary);
+  }
+  
+  .home p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    line-height: 1.5;
+  }
+  
+  .home .calendar-container {
+    margin-top: 2rem;
+    max-width: 800px;
+  }
+  

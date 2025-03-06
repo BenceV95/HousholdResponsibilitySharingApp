@@ -2,6 +2,6 @@
 {
     public class HouseholdDto
     {
-        public string Name { get; set; }
+        public required string HouseholdName { get; set; }
     }
 }

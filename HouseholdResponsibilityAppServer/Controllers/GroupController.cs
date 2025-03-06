@@ -1,15 +1,22 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Groups;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.Groups;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
+[Authorize]
 public class GroupController : ControllerBase
 {
     private readonly IGroupService _groupService;
+    private readonly IAuthService _authService;
+    private readonly ILogger<GroupController> _logger;
 
-    public GroupController(IGroupService groupService)
+    public GroupController(IGroupService groupService, IAuthService authService, ILogger<GroupController> logger)
     {
         _groupService = groupService;
+        _authService = authService;
+        _logger = logger;
     }
 
     [HttpGet("/groups")]
@@ -22,9 +29,9 @@ public class GroupController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while retrieving groups.");
+            return StatusCode(500, new { Message = "An error occurred while retrieving all groups." });
         }
     }
 
@@ -36,11 +43,15 @@ public class GroupController : ControllerBase
             var group = await _groupService.GetGroupByIdAsync(groupId);
             return Ok(group);
         }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { message = e.Message });
+        }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while retrieving groups.");
+            return StatusCode(500, new { Message = $"An error occurred while retrieving group with ID: {groupId}." });
         }
     }
 
@@ -49,14 +60,20 @@ public class GroupController : ControllerBase
     {
         try
         {
-            await _groupService.CreateGroupAsync(postGroupDto);
-            return Ok();
+            UserClaims userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+            await _groupService.CreateGroupAsync(postGroupDto, userClaims);
+            return Ok(new { message = "Group created successfully" });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while creating group.");
+            return StatusCode(500, new { Message = "An error occurred while creating groups." });
         }
     }
 
@@ -65,14 +82,20 @@ public class GroupController : ControllerBase
     {
         try
         {
-            await _groupService.UpdateGroupAsync(groupId, groupDto);
+            UserClaims userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+            await _groupService.UpdateGroupAsync(groupId, groupDto, userClaims);
             return NoContent();
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { Message = e.Message });
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while updating group.");
+            return StatusCode(500, new { Message = "An error occurred while updating group." });
         }
     }
 
@@ -86,9 +109,29 @@ public class GroupController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return NotFound("An error occurred while deleting group.");
+            return StatusCode(500, new { Message = "An error occurred while deleting group." });
+        }
+    }
+
+
+    [HttpGet("/groups/my-household")]
+    public async Task<ActionResult> GetGroupsByHouseholdID()
+    {
+        try
+        {
+            var userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+            var groups = await _groupService.GetGroupsByHouseholdIdAsync(userClaims);
+
+            return Ok(groups);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+
+            return StatusCode(500, new { Message = "An error occurred while retrieving groups." });
         }
     }
 }

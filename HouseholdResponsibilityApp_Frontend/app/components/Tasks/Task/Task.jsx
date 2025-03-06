@@ -1,15 +1,25 @@
-import React from 'react'
+import React from "react";
 
-const Task = ({ data }) => {
+function Task({ data, deleteTask, userName, groupName }) {
+  return (
+    <div>
+      <h3>{data.title}</h3>
+      <p>
+        {data.description
+          ? data.description
+          : <i>No description provided.</i>}
+      </p>
+      <p>Priority: {data.priority ? "ASAP" : "No"}</p>
+      <p>Group: {groupName}</p>
+      <p>Created By: {userName}</p>
+      <p>Task ID: {data.taskId}</p>
 
-    return (
-        <>
-            <h1>{data.title}</h1>
-            <span>{data.description ? (data.description) : (<i>No description provided.</i>)}</span><br />
-            <span>Priority: {data.priority ? (<>ASAP</>) : (<>No</>)}</span><br />
-            <span>Group: {data.group_id}</span>
-        </>
-    )
+      <button className="btn btn-danger" id={data.taskId} onClick={deleteTask}>
+        DELETE
+      </button>
+    </div>
+  );
 }
 
-export default Task
+
+export default Task;

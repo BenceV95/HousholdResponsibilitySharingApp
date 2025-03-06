@@ -6,7 +6,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.HouseholdRepo
     {
         Task<IEnumerable<Household>> GetAllHouseholdsAsync();
         Task<Household> GetHouseholdByIdAsync(int id);
-        Task AddHouseholdAsync(Household household);
+        Task<Household> AddHouseholdAsync(Household household);
         Task UpdateHouseholdAsync(Household household);
         Task DeleteHouseholdAsync(int id);
 

@@ -1,20 +1,47 @@
 ﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.HouseholdTaskServices;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HouseholdResponsibilityAppServer.Controllers
 {
+    [Authorize]
     [Route("/tasks")]
     [ApiController]
     public class HouseholdTaskController : ControllerBase
     {
-        IHouseholdTaskService _householdTaskService;
-        public HouseholdTaskController(IHouseholdTaskService householdTaskService)
+        private readonly IHouseholdTaskService _householdTaskService;
+        private readonly IAuthService _authService;
+        private readonly ILogger<GroupController> _logger;
+
+        public HouseholdTaskController(
+            IHouseholdTaskService householdTaskService,
+            IAuthService authService,
+            ILogger<GroupController> logger)
         {
             _householdTaskService = householdTaskService;
+            _authService = authService;
+            _logger = logger;
         }
 
+        [HttpGet("/tasks/my-household")]
+        public async Task<IActionResult> GetHouseholdTasksByUsersHousehold()
+        {
+            var userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+            try
+            {
+                var filteredTasks = await _householdTaskService.GetallTasksByHouseholdIdAsync(userClaims);
+
+                return Ok(filteredTasks);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new { Message = $"An error occurred while retrieving all tasks for household {userClaims.HouseholdId}." });
+            }
+        }
 
         [HttpGet()]
         public async Task<IActionResult> GetAllTasks()
@@ -26,7 +53,8 @@ namespace HouseholdResponsibilityAppServer.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new { Message = $"An error occurred while retrieving all tasks." });
             }
         }
 
@@ -40,7 +68,8 @@ namespace HouseholdResponsibilityAppServer.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new { Message = $"An error occurred while retrieving tasks with ID: {taskId}." });
             }
         }
 
@@ -49,13 +78,15 @@ namespace HouseholdResponsibilityAppServer.Controllers
         {
             try
             {
-                var task = await _householdTaskService.AddTaskAsync(createRequest);
-                return Ok(task.TaskId);
+                UserClaims userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
 
+                var task = await _householdTaskService.AddTaskAsync(createRequest, userClaims);
+                return Ok(task.TaskId);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new { Message = $"An error occurred while posting task." });
             }
 
         }
@@ -66,12 +97,15 @@ namespace HouseholdResponsibilityAppServer.Controllers
         {
             try
             {
-                var task = await _householdTaskService.UpdateTaskAsync(updateRequest, taskId);
+                UserClaims userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+                var task = await _householdTaskService.UpdateTaskAsync(updateRequest, userClaims, taskId);
                 return Ok(task);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new { Message = $"An error occurred while updating task." });
             }
         }
 
@@ -85,10 +119,9 @@ namespace HouseholdResponsibilityAppServer.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new { Message = $"An error occurred while deleting task with ID: {taskId}." });
             }
         }
-
-
     }
 }

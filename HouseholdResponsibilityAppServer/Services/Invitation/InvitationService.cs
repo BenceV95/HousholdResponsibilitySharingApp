@@ -29,7 +29,7 @@ public class InvitationService : IInvitationService
         await _invitationRepository.CreateInvitationAsync(invitation);
     }
 
-    public async Task AcceptInvitationAsync(int userId, AcceptInvitationDto acceptDto)
+    public async Task AcceptInvitationAsync(string userId, AcceptInvitationDto acceptDto)
     {
         var invitation = await _invitationRepository.GetInvitationByEmailAsync(acceptDto.Email, acceptDto.HouseholdId);
 

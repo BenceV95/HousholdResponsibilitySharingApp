@@ -1,0 +1,52 @@
+.user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    background-color: #222;
+    color: white;
+}
+
+.user-form label {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.user-form input {
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #333;
+    color: white;
+}
+
+.user-form span {
+    color: red;
+    font-size: 12px;
+}
+
+.user-form button {
+    padding: 12px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.user-form button:hover {
+    background-color: #45a049;
+}
+
+.user-form p {
+    margin-top: 15px;
+    font-weight: bold;
+}

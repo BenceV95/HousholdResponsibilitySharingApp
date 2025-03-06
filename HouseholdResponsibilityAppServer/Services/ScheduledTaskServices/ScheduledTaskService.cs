@@ -2,6 +2,7 @@
 using HouseholdResponsibilityAppServer.Repositories.HouseholdTasks;
 using HouseholdResponsibilityAppServer.Repositories.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Repositories.UserRepo;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 
 namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
 {
@@ -17,10 +18,22 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
             _userRepository = userRepository;
         }
 
-        public async Task<ScheduledTaskDTO> AddScheduledTaskAsync(CreateScheduledTaskRequest scheduledTaskCreateRequest)
+        public async Task<IEnumerable<ScheduledTaskDTO>> GetAllScheduledByHouseholdIdAsync(UserClaims userClaims)
         {
+
+            int householdId = int.Parse(userClaims.HouseholdId);
+
+            var filteredTasks = await _scheduledTasksRepository.GetScheduledTasksByHouseholdIdAsync(householdId);
+
+            return filteredTasks.Select(ConvertModelToDTO);
+        }
+
+        public async Task<ScheduledTaskDTO> AddScheduledTaskAsync(CreateScheduledTaskRequest scheduledTaskCreateRequest, UserClaims userClaims)
+        {
+            ArgumentNullException.ThrowIfNull(scheduledTaskCreateRequest);
+
             //convert request to modell
-            var scheduledTaskModel = await ConvertRequestToModel(scheduledTaskCreateRequest);
+            var scheduledTaskModel = await ConvertRequestToModel(scheduledTaskCreateRequest, userClaims);
             //add the modell to db
             var addedModel = await _scheduledTasksRepository.AddScheduledTaskAsync(scheduledTaskModel);
             //convert the added model to dto, and return it
@@ -34,13 +47,8 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
 
         public async Task<IEnumerable<ScheduledTaskDTO>> GetAllScheduledTasksAsync()
         {
-            List<ScheduledTaskDTO> scheduledTaskDTOs = new List<ScheduledTaskDTO>();
             var scheduledTaskModels = await _scheduledTasksRepository.GetAllScheduledTasksAsync();
-            foreach (var task in scheduledTaskModels)
-            {
-                scheduledTaskDTOs.Add(ConvertModelToDTO(task));
-            }
-            return scheduledTaskDTOs;
+            return scheduledTaskModels.Select(ConvertModelToDTO);
         }
 
         public async Task<ScheduledTaskDTO> GetByIdAsync(int scheduledTaskId)
@@ -49,20 +57,45 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
             return ConvertModelToDTO(scheduledTaskModel);
         }
 
-        public async Task<ScheduledTaskDTO> UpdateScheduledTaskAsync(CreateScheduledTaskRequest updateRequest,int taskId)
+        public async Task<ScheduledTaskDTO> UpdateScheduledTaskAsync(CreateScheduledTaskRequest updateRequest, UserClaims userClaims, int taskId)
         {
-            var scheduledTaskModel = await ConvertRequestToModel(updateRequest);
+            var scheduledTaskModel = await ConvertRequestToModel(updateRequest, userClaims);
 
             var updatedModel = await _scheduledTasksRepository.UpdateSheduledTaskAsync(scheduledTaskModel, taskId);
             return ConvertModelToDTO(updatedModel);
         }
 
-        private async Task<ScheduledTask> ConvertRequestToModel(CreateScheduledTaskRequest scheduledTaskCreateRequest)
+
+
+        private async Task<ScheduledTask> ConvertRequestToModel(CreateScheduledTaskRequest scheduledTaskCreateRequest, UserClaims userClaims)
         {
             var task = await _householdTaskRepository.GetByIdAsync(scheduledTaskCreateRequest.HouseholdTaskId);
-            var createdByUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.CreatedByUserId);
-            var assignedToUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.AssignedToUserId);
+            if (task == null)
+            {
+                throw new KeyNotFoundException("Household task not found!");
+            }
 
+            var createdByUser = await _userRepository.GetUserByIdAsync(userClaims.UserId);
+            if (createdByUser == null)
+            {
+                throw new KeyNotFoundException("Created by user not found!");
+            }
+            // Checks whether the household associated with the task matches the createdByUser's household
+            if (createdByUser.Household == null || createdByUser.Household.HouseholdId != task.Household.HouseholdId)
+            {
+                throw new UnauthorizedAccessException("You do not belong to the same household as the task!");
+            }
+
+            var assignedToUser = await _userRepository.GetUserByIdAsync(scheduledTaskCreateRequest.AssignedToUserId);
+            if (assignedToUser == null)
+            {
+                throw new KeyNotFoundException("Assigned to user not found!");
+            }
+            // Checks whether the assignedToUser is also in the same household
+            if (assignedToUser.Household == null || assignedToUser.Household.HouseholdId != task.Household.HouseholdId)
+            {
+                throw new UnauthorizedAccessException("The user to assign the task to does not belong to the same household!");
+            }
 
             return new ScheduledTask()
             {
@@ -74,21 +107,27 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
                 Repeat = scheduledTaskCreateRequest.Repeat,
 
             };
-
         }
+
         private ScheduledTaskDTO ConvertModelToDTO(ScheduledTask scheduledTaskModel)
         {
+            if (scheduledTaskModel == null)
+            {
+                throw new ArgumentNullException(nameof(scheduledTaskModel), "ScheduledTask model cannot be null");
+            }
+
             return new ScheduledTaskDTO()
             {
                 ScheduledTaskId = scheduledTaskModel.ScheduledTaskId,
-                HouseholdTaskId = scheduledTaskModel.HouseholdTask.TaskId,
-                CreatedByUserId = scheduledTaskModel.CreatedBy.UserId,
-                AssignedToUserId = scheduledTaskModel.AssignedTo.UserId,
+                HouseholdTaskId = scheduledTaskModel.HouseholdTask?.TaskId ?? 0,
+                CreatedByUserId = scheduledTaskModel.CreatedBy?.Id ?? string.Empty,
+                AssignedToUserId = scheduledTaskModel.AssignedTo?.Id ?? string.Empty,
                 EventDate = scheduledTaskModel.EventDate,
                 CreatedAt = scheduledTaskModel.CreatedAt,
                 AtSpecificTime = scheduledTaskModel.AtSpecificTime,
                 Repeat = scheduledTaskModel.Repeat,
             };
         }
+
     }
 }
