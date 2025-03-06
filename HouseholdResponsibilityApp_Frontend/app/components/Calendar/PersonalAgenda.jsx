@@ -19,14 +19,11 @@ export default function PersonalAgenda() {
 
   useEffect(() => {
     async function fetchUserTasks() {
-      if (user?.userId) {
-        const scheduledTasks = await apiFetch(`/scheduleds`);
-        const filteredTasks = scheduledTasks.filter(
-          (task) => task.assignedToUserId === user.userId
-        );
+      
+        const scheduledTasks = await apiFetch(`/scheduleds/my-household`);
 
-        const householdTasks = await apiFetch(`/tasks/filtered/${user.householdId}`);
-        const events = filteredTasks
+        const householdTasks = await apiFetch(`/tasks/my-household`);
+        const events = scheduledTasks
           .map((scheduledTask) => {
             const template = householdTasks.find(
               (task) => task.taskId === scheduledTask.householdTaskId
@@ -42,10 +39,10 @@ export default function PersonalAgenda() {
               : null;
           })
           .filter((event) => event !== null);
-
-        setTasks(events);
-      }
-    }
+          console.log("Events: ", events);
+        setTasks(events); 
+      
+    }    
 
     fetchUserTasks();
   }, [user]);
@@ -74,6 +71,9 @@ export default function PersonalAgenda() {
     <div style={{ height: "30rem", width: "100%", padding: "30px" }}>
       <Calendar
         localizer={localizer}
+        defaultDate={new Date(2025, 2, 6)}
+        min={new Date(2025, 2, 5, 8, 0)}  // Earliest time: 8 AM
+  max={new Date(2025, 2, 7, 18, 0)} // Latest time: 6 PM
         events={tasks}
         eventPropGetter={getEventStyle}
         startAccessor="start"

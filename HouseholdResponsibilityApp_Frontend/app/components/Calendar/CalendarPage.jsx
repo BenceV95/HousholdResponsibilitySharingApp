@@ -28,7 +28,7 @@ export default function CalendarPage() {
     async function fetchHouseholdEvents() {
       if (user?.householdId) {
         const scheduledTasks = await apiFetch("/scheduleds");
-        const householdTasks = await apiFetch(`/tasks/filtered/${user.householdId}`);
+        const householdTasks = await apiFetch(`/tasks/my-household`); //módosítás
 
         setScheduledTasks(scheduledTasks);
         setTasks(householdTasks);
