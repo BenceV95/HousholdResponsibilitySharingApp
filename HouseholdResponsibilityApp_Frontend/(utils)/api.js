@@ -1,4 +1,4 @@
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const BACKEND_URL = "/api";
 
 //we should make our fetches uniform, and make the backend send unform error messages as well!
 //also, not just saying API request failed, cause we wont know what exactly went wrong
