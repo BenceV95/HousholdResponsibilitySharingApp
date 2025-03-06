@@ -22,6 +22,8 @@ namespace IntegrationTests
         private readonly string _dbName = Guid.NewGuid().ToString();
         private readonly string _userWithoutHouseholdId = "1";
         private readonly string _userWithHouseholdId = "2";
+        public HouseholdResponsibilityAppContext InMemoryDbContext { get; private set; }
+
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -59,6 +61,9 @@ namespace IntegrationTests
                 var householdContext = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
                 householdContext.Database.EnsureDeleted();
                 householdContext.Database.EnsureCreated();
+
+
+                InMemoryDbContext = householdContext;
 
                 await AddUsersToInMemoryDb(scope);
                 //await AddHouseholdToInMemoryDb(scope);
