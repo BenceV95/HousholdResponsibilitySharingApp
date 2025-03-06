@@ -1,6 +1,9 @@
 using HouseholdResponsibilityAppServer;
 using HouseholdResponsibilityAppServer.Context;
+using HouseholdResponsibilityAppServer.Models.Groups;
+using HouseholdResponsibilityAppServer.Models.Histories;
 using HouseholdResponsibilityAppServer.Models.Households;
+using HouseholdResponsibilityAppServer.Models.Task;
 using HouseholdResponsibilityAppServer.Models.Users;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +20,8 @@ namespace IntegrationTests
     {
 
         private readonly string _dbName = Guid.NewGuid().ToString();
+        private readonly string _userWithoutHouseholdId = "1";
+        private readonly string _userWithHouseholdId = "2";
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -30,7 +35,7 @@ namespace IntegrationTests
                 services.Remove(dbContextDescriptor);
 
                 var dbConnectionDescriptor = services.SingleOrDefault(
-            d => d.ServiceType ==
+                   d => d.ServiceType ==
                 typeof(DbConnection));
 
                 services.Remove(dbConnectionDescriptor);
@@ -56,6 +61,7 @@ namespace IntegrationTests
                 householdContext.Database.EnsureCreated();
 
                 await AddUsersToInMemoryDb(scope);
+                //await AddHouseholdToInMemoryDb(scope);
 
 
 
@@ -65,13 +71,14 @@ namespace IntegrationTests
 
         private async Task AddUsersToInMemoryDb(IServiceScope scope)
         {
-            var householdContext = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
+            using var householdContext = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
             using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
             // seed users to the in memory db.
 
             var userWithNoHousehold = new User
             {
+                Id = _userWithoutHouseholdId,
                 Email = "userWithNoHousehold@gmail.com",
                 UserName = "userWithNoHousehold",
                 FirstName = "John",
@@ -83,6 +90,7 @@ namespace IntegrationTests
 
             var userWithHousehold = new User
             {
+                Id = _userWithHouseholdId,
                 Email = "userWithHousehold@gmail.com",
                 NormalizedEmail = "userWithHousehold@gmail.com",
                 UserName = "userWithHousehold",
@@ -93,22 +101,52 @@ namespace IntegrationTests
             };
 
             //add  a household to the user
-            userWithHousehold.Household = new Household()
+            var household = new Household()
             {
+                HouseholdId = 1,
                 Name = "Household",
                 CreatedByUser = userWithHousehold,
                 CreatedAt = DateTime.UtcNow,
-                Groups = null,
-                Histories = null,
-                HouseholdId = 1,
-                HouseholdTasks = null,
-                Users = null,
+                Groups = new List<TaskGroup>(),
+                Histories = new List<History>(),
+                HouseholdTasks = new List<HouseholdTask>(),
+                Users = new List<User>(),
             };
 
+            userWithHousehold.Household = household;
+
+            userWithHousehold.Household.Groups.Add(new TaskGroup()
+            {
+                GroupId = 1,
+                Name = "Pre Seeded Group",
+                Household = household,
+            });
 
             var resultUserWithNoHousehold = await userManager.CreateAsync(userWithNoHousehold, "password");
             var resultUserWithHousehold = await userManager.CreateAsync(userWithHousehold, "password");
 
+            await householdContext.SaveChangesAsync();
+
+        }
+
+
+        private async Task AddHouseholdToInMemoryDb(IServiceScope scope)
+        {
+            using var householdContext = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
+            using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+            var userWithHousehold = await userManager.FindByIdAsync(_userWithHouseholdId);
+
+            var household = new Household()
+            {
+                HouseholdId = 1,
+                CreatedAt = DateTime.UtcNow,
+                CreatedByUser = userWithHousehold,
+                Groups = null,
+                Histories = null,
+            };
+
+            await householdContext.Households.AddAsync(household);
             await householdContext.SaveChangesAsync();
 
         }
