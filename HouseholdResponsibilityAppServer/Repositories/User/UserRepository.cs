@@ -16,22 +16,13 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
 
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            try
-            {
                 return await _context.Users
                     .Include(u => u.Household)
                     .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Database error: Unable to fetch users.");
-            }
         }
-
 
         public async Task<User> GetUserByIdAsync(string userId)
         {
-
             var user = await _context.Users
                 .Include(u => u.Household)
                 .FirstOrDefaultAsync(u => u.Id == userId);
@@ -41,15 +32,8 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
 
         public async Task AddUserAsync(User user)
         {
-            try
-            {
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Database error: Unable to create user.");
-            }
         }
 
         public async Task UpdateUserAsync(User user)
@@ -61,23 +45,10 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
             if (affectedRows == 0) throw new KeyNotFoundException($"User with ID {user.Id} not found.");
         }
 
-        /*public async Task DeleteUserAsync(int userId)
-        {
-            var user = new User { UserId = userId };
-
-            _context.Entry(user).State = EntityState.Deleted;
-
-            int affectedRows = await _context.SaveChangesAsync();
-
-            if (affectedRows == 0) throw new KeyNotFoundException($"User with ID {userId} not found.");
-
-        }
-        */
-
         public async Task DeleteUserAsync(string userId)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            Debug.WriteLine($"\n\n{user.Id}\n\n");
+
             if (user == null)
             {
                 throw new KeyNotFoundException($"User with ID {userId} not found.");
@@ -87,5 +58,4 @@ namespace HouseholdResponsibilityAppServer.Repositories.UserRepo
             await _context.SaveChangesAsync();
         }
     }
-
 }

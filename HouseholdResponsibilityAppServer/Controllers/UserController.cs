@@ -6,23 +6,27 @@ using HouseholdResponsibilityAppServer.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+[Authorize]
 [ApiController]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
-
     private readonly IInvitationService _invitationService;
-
     private readonly IAuthService _authService;
+    private readonly ILogger<GroupController> _logger;
 
-    public UserController(IUserService userService, IInvitationService invitationService, IAuthService authService)
+    public UserController(
+        IUserService userService,
+        IInvitationService invitationService,
+        IAuthService authService,
+        ILogger<GroupController> logger)
     {
         _userService = userService;
         _invitationService = invitationService;
         _authService = authService;
+        _logger = logger;
     }
 
-    [Authorize]
     [HttpGet("/users")]
     public async Task<ActionResult> GetAllUser()
     {
@@ -33,9 +37,9 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while retrieving users.");
+            return StatusCode(500, new { Message = "An error occurred while retrieving users." });
         }
     }
 
@@ -49,12 +53,13 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while retrieving user.");
+            return StatusCode(500, new { Message = "An error occurred while retrieving user." });
         }
     }
 
+    [AllowAnonymous]
     [HttpPost("/user")]
     public async Task<ActionResult> CreateUser([FromBody] UserDto userDto)
     {
@@ -65,8 +70,9 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
-            return BadRequest(new { message = "An error occurred while creating user." });
+            _logger.LogError(ex.Message);
+
+            return StatusCode(500, new { Message = "An error occurred while creating user." });
         }
     }
 
@@ -81,11 +87,10 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return BadRequest("An error occurred while updating user.");
+            return StatusCode(500, new { Message = "An error occurred while updating user." });
         }
-
     }
 
     [HttpDelete("/user/{userId}")]
@@ -98,12 +103,38 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
 
-            return NotFound("An error occurred while deleting user.");
+            return StatusCode(500, new { Message = "An error occurred while deleting user." });
         }
     }
 
+    /// <summary>
+    /// Gives back all the users in the same household (household id is from the token.)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    [HttpGet("/users/my-household")]
+    public async Task<ActionResult> GetUsersByHouseholdId()
+    {
+        try
+        {
+            var userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
+
+            var filteredUsers = await _userService.GetAllUsersByHouseholdIdAsync(userClaims);
+
+            return Ok(filteredUsers);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+
+            return StatusCode(500, new { Message = "An error occurred while retrieving users." });
+
+        }
+    }
+
+    /*
     [HttpPost("/user/{userId}/accept-invitation")]
     public async Task<ActionResult> AcceptInvitation(string userId, [FromBody] AcceptInvitationDto acceptDto)
     {
@@ -118,33 +149,5 @@ public class UserController : ControllerBase
             return BadRequest("An error occurred while accepting the invitation.");
         }
     }
-
-    /// <summary>
-    /// Gives back all the users in the same household (household id is from the token.)
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <returns></returns>
-    [Authorize]
-    [HttpGet("/users/my-household")]
-    public async Task<ActionResult> GetUsersByHouseholdId()
-    {
-        try
-        {
-            var userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
-
-            var filteredUsers = await _userService.GetAllUsersByHouseholdIdAsync(userClaims);
-
-            return Ok(filteredUsers);
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine(ex.Message);
-
-            return BadRequest("An error occurred while retrieving users.");
-        }
-    }
-
-
-
-
+    */
 }
