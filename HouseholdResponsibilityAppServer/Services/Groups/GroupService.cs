@@ -47,6 +47,7 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
             {
                 GroupResponseDtoId = group.GroupId,
                 Name = group.Name,
+                HouseholdId = group.Household.HouseholdId
             };
         }
 
@@ -63,7 +64,7 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
 
             var household = await _householdRepository.GetHouseholdByIdAsync(householdId);
             var checkForSameName = await _groupRepository.GetGroupsByHouseholdId(householdId);
-            if (checkForSameName.Any(g=>g.Name == postGroupDto.GroupName))
+            if (checkForSameName.Any(g => g.Name == postGroupDto.GroupName))
             {
                 throw new ArgumentException($"Group with name: {postGroupDto.GroupName} already exists !");
             }
@@ -91,7 +92,7 @@ namespace HouseholdResponsibilityAppServer.Services.Groups
             {
                 throw new ArgumentException("Name can not be empty !");
             }
-            
+
             var allGroupsByHouseholdId = await _groupRepository.GetGroupsByHouseholdId(householdId);
             var findGroup = allGroupsByHouseholdId.FirstOrDefault(g => g.GroupId == groupId);
             if (findGroup == null)

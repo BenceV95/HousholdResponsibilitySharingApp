@@ -45,13 +45,13 @@ public class GroupController : ControllerBase
         }
         catch (KeyNotFoundException e)
         {
-            return NotFound(e.Message);
+            return NotFound(new { message = e.Message });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
 
-            return StatusCode(500,new {Message = $"An error occurred while retrieving group with ID: {groupId}."});
+            return StatusCode(500, new { Message = $"An error occurred while retrieving group with ID: {groupId}." });
         }
     }
 
@@ -89,13 +89,13 @@ public class GroupController : ControllerBase
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new { Message = e.Message});
+            return BadRequest(new { Message = e.Message });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
 
-            return StatusCode(500,new { Message = "An error occurred while updating group."});
+            return StatusCode(500, new { Message = "An error occurred while updating group." });
         }
     }
 
@@ -111,7 +111,7 @@ public class GroupController : ControllerBase
         {
             _logger.LogError(ex.Message);
 
-            return StatusCode(500, new { Message = "An error occurred while deleting group."});
+            return StatusCode(500, new { Message = "An error occurred while deleting group." });
         }
     }
 
@@ -131,7 +131,7 @@ public class GroupController : ControllerBase
         {
             _logger.LogError(ex.Message);
 
-            return StatusCode(500, new { Message = "An error occurred while retrieving groups."});
+            return StatusCode(500, new { Message = "An error occurred while retrieving groups." });
         }
     }
 }

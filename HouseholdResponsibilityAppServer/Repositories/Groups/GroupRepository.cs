@@ -20,7 +20,9 @@ namespace HouseholdResponsibilityAppServer.Repositories.Groups
 
         public async Task<TaskGroup> GetGroupByIdAsync(int groupId)
         {
-            var group = await _context.Groups.FirstOrDefaultAsync(g => g.GroupId == groupId);
+            var group = await _context.Groups
+                .Include(g => g.Household)
+                .FirstOrDefaultAsync(g => g.GroupId == groupId);
 
             if (group == null)
             {
