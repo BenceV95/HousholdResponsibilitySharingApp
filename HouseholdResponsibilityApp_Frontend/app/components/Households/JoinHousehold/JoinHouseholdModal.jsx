@@ -30,7 +30,7 @@ const JoinHouseholdModal = ({ isOpen, onClose, setSuccesFullyJoined }) => {
         setJoinSuccess(true);
         setResponseMessage(response?.Message || "Successfully joined household!");
 
-        const refreshResult = await apiFetch("/Auth/refresh");
+        const refreshResult = await apiFetch("/Auth/update-token");
         setUser({ ...user, householdId: householdId });
 
         console.log("refreshResult", refreshResult);

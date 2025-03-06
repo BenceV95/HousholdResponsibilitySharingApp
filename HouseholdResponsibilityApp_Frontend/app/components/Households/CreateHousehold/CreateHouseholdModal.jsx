@@ -21,8 +21,7 @@ export default function CreateHouseholdModal({ isOpen, onClose, setSuccesFullyCr
     if (householdName && user) {
       try {
         const payload = {
-          name: householdName,
-          userId: user.userId,
+          HouseholdName: householdName,
         };
 
         const householdId = await apiPost("/household", payload);
@@ -30,7 +29,7 @@ export default function CreateHouseholdModal({ isOpen, onClose, setSuccesFullyCr
           setResponse(`Household ${householdName} created!`);
         }
 
-        const refreshResult = await apiFetch("/Auth/refresh");
+        const refreshResult = await apiFetch("/Auth/update-token");
         setUser({ ...user, householdId: householdId });
         console.log("refreshResult", refreshResult);
 
@@ -39,7 +38,7 @@ export default function CreateHouseholdModal({ isOpen, onClose, setSuccesFullyCr
         onClose(); 
 
       } catch (e) {
-        setResponse("Error: " + e);
+        setResponse(e.message);
       } finally {
         setLoading(false);
       }

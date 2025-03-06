@@ -11,24 +11,16 @@ export default function CreateGroup() {
   const [isError, setIsError] = useState(false);
   const { user } = useAuth();
 
-  useEffect(() => {
-    register("userId", { required: "User ID is required" });
-    register("householdId", { required: "Household ID is required" });
-  }, [register]);
-
-  useEffect(() => {
-    if (user) {
-      setValue("userId", user.userId);
-      setValue("householdId", user.householdId || 0);
-    }
-  }, [user, setValue]);
 
   const onSubmit = async (formData) => {
+    console.log("asd");
+    
     setResponseMessage("");
     setIsError(false);
-
+    
     const groupData = {
-      groupName: formData.name,
+      GroupName: formData.name,
+      
     };
 
     try {
@@ -41,14 +33,14 @@ export default function CreateGroup() {
     }
   };
 
+  
+
   return (
     <div className="create-group-container">
       <form onSubmit={handleSubmit(onSubmit)} className="create-group-form">
         <div className="form-group">
           <label htmlFor="name">Group Name:</label>
           <input
-            type="text"
-            id="name"
             placeholder="Enter group name..."
             {...register("name", { required: "Group name is required" })}
           />

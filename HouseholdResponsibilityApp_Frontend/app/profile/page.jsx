@@ -60,7 +60,7 @@ export default function Profile() {
       return;
     }
     try {
-      const response = await apiDelete(`/user/${user.userId}`);
+      const response = await apiDelete(`/user/delete-self`);
       const message = response?.Message || "Account deleted successfully!";
       alert(message);
       logout();
@@ -90,7 +90,9 @@ export default function Profile() {
       return;
     }
     try {
-      await apiPut(`/user/${user.userId}/leave-household`, {});
+      console.log("user:", user );
+      
+      await apiPut(`/user/leave-household`, {});
       setUser({ ...user, householdId: null });
       setHousehold(null);
       alert("You have left the household successfully!");

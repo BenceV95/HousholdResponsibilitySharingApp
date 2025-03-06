@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import { apiFetch, apiPost } from "../../../../(utils)/api";
 import "./CreateTasks.css";
+import { useAuth } from "../../AuthContext/AuthProvider"; //módosítás
+
 
 export default function CreateTasks() {
   const { register, handleSubmit, setValue, formState: { errors } } = useForm();
@@ -26,6 +28,7 @@ export default function CreateTasks() {
     if (user) fetchData();
   }, [user]);
 
+  /*
   useEffect(() => {
     register("createdBy", { required: "Created By is required" });
     register("householdId", { required: "Household ID is required" });
@@ -37,6 +40,7 @@ export default function CreateTasks() {
       setValue("householdId", user.householdId || 0);
     }
   }, [user, setValue]);
+  */
 
   const onSubmit = async (formData) => {
     setResponseMessage("");
@@ -45,10 +49,8 @@ export default function CreateTasks() {
     const taskData = {
       title: formData.title,
       description: formData.description,
-      createdById: formData.createdBy,
       groupId: Number(formData.groupId),
       priority: formData.priority || false,
-      householdId: Number(formData.householdId),
     };
 
     try {
