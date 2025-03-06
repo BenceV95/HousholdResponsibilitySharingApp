@@ -1,17 +1,10 @@
-﻿using HouseholdResponsibilityAppServer.Contracts;
-using IntegrationTests.ResponseModels;
-using IntegrationTests;
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using HouseholdResponsibilityAppServer.Models.Groups;
-using HouseholdResponsibilityAppServer.Models.Households;
+using Microsoft.AspNetCore.Http;
 
 namespace IntegrationTests
 {
@@ -68,6 +61,8 @@ namespace IntegrationTests
                 }
             }
 
+            //CREATE GROUP
+
             [Fact]
             public async Task CreateGroup_ShouldReturnBadRequest_WhenUserIsNotPartOfAHousehold()
             {
@@ -117,6 +112,7 @@ namespace IntegrationTests
 
 
 
+            //GET GROUPS BY HOUSEHOLD ID
 
             [Fact]
             public async Task GetGroupsByHouseholdId_ShouldReturnOk_WhenUserIsPartOfAHousehold()
@@ -157,8 +153,6 @@ namespace IntegrationTests
             public async Task GetGroupsByHouseholdID_ShouldReturnInternalServerError_WhenUserIsNotInHousehold()
             {
 
-
-                //log in the user
                 var loginResponse = await LoginUser(_userWithoutHouseholdEmail, _userPassword);
                 loginResponse.EnsureSuccessStatusCode();
 
@@ -174,6 +168,9 @@ namespace IntegrationTests
 
                 Assert.Equal(errorResponse["message"], "An error occurred while retrieving groups.");
             }
+
+
+            // GET GROUP BY ID
 
             [Fact]
             public async Task GetGroupById_ShouldReturnOk_WhenGroupExists()
@@ -199,6 +196,164 @@ namespace IntegrationTests
             }
 
 
+            [Fact]
+            public async Task GetGroupById_ShouldReturnBadRequest_WhenGroupDoesntExist()
+            {
+                const int nonExistingGroupId = -1;
+
+                var loginResponse = await LoginUser(_userWithoutHouseholdEmail, _userPassword);
+                loginResponse.EnsureSuccessStatusCode();
+
+                AttachAuthCookies(loginResponse);
+
+                var response = await _client.GetAsync($"/group/{nonExistingGroupId}");
+                Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var errorResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseContent);
+
+                Assert.Equal(errorResponse["message"], $"Group with ID {nonExistingGroupId} not found.");
+
+
+            }
+
+            //GET GROUPS (not sure how to test this for bad outcome)
+
+            [Fact]
+            public async Task GetGroups_ShouldReturnOk_WhenUsedWithAuthorizedUser()
+            {
+
+                var loginResponse = await LoginUser(_userWithoutHouseholdEmail, _userPassword);
+                loginResponse.EnsureSuccessStatusCode();
+
+                AttachAuthCookies(loginResponse);
+
+                var response = await _client.GetAsync($"/groups");
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var succesResponse = JsonConvert.DeserializeObject<List<GroupResponseDto>>(responseContent);
+
+                Assert.True(succesResponse.Count() == 1);
+                Assert.Contains(succesResponse, group => group.Name == "Pre Seeded Group");
+
+
+            }
+
+
+            //UPDATE GROUP
+            [Fact]
+            public async Task UpdateGroup_ShouldReturnNoContent_WhenPassedValidData()
+            {
+                var groupDto = new GroupDto()
+                {
+                    Name = "Updated Group"
+                };
+
+                const int existingGroupId = 1;
+                var loginResponse = await LoginUser(_userWithHouseholdEmail, _userPassword);
+                loginResponse.EnsureSuccessStatusCode();
+
+                AttachAuthCookies(loginResponse);
+
+                // serialize groupDto to JSON
+                var json = JsonConvert.SerializeObject(groupDto);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _client.PutAsync($"/group/{existingGroupId}", content);
+
+                //for now, it just returns no content
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+                //var responseContent = await response.Content.ReadAsStringAsync();
+                //var succesResponse = JsonConvert.DeserializeObject<List<GroupResponseDto>>(responseContent);
+                //Assert.True(succesResponse.Count() == 1);
+                //Assert.Contains(succesResponse, group => group.Name == "Pre Seeded Group");
+
+            }
+
+
+            [Fact]
+            public async Task UpdateGroup_ShouldReturnBadRequest_WhenUserIsNotInAHousehold()
+            {
+                var groupDto = new GroupDto()
+                {
+                    Name = "Updated Group"
+                };
+
+                const int existingGroupId = 1;
+                var loginResponse = await LoginUser(_userWithoutHouseholdEmail, _userPassword);
+                loginResponse.EnsureSuccessStatusCode();
+
+                AttachAuthCookies(loginResponse);
+
+                // serialize groupDto to JSON
+                var json = JsonConvert.SerializeObject(groupDto);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _client.PutAsync($"/group/{existingGroupId}", content);
+
+                Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var errorResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseContent);
+                Assert.Equal(errorResponse["message"], "Cannot update group, user is not in a household!");
+
+
+            }
+
+
+            //DELETE GROUP
+
+            [Fact]
+            public async Task DeleteGroup_ShouldReturnNoContent_WhenPassedExistingGroupId()
+            {
+
+                //possible bug : user without household should be able to delete a group?
+
+                const int existingGroupId = 1;
+                var loginResponse = await LoginUser(_userWithoutHouseholdEmail, _userPassword);
+                loginResponse.EnsureSuccessStatusCode();
+
+                AttachAuthCookies(loginResponse);
+
+
+                var response = await _client.DeleteAsync($"/group/{existingGroupId}");
+
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+                //var responseContent = await response.Content.ReadAsStringAsync();
+                //var errorResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseContent);
+                //Assert.Equal(errorResponse["message"], "Cannot update group, user is not in a household!");
+
+
+            }
+
+            [Fact]
+            public async Task DeleteGroup_ShouldReturnInternalServerError_WhenPassedNonExistingGroupId()
+            {
+
+                //possible bug : user without household should be able to delete a group?
+
+                const int nonExistingGroupId = -1;
+                var loginResponse = await LoginUser(_userWithoutHouseholdEmail, _userPassword);
+                loginResponse.EnsureSuccessStatusCode();
+
+                AttachAuthCookies(loginResponse);
+
+
+                var response = await _client.DeleteAsync($"/group/{nonExistingGroupId}");
+
+                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var errorResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseContent);
+                Assert.Equal(errorResponse["message"], "An error occurred while deleting group.");
+
+
+            }
         }
     }
 }
+
+
