@@ -11,5 +11,7 @@ namespace HouseholdResponsibilityAppServer.Services.UserService
         Task CreateUserAsync(UserDto userDto);
         Task UpdateUserAsync(string id, UserDto userDto);
         Task DeleteUserAsync(string id);
+
+        Task LeaveHouseholdAsync(string userId);
     }
 }
