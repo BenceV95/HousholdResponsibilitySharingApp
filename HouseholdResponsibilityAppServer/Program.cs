@@ -124,6 +124,7 @@ namespace HouseholdResponsibilityAppServer
 
             /*
             // Apply pending migrations
+
             var db = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
             db.Database.Migrate();
             */

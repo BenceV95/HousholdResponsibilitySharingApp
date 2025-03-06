@@ -14,7 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Data.Common;
 
-
 namespace IntegrationTests
 {
     public class HRAWebAppFactory : WebApplicationFactory<Program>
@@ -142,7 +141,6 @@ namespace IntegrationTests
 
             await householdContext.Households.AddAsync(household);
             await householdContext.SaveChangesAsync();
-
         }
     }
 }

@@ -19,11 +19,8 @@ namespace IntegrationTests
             private readonly HRAWebAppFactory _app;
             private readonly HttpClient _client;
 
-
             public AuthControllerIntegrationTest()
             {
-
-
                 _app = new HRAWebAppFactory();
 
                 //automatic cookie handling
@@ -31,7 +28,6 @@ namespace IntegrationTests
                 {
                     HandleCookies = true
                 });
-
             }
 
             /// <summary>
