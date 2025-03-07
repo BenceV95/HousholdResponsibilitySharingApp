@@ -4,6 +4,7 @@
     width: 100%;
     border-bottom: solid white 2px;
     background-color: #343434;
+    overflow-x: auto;
 }
 
 .navbar {
