@@ -20,7 +20,10 @@ export const AuthProvider = ({ children }) => {
     //set the user every page render/refresh
     useEffect(() => {
         const storedUser = sessionStorage.getItem("userData");
-        setUser(storedUser)
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));            
+        }
+        
     }, [])
 
     //store meta data in session storage, so if someone closes the browser, and reopens it, it wont look like they're already logged in

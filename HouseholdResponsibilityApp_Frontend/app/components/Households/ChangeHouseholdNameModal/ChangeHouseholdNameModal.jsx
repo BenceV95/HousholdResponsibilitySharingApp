@@ -25,8 +25,7 @@ export default function ChangeHouseholdNameModal({
 
     try {
       await apiPut(`/household/${householdId}`, {
-        Name: newName,
-        UserId: userId,
+        HouseholdName: newName
       });
 
       const updatedHousehold = await apiFetch(`/household/${householdId}`);

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HouseholdResponsibilityAppServer.Migrations
 {
     [DbContext(typeof(HouseholdResponsibilityAppContext))]
-    [Migration("20250305114835_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250307070258_Sprint4")]
+    partial class Sprint4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -509,7 +509,7 @@ namespace HouseholdResponsibilityAppServer.Migrations
                     b.HasOne("HouseholdResponsibilityAppServer.Models.Users.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
                     b.HasOne("HouseholdResponsibilityAppServer.Models.Task.HouseholdTask", "HouseholdTask")

@@ -119,15 +119,15 @@ export default function Profile() {
                 <Household dataEntry={household} />
 
                 {household.createdByUsername === user?.userName ? (
-                  <>
-                    <button className="btn btn-danger" onClick={deleteHousehold}>
-                      Delete Household
-                    </button>
+                  <>                    
                     <button
                       className="btn btn-warning"
                       onClick={() => setIsHouseholdModalOpen(true)}
                     >
                       Change Household Name
+                    </button>
+                    <button className="btn btn-danger" onClick={deleteHousehold}>
+                      Delete Household
                     </button>
                   </>
                 ) : (
@@ -197,23 +197,6 @@ export default function Profile() {
         onClose={() => setIsJoinModalOpen(false)}
         setSuccesFullyJoined={setSuccesFullyJoined}
       />
-
-      <div className="notes">
-        <ul>
-          <li>
-            Add an option here that once the user has a household and if the admin then edit household.
-          </li>
-          <li>
-            User deletion is broken ATM both for users with or without household. <b>Must investigate</b>
-          </li>
-          <li>
-            Refresh site once user has joined or created household else broken
-          </li>
-          <li>
-            We need to use PATCH for the user to edit their settings so only the necessary info needs to be sent/updated
-          </li>
-        </ul>
-      </div>
     </div>
   );
 }
