@@ -70,8 +70,8 @@ namespace HouseholdResponsibilityAppServer
             });
 
             // Config settings
-            var jwtSettings = builder.Configuration.GetSection("Jwt");
-            var issuerSigningKey = builder.Configuration["Jwt:IssuerSigningKey"];
+            var jwtSettings = builder.Configuration;
+            var issuerSigningKey = jwtSettings["IssuerSigningKey"];
 
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();

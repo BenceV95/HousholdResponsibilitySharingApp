@@ -34,8 +34,8 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
         private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials,
             DateTime expiration) =>
             new(
-                "apiWithAuthBackend",  //issuer    later get it from appsettings.json...
-                "apiWithAuthBackend", //audience
+                _configuration["ValidIssuer"],  //issuer
+                _configuration["ValidAudience"], //audience
                 claims,
                 expires: expiration,
                 signingCredentials: credentials
@@ -74,7 +74,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             return new SigningCredentials(
                 new SymmetricSecurityKey(
 
-                    Encoding.UTF8.GetBytes(_configuration["Jwt:IssuerSigningKey"])
+                    Encoding.UTF8.GetBytes(_configuration["IssuerSigningKey"])
                 ),
                 SecurityAlgorithms.HmacSha256
             );
