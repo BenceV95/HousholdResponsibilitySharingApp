@@ -1,11 +1,7 @@
 import Link from "next/link"
-import authorizeUser from "../../(utils)/authorizeUser"
 import './Unauthorized.css';
 
 export default async function Unauthorized() {
-
-    await authorizeUser()
-
 
     return (
         <div className="Unauthorized">

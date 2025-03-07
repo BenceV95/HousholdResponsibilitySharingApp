@@ -2,7 +2,7 @@
 import { useState } from "react"
 import AllHouseholds from "../components/Households/AllHouseholds/AllHouseholds"
 import CreateHousehold from "../components/Households/CreateHousehold/CreateHouseholdModal";
-import ChangeHouseholdName from "../components/Households/ChangeHouseholdNameModal/ChangeHouseholdName";
+import ChangeHouseholdName from "../components/Households/ChangeHouseholdNameModal/ChangeHouseholdNameModal";
 import JoinHousehold from "../components/Households/JoinHousehold/JoinHouseholdModal";
 
 export default function Households() {
