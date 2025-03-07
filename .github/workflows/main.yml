@@ -11,6 +11,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      DbConnectionString: ${{ secrets.DbConnectionString }}
+      IssuerSigningKey: ${{ secrets.IssuerSigningKey }}
+      ValidIssuer: ${{secrets.ValidIssuer}}
+      ValidAudience: ${{secrets.ValidAudience}}
+
     steps:
     - uses: actions/checkout@v4
 
