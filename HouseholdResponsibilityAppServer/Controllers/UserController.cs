@@ -66,7 +66,7 @@ public class UserController : ControllerBase
         try
         {
             await _userService.CreateUserAsync(userDto);
-            return Ok(new { message = "User created successfully!" }); //changed cuz frontend
+            return Ok(new { message = "User created successfully!" });
         }
         catch (Exception ex)
         {
@@ -83,7 +83,7 @@ public class UserController : ControllerBase
         try
         {
             await _userService.UpdateUserAsync(userId, userDto);
-            return Ok(new { message = "Update successfull!" });  //changed cuz frontend
+            return Ok(new { message = "Update successful!" });
         }
         catch (Exception ex)
         {
