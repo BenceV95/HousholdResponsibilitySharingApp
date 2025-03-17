@@ -3,6 +3,7 @@ using HouseholdResponsibilityAppServer.Context;
 using HouseholdResponsibilityAppServer.Models.Groups;
 using HouseholdResponsibilityAppServer.Models.Histories;
 using HouseholdResponsibilityAppServer.Models.Households;
+using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Models.Task;
 using HouseholdResponsibilityAppServer.Models.Users;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +21,7 @@ namespace IntegrationTests
     {
         private readonly string _dbName = Guid.NewGuid().ToString();
         private readonly string _userWithoutHouseholdId = "1";
-        private readonly string _userWithHouseholdId = "2";
+        private readonly string _userWithHouseholdId = "12442142189ö";
         public HouseholdResponsibilityAppContext InMemoryDbContext { get; private set; }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -56,13 +57,13 @@ namespace IntegrationTests
 
                 InMemoryDbContext = householdContext;
 
-                await AddUsersToInMemoryDb(scope);
+                await SeedInMemoryDb(scope);
                 //await AddHouseholdToInMemoryDb(scope);
 
             });
         }
 
-        private async Task AddUsersToInMemoryDb(IServiceScope scope)
+        private async Task SeedInMemoryDb(IServiceScope scope)
         {
             using var householdContext = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
             using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
@@ -73,6 +74,7 @@ namespace IntegrationTests
             {
                 Id = _userWithoutHouseholdId,
                 Email = "userWithNoHousehold@gmail.com",
+                NormalizedEmail = "userWithNoHousehold@gmail.com",
                 UserName = "userWithNoHousehold",
                 FirstName = "John",
                 LastName = "Doe",
@@ -93,6 +95,8 @@ namespace IntegrationTests
                 PasswordHash = "password"
             };
 
+
+
             //add  a household to the user
             var household = new Household()
             {
@@ -106,41 +110,68 @@ namespace IntegrationTests
                 Users = new List<User>(),
             };
 
-            userWithHousehold.Household = household;
-
-            userWithHousehold.Household.Groups.Add(new TaskGroup()
+            var taskGroup = new TaskGroup()
             {
                 GroupId = 1,
                 Name = "Pre Seeded Group",
                 Household = household,
-            });
-
-            var resultUserWithNoHousehold = await userManager.CreateAsync(userWithNoHousehold, "password");
-            var resultUserWithHousehold = await userManager.CreateAsync(userWithHousehold, "password");
-
-            await householdContext.SaveChangesAsync();
-
-        }
-
-
-        private async Task AddHouseholdToInMemoryDb(IServiceScope scope)
-        {
-            using var householdContext = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
-            using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-
-            var userWithHousehold = await userManager.FindByIdAsync(_userWithHouseholdId);
-
-            var household = new Household()
-            {
-                HouseholdId = 1,
-                CreatedAt = DateTime.UtcNow,
-                CreatedByUser = userWithHousehold,
-                Groups = null,
-                Histories = null,
             };
 
-            await householdContext.Households.AddAsync(household);
+            await householdContext.Groups.AddAsync(taskGroup);
+
+            userWithHousehold.Household = household;
+
+            userWithHousehold.Household.Groups.Add(taskGroup);
+
+            await userManager.CreateAsync(userWithNoHousehold, "password");
+            await userManager.CreateAsync(userWithHousehold, "password");
+
+
+
+            var householdTask = new HouseholdTask()
+            {
+                TaskId = 1,
+                CreatedAt = DateTime.Now,
+                CreatedBy = userWithHousehold,
+                Title = "test title",
+                Description = "test description",
+                Group = taskGroup,
+                Household = household,
+                Priority = false,
+            };
+
+            var scheduledTask = new ScheduledTask()
+            {
+                ScheduledTaskId = 1,
+                AssignedTo = userWithHousehold,
+                AtSpecificTime = false,
+                CreatedAt = DateTime.Now,
+                CreatedBy = userWithHousehold,
+                EventDate = DateTime.UtcNow,
+                Repeat = 0,
+                HouseholdTask = householdTask,
+            };
+
+            var history = new History()
+            {
+                HistoryId = 1,
+                CompletedAt = DateTime.UtcNow,
+                CompletedBy = userWithHousehold,
+                ScheduledTask = scheduledTask,
+                Household = household,
+                Outcome = false,
+            };
+
+
+
+            await householdContext.Tasks.AddAsync(householdTask);
+            await householdContext.ScheduledTasks.AddAsync(scheduledTask);
+
+
+
             await householdContext.SaveChangesAsync();
+
         }
+
     }
 }
