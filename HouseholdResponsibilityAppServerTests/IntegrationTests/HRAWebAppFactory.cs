@@ -21,7 +21,7 @@ namespace IntegrationTests
     {
         private readonly string _dbName = Guid.NewGuid().ToString();
         private readonly string _userWithoutHouseholdId = "1";
-        private readonly string _userWithHouseholdId = "12442142189ö";
+        private readonly string _userWithHouseholdId = "2";
         public HouseholdResponsibilityAppContext InMemoryDbContext { get; private set; }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -110,22 +110,24 @@ namespace IntegrationTests
                 Users = new List<User>(),
             };
 
+            userWithHousehold.Household = household;
+
+
+            await userManager.CreateAsync(userWithNoHousehold, "password");
+            await userManager.CreateAsync(userWithHousehold, "password");
+
+
+            //for some reason this cannot be before we add users to the db (why?)
             var taskGroup = new TaskGroup()
             {
                 GroupId = 1,
                 Name = "Pre Seeded Group",
                 Household = household,
             };
+           
 
             await householdContext.Groups.AddAsync(taskGroup);
-
-            userWithHousehold.Household = household;
-
             userWithHousehold.Household.Groups.Add(taskGroup);
-
-            await userManager.CreateAsync(userWithNoHousehold, "password");
-            await userManager.CreateAsync(userWithHousehold, "password");
-
 
 
             var householdTask = new HouseholdTask()
@@ -166,10 +168,11 @@ namespace IntegrationTests
 
             await householdContext.Tasks.AddAsync(householdTask);
             await householdContext.ScheduledTasks.AddAsync(scheduledTask);
-
+            await householdContext.Histories.AddAsync(history);
 
 
             await householdContext.SaveChangesAsync();
+
 
         }
 

@@ -79,7 +79,7 @@ namespace HouseholdResponsibilityAppServer.Controllers
 
         }
 
-
+        // we should make use of this history ID!
         [HttpPatch("/history/{historyId}")]
         public async Task<IActionResult> UpdateHistory([FromBody] CreateHistoryRequest updateRequest)
         {
@@ -101,11 +101,11 @@ namespace HouseholdResponsibilityAppServer.Controllers
         }
 
         [HttpDelete("/history/{historyId}")]
-        public async Task<IActionResult> DeleteHistory([FromQuery] int id)
+        public async Task<IActionResult> DeleteHistory(int historyId)
         {
             try
             {
-                await _historyService.DeleteHistoryByIdAsync(id);
+                await _historyService.DeleteHistoryByIdAsync(historyId);
                 return NoContent();
             }
             catch (KeyNotFoundException e)
