@@ -181,7 +181,7 @@ namespace IntegrationTests
             }
 
 
-            //atm this fails, but should be fixed in the controller, or there should be a filter to give back only histories that belong to a specific household
+            //atm this fails, but should be fixed in the controller, or there should be a filter to give back only histories that belong to a specific household, cuase now any user can get all the histories
             [Fact]
             public async Task GetAllHistories_ShouldReturnOkWithEmptyList_WhenUserDoesntHaveAHousehold()
             {
@@ -273,7 +273,7 @@ namespace IntegrationTests
             }
 
 
-            //should fix this as well! (test is good, the repo, or service is at fault)
+            //should fix this as well! (test is good, the repo, or service is at fault) should return non existing history id or something
             [Fact]
             public async Task DeleteHistory_ShouldReturnBadRequest_WhenDeletingNonExistingHistory()
             {
