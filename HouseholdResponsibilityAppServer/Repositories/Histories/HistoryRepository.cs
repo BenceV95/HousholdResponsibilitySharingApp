@@ -2,7 +2,9 @@
 using HouseholdResponsibilityAppServer.Models.Histories;
 using HouseholdResponsibilityAppServer.Models.Task;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 
 namespace HouseholdResponsibilityAppServer.Repositories.Histories
 {
@@ -26,10 +28,14 @@ namespace HouseholdResponsibilityAppServer.Repositories.Histories
 
         public async Task DeleteHistoryByIdAsync(int historyId)
         {
-            History history = new() { HistoryId = historyId };
+            var history = await _dbContext.Histories.FirstOrDefaultAsync(h=>h.HistoryId == historyId);
 
-            _dbContext.Entry(history).State = EntityState.Deleted;
+            if (history == null)
+            {
+                throw new KeyNotFoundException($"History with ID {historyId} not found.");
+            }
 
+            _dbContext.Histories.Remove(history);
             await _dbContext.SaveChangesAsync();
         }
 
@@ -39,6 +45,16 @@ namespace HouseholdResponsibilityAppServer.Repositories.Histories
                 .Include(h => h.CompletedBy)
                 .Include(h => h.Household)
                 .Include(h => h.ScheduledTask)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<History>> GetAllHistoriesAsync(int householdId)
+        {
+            return await _dbContext.Histories
+                .Include(h => h.CompletedBy)
+                .Include(h => h.Household)
+                .Include(h => h.ScheduledTask)
+                .Where(h=>h.Household.HouseholdId == householdId)
                 .ToListAsync();
         }
 

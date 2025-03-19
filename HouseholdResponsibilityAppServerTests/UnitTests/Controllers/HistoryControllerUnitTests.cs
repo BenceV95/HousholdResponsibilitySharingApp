@@ -8,6 +8,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using HouseholdResponsibilityAppServer.Services.Authentication;
 using Xunit;
 
 namespace HouseholdResponsibilityAppServerTests.UnitTests.Controllers
@@ -16,13 +17,15 @@ namespace HouseholdResponsibilityAppServerTests.UnitTests.Controllers
     {
         private readonly Mock<IHistoryService> _mockHistoryService;
         private readonly Mock<ILogger<GroupController>> _mockLogger;
+        private readonly Mock<IAuthService> _authService;
         private readonly HistoryController _controller;
 
         public HistoryControllerUnitTests()
         {
             _mockHistoryService = new Mock<IHistoryService>();
             _mockLogger = new Mock<ILogger<GroupController>>();
-            _controller = new HistoryController(_mockHistoryService.Object, _mockLogger.Object);
+            _authService = new Mock<IAuthService>();
+            _controller = new HistoryController(_mockHistoryService.Object, _mockLogger.Object, _authService.Object);
         }
 
         [Fact]
@@ -78,7 +81,7 @@ namespace HouseholdResponsibilityAppServerTests.UnitTests.Controllers
         public async Task UpdateHistory_ReturnsOkResult_WithUpdatedHistory()
         {
             // Arrange
-            var updateRequest = new CreateHistoryRequest { ScheduledTaskId = 1, CompletedAt = DateTime.Now, CompletedByUserId = "1", Outcome = true, HouseholdId = 1 };
+            var updateRequest = new UpdateHistoryDTO(1,true,"1");
             var history = new HistoryDTO { HistoryId = 1, ScheduledTaskId = 1, CompletedAt = DateTime.Now, CompletedByUserId = "1", Outcome = true, HouseholdId = 1 };
             _mockHistoryService.Setup(service => service.UpdateHistoryAsync(updateRequest)).ReturnsAsync(history);
 

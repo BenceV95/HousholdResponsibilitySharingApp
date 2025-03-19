@@ -135,28 +135,19 @@ namespace HouseholdResponsibilityAppServerTests.UnitTests.Services
         public async Task UpdateHistoryAsync_ShouldUpdateHistory()
         {
             // Arrange
-            var updateRequest = new CreateHistoryRequest
-            {
-                ScheduledTaskId = 1,
-                CompletedAt = DateTime.Now,
-                CompletedByUserId = "user1",
-                Outcome = true
-            };
-
-            var scheduledTask = new ScheduledTask { ScheduledTaskId = 1 };
             var user = new User { Id = "user1" };
+            var updateRequest = new UpdateHistoryDTO(1, true, "user1");
             var history = new History
             {
-                ScheduledTask = scheduledTask,
-                CompletedAt = updateRequest.CompletedAt,
+                HistoryId = 1,
                 CompletedBy = user,
                 Outcome = updateRequest.Outcome
             };
 
-            _mockScheduledTasksRepository.Setup(
-                repo => 
-                    repo.GetByIdAsync(updateRequest.ScheduledTaskId))
-                .ReturnsAsync(scheduledTask);
+            _mockHistoryRepository.Setup(
+                repo =>
+                    repo.GetByIdAsync(updateRequest.Id))
+                .ReturnsAsync(history);
 
             _mockUserRepository.Setup(
                 repo => 
@@ -173,7 +164,7 @@ namespace HouseholdResponsibilityAppServerTests.UnitTests.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(updateRequest.CompletedByUserId, result.CompletedByUserId);
+            Assert.Equal(updateRequest.Outcome, result.Outcome);
             _mockHistoryRepository.Verify(
                 repo => 
                     repo.UpdateHistoryAsync(It.IsAny<History>()), Times.Once);

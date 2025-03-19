@@ -7,6 +7,7 @@ using HouseholdResponsibilityAppServer.Context;
 using Microsoft.Extensions.DependencyInjection;
 using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
+using HouseholdResponsibilityAppServer.Models.Users;
 
 namespace IntegrationTests
 {
@@ -189,15 +190,16 @@ namespace IntegrationTests
                 loginResponse.EnsureSuccessStatusCode();
                 AttachAuthCookies(loginResponse);
 
-                var response = await _client.GetAsync("/histories");
+                var response = await _client.GetAsync("/histories/my-household");
 
                 var responseContent = await response.Content.ReadAsStringAsync();
 
 
-                var histories = JsonConvert.DeserializeObject<List<HistoryDTO>>(responseContent);
+                //var histories = JsonConvert.DeserializeObject<List<HistoryDTO>>(responseContent);
 
-                Assert.Empty(histories);
-                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                //Assert.Empty(histories);
+                Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+                Assert.Contains("User does not belong to a household.", responseContent);
             }
 
             [Fact]
@@ -235,18 +237,10 @@ namespace IntegrationTests
                 AttachAuthCookies(loginResponse);
 
                 const int existingHistoryId = 1;
+                var updateRequest = new UpdateHistoryDTO(existingHistoryId, true, "2");
+                
 
-
-                var updateRequest = new CreateHistoryRequest
-                {
-                    CompletedByUserId = "2",
-                    CompletedAt = DateTime.UtcNow,
-                    HouseholdId = 1,
-                    Outcome = true,
-                    ScheduledTaskId = 1
-                };
-
-                var updateResponse = await _client.PatchAsJsonAsync($"/history/{existingHistoryId}", updateRequest);
+                var updateResponse = await _client.PatchAsJsonAsync($"/history", updateRequest);
                 Assert.Equal(HttpStatusCode.OK, updateResponse.StatusCode);
 
                 var updatedHistory = await _dbContext.Histories.FindAsync(existingHistoryId);
@@ -286,6 +280,7 @@ namespace IntegrationTests
 
                 var deleteResponse = await _client.DeleteAsync($"/history/{nonExistingHistoryId}");
                 Assert.Equal(HttpStatusCode.BadRequest, deleteResponse.StatusCode);
+                Assert.Contains($"History with ID {nonExistingHistoryId} not found.",await deleteResponse.Content.ReadAsStringAsync());
 
             }
 
