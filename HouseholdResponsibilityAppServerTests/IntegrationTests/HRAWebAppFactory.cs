@@ -3,6 +3,7 @@ using HouseholdResponsibilityAppServer.Context;
 using HouseholdResponsibilityAppServer.Models.Groups;
 using HouseholdResponsibilityAppServer.Models.Histories;
 using HouseholdResponsibilityAppServer.Models.Households;
+using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Models.Task;
 using HouseholdResponsibilityAppServer.Models.Users;
 using Microsoft.AspNetCore.Hosting;
@@ -56,13 +57,13 @@ namespace IntegrationTests
 
                 InMemoryDbContext = householdContext;
 
-                await AddUsersToInMemoryDb(scope);
+                await SeedInMemoryDb(scope);
                 //await AddHouseholdToInMemoryDb(scope);
 
             });
         }
 
-        private async Task AddUsersToInMemoryDb(IServiceScope scope)
+        private async Task SeedInMemoryDb(IServiceScope scope)
         {
             using var householdContext = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
             using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
@@ -73,6 +74,7 @@ namespace IntegrationTests
             {
                 Id = _userWithoutHouseholdId,
                 Email = "userWithNoHousehold@gmail.com",
+                NormalizedEmail = "userWithNoHousehold@gmail.com",
                 UserName = "userWithNoHousehold",
                 FirstName = "John",
                 LastName = "Doe",
@@ -93,6 +95,8 @@ namespace IntegrationTests
                 PasswordHash = "password"
             };
 
+
+
             //add  a household to the user
             var household = new Household()
             {
@@ -108,39 +112,69 @@ namespace IntegrationTests
 
             userWithHousehold.Household = household;
 
-            userWithHousehold.Household.Groups.Add(new TaskGroup()
+
+            await userManager.CreateAsync(userWithNoHousehold, "password");
+            await userManager.CreateAsync(userWithHousehold, "password");
+
+
+            //for some reason this cannot be before we add users to the db (why?)
+            var taskGroup = new TaskGroup()
             {
                 GroupId = 1,
                 Name = "Pre Seeded Group",
                 Household = household,
-            });
+            };
+           
 
-            var resultUserWithNoHousehold = await userManager.CreateAsync(userWithNoHousehold, "password");
-            var resultUserWithHousehold = await userManager.CreateAsync(userWithHousehold, "password");
-
-            await householdContext.SaveChangesAsync();
-
-        }
+            await householdContext.Groups.AddAsync(taskGroup);
+            userWithHousehold.Household.Groups.Add(taskGroup);
 
 
-        private async Task AddHouseholdToInMemoryDb(IServiceScope scope)
-        {
-            using var householdContext = scope.ServiceProvider.GetRequiredService<HouseholdResponsibilityAppContext>();
-            using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-
-            var userWithHousehold = await userManager.FindByIdAsync(_userWithHouseholdId);
-
-            var household = new Household()
+            var householdTask = new HouseholdTask()
             {
-                HouseholdId = 1,
-                CreatedAt = DateTime.UtcNow,
-                CreatedByUser = userWithHousehold,
-                Groups = null,
-                Histories = null,
+                TaskId = 1,
+                CreatedAt = DateTime.Now,
+                CreatedBy = userWithHousehold,
+                Title = "test title",
+                Description = "test description",
+                Group = taskGroup,
+                Household = household,
+                Priority = false,
             };
 
-            await householdContext.Households.AddAsync(household);
+            var scheduledTask = new ScheduledTask()
+            {
+                ScheduledTaskId = 1,
+                AssignedTo = userWithHousehold,
+                AtSpecificTime = false,
+                CreatedAt = DateTime.Now,
+                CreatedBy = userWithHousehold,
+                EventDate = DateTime.UtcNow,
+                Repeat = 0,
+                HouseholdTask = householdTask,
+            };
+
+            var history = new History()
+            {
+                HistoryId = 1,
+                CompletedAt = DateTime.UtcNow,
+                CompletedBy = userWithHousehold,
+                ScheduledTask = scheduledTask,
+                Household = household,
+                Outcome = false,
+            };
+
+
+
+            await householdContext.Tasks.AddAsync(householdTask);
+            await householdContext.ScheduledTasks.AddAsync(scheduledTask);
+            await householdContext.Histories.AddAsync(history);
+
+
             await householdContext.SaveChangesAsync();
+
+
         }
+
     }
 }
