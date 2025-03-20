@@ -35,6 +35,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
         {
             return _dbContext.ScheduledTasks
                 .Include(task => task.CreatedBy)
+                .Include(a => a.AssignedTo)
                 .Include(task => task.HouseholdTask)
                 .ThenInclude(ht => ht.Household)
                 .AsQueryable();
@@ -75,6 +76,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
         {
             return await _dbContext.ScheduledTasks
                 .Include(task => task.CreatedBy)
+                .Include(a=>a.AssignedTo)
                 .Include(task => task.HouseholdTask)
                 .ThenInclude(ht => ht.Household)
                 .Where(task => task.HouseholdTask.Household.HouseholdId == householdId)
