@@ -1,8 +1,6 @@
 ﻿using HouseholdResponsibilityAppServer.Context;
 using HouseholdResponsibilityAppServer.Models.Task;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Writers;
-using System.Runtime.CompilerServices;
 
 namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
 {

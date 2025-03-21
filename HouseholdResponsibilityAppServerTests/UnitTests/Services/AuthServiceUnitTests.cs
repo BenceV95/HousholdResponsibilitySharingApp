@@ -1,15 +1,12 @@
 ﻿using HouseholdResponsibilityAppServer.Context;
 using HouseholdResponsibilityAppServer.Contracts;
-using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Models.Users;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using System.Linq.Expressions;
 using System.Security.Claims;
-using Xunit;
 
 namespace HouseholdResponsibilityAppServerTests.UnitTests.Services
 {

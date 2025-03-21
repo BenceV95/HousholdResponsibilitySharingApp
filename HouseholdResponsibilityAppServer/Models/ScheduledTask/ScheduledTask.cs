@@ -1,5 +1,4 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Task;
-using System.Diagnostics.Eventing.Reader;
 using HouseholdResponsibilityAppServer.Models.Users;
 
 namespace HouseholdResponsibilityAppServer.Models.ScheduledTasks

@@ -6,10 +6,6 @@ using HouseholdResponsibilityAppServer.Repositories.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Repositories.UserRepo;
 using HouseholdResponsibilityAppServer.Services.HistoryServices;
 using Moq;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace HouseholdResponsibilityAppServerTests.UnitTests.Services
 {

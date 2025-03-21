@@ -1,5 +1,3 @@
-using HouseholdResponsibilityAppServer.Controllers;
-using HouseholdResponsibilityAppServer.Models;
 using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Models.Users;
 using HouseholdResponsibilityAppServer.Services.Authentication;
@@ -9,11 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace HouseholdResponsibilityAppServerTests.UnitTests.Controllers
 {

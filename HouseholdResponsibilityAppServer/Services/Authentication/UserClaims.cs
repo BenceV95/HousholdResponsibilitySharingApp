@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace HouseholdResponsibilityAppServer.Services.Authentication
+﻿namespace HouseholdResponsibilityAppServer.Services.Authentication
 {
     public class UserClaims
     {

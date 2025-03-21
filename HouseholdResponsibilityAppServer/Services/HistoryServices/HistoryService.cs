@@ -2,8 +2,6 @@
 using HouseholdResponsibilityAppServer.Repositories.Histories;
 using HouseholdResponsibilityAppServer.Repositories.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Repositories.UserRepo;
-using HouseholdResponsibilityAppServer.Services.UserService;
-using System.Threading.Tasks;
 
 namespace HouseholdResponsibilityAppServer.Services.HistoryServices
 {

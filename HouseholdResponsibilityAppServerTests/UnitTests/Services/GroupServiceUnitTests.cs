@@ -5,7 +5,6 @@ using HouseholdResponsibilityAppServer.Repositories.Groups;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.Groups;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Moq;
 
 namespace HouseholdResponsibilityAppServerTests.UnitTests.Services

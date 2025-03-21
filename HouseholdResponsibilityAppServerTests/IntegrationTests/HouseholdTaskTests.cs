@@ -1,25 +1,16 @@
-﻿using HouseholdResponsibilityAppServer.Context;
-using HouseholdResponsibilityAppServer.Models.Households;
-using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
-using IntegrationTests;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
+﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IntegrationTests
 {
-    public class HouseholdTaskTests
+    public partial class HouseholdTaskTests
     {
         [Collection("IntegrationTests")]
-        public class HouseholdTaskControllerIntegrationTest
+        public class HouseholdTaskControllerIntegrationTest : BaseIntegrationTest
         {
+            /*
             private readonly HRAWebAppFactory _app;
             private readonly HttpClient _client;
             private readonly HouseholdResponsibilityAppContext _dbContext;
@@ -45,6 +36,7 @@ namespace IntegrationTests
 
             }
 
+            // extension method for httpclient or base class, inheritance
             private async Task<HttpResponseMessage> LoginUser(string email, string password)
             {
                 var loginRequest = new
@@ -64,7 +56,7 @@ namespace IntegrationTests
                     _client.DefaultRequestHeaders.Add("Cookie", cookie);
                 }
             }
-
+            */
 
             [Fact]
             public async Task GetHouseholdTasksByUsersHousehold_ShouldReturnOk_WithListOfTasks()

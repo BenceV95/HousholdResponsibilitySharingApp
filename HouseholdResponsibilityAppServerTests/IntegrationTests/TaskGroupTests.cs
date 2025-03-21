@@ -4,7 +4,6 @@ using System.Net.Http.Json;
 using System.Net;
 using System.Text;
 using HouseholdResponsibilityAppServer.Models.Groups;
-using Microsoft.AspNetCore.Http;
 
 namespace IntegrationTests
 {

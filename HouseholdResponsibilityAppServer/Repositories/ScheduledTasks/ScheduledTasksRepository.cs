@@ -1,8 +1,6 @@
 ﻿using HouseholdResponsibilityAppServer.Context;
 using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
-using HouseholdResponsibilityAppServer.Models.Task;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
 {

@@ -1,11 +1,8 @@
-﻿using System.Diagnostics;
-using HouseholdResponsibilityAppServer.Models;
-using HouseholdResponsibilityAppServer.Models.Households;
+﻿using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Models.Users;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
 using HouseholdResponsibilityAppServer.Repositories.UserRepo;
 using HouseholdResponsibilityAppServer.Services.Authentication;
-using Microsoft.AspNetCore.Identity;
 
 namespace HouseholdResponsibilityAppServer.Services.HouseholdService
 {

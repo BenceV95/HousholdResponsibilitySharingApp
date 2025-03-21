@@ -2,7 +2,6 @@
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.HouseholdTaskServices;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 
 namespace HouseholdResponsibilityAppServer.Controllers

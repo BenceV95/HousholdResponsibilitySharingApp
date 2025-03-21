@@ -1,8 +1,6 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Histories;
-using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.HistoryServices;
-using HouseholdResponsibilityAppServer.Services.HouseholdTaskServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

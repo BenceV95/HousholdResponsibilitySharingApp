@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using HouseholdResponsibilityAppServer.Context;
+﻿using HouseholdResponsibilityAppServer.Context;
 using HouseholdResponsibilityAppServer.Models.Users;
 using Microsoft.EntityFrameworkCore;
 

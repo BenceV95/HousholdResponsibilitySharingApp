@@ -2,7 +2,6 @@
 using HouseholdResponsibilityAppServer.Contracts;
 using HouseholdResponsibilityAppServer.Models.Users;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace HouseholdResponsibilityAppServer.Services.Authentication

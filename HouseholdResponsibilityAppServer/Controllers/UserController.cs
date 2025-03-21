@@ -1,5 +1,4 @@
-﻿using HouseholdResponsibilityAppServer.Models.Invitations;
-using HouseholdResponsibilityAppServer.Models.Users;
+﻿using HouseholdResponsibilityAppServer.Models.Users;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.Invitation;
 using HouseholdResponsibilityAppServer.Services.UserService;

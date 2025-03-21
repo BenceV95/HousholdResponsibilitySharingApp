@@ -1,10 +1,6 @@
 ﻿using HouseholdResponsibilityAppServer.Context;
 using HouseholdResponsibilityAppServer.Models.Histories;
-using HouseholdResponsibilityAppServer.Models.Task;
 using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using HouseholdResponsibilityAppServer.Services.Authentication;
 
 namespace HouseholdResponsibilityAppServer.Repositories.Histories
 {

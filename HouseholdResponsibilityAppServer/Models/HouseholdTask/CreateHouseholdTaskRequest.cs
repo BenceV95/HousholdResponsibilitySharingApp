@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-
-namespace HouseholdResponsibilityAppServer.Models.HouseholdTasks
+﻿namespace HouseholdResponsibilityAppServer.Models.HouseholdTasks
 {
     public class CreateHouseholdTaskRequest
     {

@@ -5,9 +5,6 @@ using System.Net;
 using HouseholdResponsibilityAppServer.Models.Histories;
 using HouseholdResponsibilityAppServer.Context;
 using Microsoft.Extensions.DependencyInjection;
-using HouseholdResponsibilityAppServer.Models.Households;
-using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
-using HouseholdResponsibilityAppServer.Models.Users;
 
 namespace IntegrationTests
 {

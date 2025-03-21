@@ -1,5 +1,4 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Histories;
-using HouseholdResponsibilityAppServer.Models.Task;
 
 namespace HouseholdResponsibilityAppServer.Repositories.Histories
 {

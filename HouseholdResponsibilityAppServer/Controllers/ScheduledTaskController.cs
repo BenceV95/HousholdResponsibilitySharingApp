@@ -1,11 +1,8 @@
-﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
-using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
+﻿using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Services.Authentication;
-using HouseholdResponsibilityAppServer.Services.HouseholdTaskServices;
 using HouseholdResponsibilityAppServer.Services.ScheduledTaskServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace HouseholdResponsibilityAppServer.Controllers
 {

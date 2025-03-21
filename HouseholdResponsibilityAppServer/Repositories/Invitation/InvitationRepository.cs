@@ -1,6 +1,5 @@
 ﻿using HouseholdResponsibilityAppServer.Context;
 using HouseholdResponsibilityAppServer.Models.Invitations;
-using HouseholdResponsibilityAppServer.Repositories.InvitationRepo;
 using Microsoft.EntityFrameworkCore;
 
 namespace HouseholdResponsibilityAppServer.Repositories.InvitationRepo
