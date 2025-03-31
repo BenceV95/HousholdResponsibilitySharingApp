@@ -3,8 +3,6 @@ using HouseholdResponsibilityAppServer.Repositories.UserRepo;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 using System.Security.Claims;
 
 namespace HouseholdResponsibilityAppServer.Controllers
@@ -20,11 +18,14 @@ namespace HouseholdResponsibilityAppServer.Controllers
         const int _expirationTimeInMinutes = 60;
 
 
-        public AuthController(IAuthService authenticationService, IUserRepository userRepository, ITokenService tokenService)
+        public AuthController(
+            IAuthService authenticationService,
+            IUserRepository userRepository,
+            ITokenService tokenService)
         {
-            _authenticationService = authenticationService;
-            _userRepository = userRepository;
-            _tokenService = tokenService;
+            _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
         }
 
         [HttpPost("Register")]

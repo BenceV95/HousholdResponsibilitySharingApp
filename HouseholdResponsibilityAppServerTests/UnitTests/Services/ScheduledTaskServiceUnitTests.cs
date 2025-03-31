@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Models.Task;
@@ -12,7 +8,6 @@ using HouseholdResponsibilityAppServer.Repositories.UserRepo;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.ScheduledTaskServices;
 using Moq;
-using Xunit;
 
 namespace HouseholdResponsibilityAppServerTests.UnitTests.Services;
 public class ScheduledTaskServiceTests

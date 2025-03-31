@@ -1,5 +1,4 @@
-﻿using HouseholdResponsibilityAppServer.Models.Households;
-using HouseholdResponsibilityAppServer.Models.Task;
+﻿using HouseholdResponsibilityAppServer.Models.Task;
 
 namespace HouseholdResponsibilityAppServer.Repositories.HouseholdTasks
 {

@@ -1,6 +1,4 @@
-﻿using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
-
-namespace HouseholdResponsibilityAppServer.Models.Histories
+﻿namespace HouseholdResponsibilityAppServer.Models.Histories
 {
     public class CreateHistoryRequest
     {

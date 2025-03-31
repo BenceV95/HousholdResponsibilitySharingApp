@@ -24,10 +24,13 @@ export default function AssignedTask() {
       setScheduledTasks(schedResp);
       setTasks(taskResp);
       setUsers(userResp);
+      console.log(schedResp);
     } catch (err) {
       console.error("Error:", err);
     }
     setLoading(false);
+    
+    
   };
 
   const deleteTask = async (id) => {

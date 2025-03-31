@@ -2,8 +2,6 @@
 using HouseholdResponsibilityAppServer.Repositories.Histories;
 using HouseholdResponsibilityAppServer.Repositories.ScheduledTasks;
 using HouseholdResponsibilityAppServer.Repositories.UserRepo;
-using HouseholdResponsibilityAppServer.Services.UserService;
-using System.Threading.Tasks;
 
 namespace HouseholdResponsibilityAppServer.Services.HistoryServices
 {
@@ -40,15 +38,26 @@ namespace HouseholdResponsibilityAppServer.Services.HistoryServices
             return historyModels.Select(ConvertModelToDTO);
         }
 
+        public async Task<IEnumerable<HistoryDTO>> GetallHistoriesAsync(int householdId)
+        {
+            var historyModels = await _historiesRepository.GetAllHistoriesAsync(householdId);
+            return historyModels.Select(ConvertModelToDTO);
+        }
+
         public async Task<HistoryDTO> GetByIdAsync(int historyId)
         {
             var historyModel = await _historiesRepository.GetByIdAsync(historyId);
             return ConvertModelToDTO(historyModel);
         }
 
-        public async Task<HistoryDTO> UpdateHistoryAsync(CreateHistoryRequest updateRequest)
+        public async Task<HistoryDTO> UpdateHistoryAsync(UpdateHistoryDTO updateRequest)
         {
-            var historyModel = await ConvertRequestToModel(updateRequest);
+            var historyModel = await _historiesRepository.GetByIdAsync(updateRequest.Id);
+            var userModel = await _userRepository.GetUserByIdAsync(updateRequest.CompletedByUserId);
+
+            historyModel.Outcome = updateRequest.Outcome;
+            historyModel.CompletedBy = userModel;
+
 
             var updatedModel = await _historiesRepository.UpdateHistoryAsync(historyModel);
             return ConvertModelToDTO(updatedModel);

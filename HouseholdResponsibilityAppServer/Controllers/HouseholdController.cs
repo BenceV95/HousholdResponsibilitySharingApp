@@ -1,13 +1,8 @@
-﻿using System.Diagnostics;
-using System.Security.Claims;
-using HouseholdResponsibilityAppServer.Models;
+﻿using System.Security.Claims;
 using HouseholdResponsibilityAppServer.Models.Households;
-using HouseholdResponsibilityAppServer.Models.Invitations;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.HouseholdService;
 using HouseholdResponsibilityAppServer.Services.Invitation;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 //[Authorize]

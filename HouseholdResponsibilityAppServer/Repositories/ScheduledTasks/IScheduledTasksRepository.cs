@@ -1,5 +1,4 @@
 ﻿using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
-using HouseholdResponsibilityAppServer.Models.Task;
 
 namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
 {

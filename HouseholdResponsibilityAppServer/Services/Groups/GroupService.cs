@@ -1,14 +1,7 @@
-﻿using HouseholdResponsibilityAppServer.Context;
-using HouseholdResponsibilityAppServer.Models;
-using HouseholdResponsibilityAppServer.Models.Groups;
-using HouseholdResponsibilityAppServer.Models.Households;
+﻿using HouseholdResponsibilityAppServer.Models.Groups;
 using HouseholdResponsibilityAppServer.Repositories.Groups;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
 using HouseholdResponsibilityAppServer.Services.Authentication;
-using HouseholdResponsibilityAppServer.Services.HouseholdService;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 
 namespace HouseholdResponsibilityAppServer.Services.Groups
 {

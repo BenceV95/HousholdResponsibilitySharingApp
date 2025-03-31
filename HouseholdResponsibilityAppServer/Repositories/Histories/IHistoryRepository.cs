@@ -1,5 +1,4 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Histories;
-using HouseholdResponsibilityAppServer.Models.Task;
 
 namespace HouseholdResponsibilityAppServer.Repositories.Histories
 {
@@ -7,6 +6,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.Histories
     {
         public Task<History> AddHistoryAsync(History householdTask);
         public Task<IEnumerable<History>> GetAllHistoriesAsync();
+        public Task<IEnumerable<History>> GetAllHistoriesAsync(int householdId);
         public Task DeleteHistoryByIdAsync(int historyId);
         public Task<History> GetByIdAsync(int historyId);
         //not sure if this will be needed

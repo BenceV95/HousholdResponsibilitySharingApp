@@ -5,8 +5,6 @@ using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdTasks;
 using HouseholdResponsibilityAppServer.Repositories.UserRepo;
 using HouseholdResponsibilityAppServer.Services.Authentication;
-using HouseholdResponsibilityAppServer.Services.Groups;
-using HouseholdResponsibilityAppServer.Services.UserService;
 
 
 namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices

@@ -1,6 +1,4 @@
-﻿using HouseholdResponsibilityAppServer.Models.Households;
-using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
-using HouseholdResponsibilityAppServer.Models.Task;
+﻿using HouseholdResponsibilityAppServer.Models.HouseholdTasks;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 
 namespace HouseholdResponsibilityAppServer.Services.HouseholdTaskServices

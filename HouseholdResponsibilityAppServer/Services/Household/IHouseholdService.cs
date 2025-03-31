@@ -1,5 +1,4 @@
-﻿using HouseholdResponsibilityAppServer.Models;
-using HouseholdResponsibilityAppServer.Models.Households;
+﻿using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 
 

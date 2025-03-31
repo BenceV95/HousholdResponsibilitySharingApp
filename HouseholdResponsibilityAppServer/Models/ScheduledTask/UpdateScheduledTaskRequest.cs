@@ -1,6 +1,4 @@
-﻿using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
-
-namespace HouseholdResponsibilityAppServer.Models.ScheduledTasks
+﻿namespace HouseholdResponsibilityAppServer.Models.ScheduledTasks
 {
     public class UpdateScheduledTaskRequest
     {

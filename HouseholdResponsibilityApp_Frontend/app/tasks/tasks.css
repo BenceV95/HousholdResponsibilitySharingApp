@@ -3,6 +3,7 @@
     flex-direction: column;
     width: 80%;
     justify-self: center;
+    align-items: center;
     text-align: center;
     border: solid white 2px;
     border-radius: 10px;
@@ -12,12 +13,13 @@
 
 .taskButtons {
     display: flex;
-    align-self: center;
+    /* align-self: center; */
     gap: 1rem;
     border: solid white 2px;
     border-radius: 10px;
     padding: 1rem;
     width: fit-content;
+    overflow-x: auto;
 }
 
 .taskAction {

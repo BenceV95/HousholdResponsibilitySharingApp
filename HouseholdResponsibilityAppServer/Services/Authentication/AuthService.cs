@@ -2,7 +2,6 @@
 using HouseholdResponsibilityAppServer.Contracts;
 using HouseholdResponsibilityAppServer.Models.Users;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace HouseholdResponsibilityAppServer.Services.Authentication
@@ -103,7 +102,7 @@ namespace HouseholdResponsibilityAppServer.Services.Authentication
             return result;
         }
 
-        public  UserClaims GetClaimsFromHttpContext(HttpContext context)
+        public UserClaims GetClaimsFromHttpContext(HttpContext context)
         {
 
            string userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

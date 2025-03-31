@@ -1,8 +1,6 @@
 ﻿using HouseholdResponsibilityAppServer.Context;
 using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
-using HouseholdResponsibilityAppServer.Models.Task;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
 {
@@ -35,6 +33,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
         {
             return _dbContext.ScheduledTasks
                 .Include(task => task.CreatedBy)
+                .Include(a => a.AssignedTo)
                 .Include(task => task.HouseholdTask)
                 .ThenInclude(ht => ht.Household)
                 .AsQueryable();
@@ -75,6 +74,7 @@ namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
         {
             return await _dbContext.ScheduledTasks
                 .Include(task => task.CreatedBy)
+                .Include(a=>a.AssignedTo)
                 .Include(task => task.HouseholdTask)
                 .ThenInclude(ht => ht.Household)
                 .Where(task => task.HouseholdTask.Household.HouseholdId == householdId)

@@ -1,7 +1,7 @@
 ﻿using HouseholdResponsibilityAppServer.Models.Households;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+
 namespace HouseholdResponsibilityAppServer.Models.Users
 {
     [Index(nameof(Email), IsUnique = true)]

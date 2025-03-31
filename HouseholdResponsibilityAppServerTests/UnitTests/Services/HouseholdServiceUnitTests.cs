@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using HouseholdResponsibilityAppServer.Models;
 using HouseholdResponsibilityAppServer.Models.Households;
 using HouseholdResponsibilityAppServer.Models.Users;
 using HouseholdResponsibilityAppServer.Repositories.HouseholdRepo;
@@ -10,7 +5,6 @@ using HouseholdResponsibilityAppServer.Repositories.UserRepo;
 using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.HouseholdService;
 using Moq;
-using Xunit;
 
 namespace HouseholdResponsibilityAppServerTests.UnitTests.Services
 {

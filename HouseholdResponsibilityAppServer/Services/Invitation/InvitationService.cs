@@ -1,5 +1,4 @@
-﻿using HouseholdResponsibilityAppServer.Models;
-using HouseholdResponsibilityAppServer.Models.Invitations;
+﻿using HouseholdResponsibilityAppServer.Models.Invitations;
 using HouseholdResponsibilityAppServer.Repositories.InvitationRepo;
 using HouseholdResponsibilityAppServer.Repositories.UserRepo;
 using HouseholdResponsibilityAppServer.Services.Invitation;
