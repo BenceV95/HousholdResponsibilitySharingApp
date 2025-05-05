@@ -129,5 +129,17 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
             };
         }
 
+        public async Task MarkScheduledTaskAsCompleteAsync(int taskId)
+        {
+            var task = await _scheduledTasksRepository.GetByIdAsync(taskId);
+
+            if (task.EventDate < DateTime.Now)
+            {
+                throw new InvalidOperationException("Cannot complete task now, since its due date has passed!");
+            }
+
+            await _scheduledTasksRepository.MarkScheduledTaskAsCompletedAsync(taskId);
+
+        }
     }
 }

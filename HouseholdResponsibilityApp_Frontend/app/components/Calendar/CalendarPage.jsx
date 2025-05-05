@@ -6,7 +6,7 @@ import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { apiFetch } from "../../../(utils)/api";
+import { apiFetch, apiPost } from "../../../(utils)/api";
 import { addHours } from "date-fns";
 import { useAuth } from "../AuthContext/AuthProvider";
 import "./calendar.css";
@@ -31,6 +31,7 @@ export default function CalendarPage() {
         const householdTasks = await apiFetch(`/tasks/my-household`); //módosítás
 
         setScheduledTasks(scheduledTasks);
+        console.log("scheduleds", scheduledTasks)
         setTasks(householdTasks);
       }
     }
@@ -53,14 +54,14 @@ export default function CalendarPage() {
         );
         return template
           ? {
-              ...scheduledTask,
-              allDay: !scheduledTask.atSpecificTime,
-              title: template.title,
-              description: template.description,
-              start: new Date(scheduledTask.eventDate),
-              end: addHours(new Date(scheduledTask.eventDate), 1),
-              assignedTo: scheduledTask.assignedToUserId,
-            }
+            ...scheduledTask,
+            allDay: !scheduledTask.atSpecificTime,
+            title: template.title,
+            description: template.description,
+            start: new Date(scheduledTask.eventDate),
+            end: addHours(new Date(scheduledTask.eventDate), 1),
+            assignedTo: scheduledTask.assignedToUserId,
+          }
           : null;
       })
       .filter((task) => task !== null);
@@ -82,6 +83,27 @@ export default function CalendarPage() {
         border: "none",
       },
     };
+  };
+
+  async function handleCompleteTask() {
+    await apiPost("/history",);
+    //create new history
+    //delete scheduled task?
+  }
+
+
+  //using histories i think its more complicated cause u can only manually set a history's outcome true or false.
+  // so if a scheduled tasks date is up, then it wont become a history automatically
+
+  //whereas if u store in the scheduled task if its completed, then you want have to create a history
+  //also, you could set that you cannot change its completed field, if its due date is up.
+
+  const createHistoryData = {
+    //   "scheduledTaskId": 0,
+    completedAt: new Date().toISOString(),
+    //   "completedByUserId": "string",
+    outcome: true,
+    //   "householdId": 0
   };
 
   return (

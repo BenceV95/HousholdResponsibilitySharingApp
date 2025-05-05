@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HouseholdResponsibilityAppServer.Migrations
 {
     /// <inheritdoc />
-    public partial class Sprint4 : Migration
+    public partial class newBase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -250,7 +250,8 @@ namespace HouseholdResponsibilityAppServer.Migrations
                     Repeat = table.Column<string>(type: "text", nullable: false),
                     EventDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     AtSpecificTime = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    AssignedToId = table.Column<string>(type: "text", nullable: false)
+                    AssignedToId = table.Column<string>(type: "text", nullable: false),
+                    IsCompleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {

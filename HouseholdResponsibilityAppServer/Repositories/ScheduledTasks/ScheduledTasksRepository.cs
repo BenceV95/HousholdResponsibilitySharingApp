@@ -1,6 +1,7 @@
 ﻿using HouseholdResponsibilityAppServer.Context;
 using HouseholdResponsibilityAppServer.Models.ScheduledTasks;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
 {
@@ -79,6 +80,18 @@ namespace HouseholdResponsibilityAppServer.Repositories.ScheduledTasks
                 .ThenInclude(ht => ht.Household)
                 .Where(task => task.HouseholdTask.Household.HouseholdId == householdId)
                 .ToListAsync();
+        }
+
+        public async Task MarkScheduledTaskAsCompletedAsync(int taskId)
+        {
+            var existingTask = await _dbContext.ScheduledTasks.FindAsync(taskId);
+            if (existingTask == null)
+            {
+                throw new KeyNotFoundException($"Couldn't find scheduled task in the db to update!");
+            }
+
+            existingTask.IsCompleted = true;
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
