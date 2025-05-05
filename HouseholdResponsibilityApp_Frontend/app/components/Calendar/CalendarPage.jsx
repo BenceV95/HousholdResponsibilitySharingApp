@@ -20,6 +20,8 @@ export default function CalendarPage() {
   const [tasks, setTasks] = useState([]);
   const [tasksToDisplay, setTasksToDisplay] = useState([]);
   const [events, setEvents] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState(Views.WEEK);
@@ -85,35 +87,34 @@ export default function CalendarPage() {
     };
   };
 
-  async function handleCompleteTask() {
-    await apiPost("/history",);
+  async function handleCompleteTask(e) {
+    setSelectedTask({ ...e })
+    console.log("clicked", e)
+    setIsModalOpen(true);
+    // await apiPost("/history",);
     //create new history
     //delete scheduled task?
   }
 
 
-  //using histories i think its more complicated cause u can only manually set a history's outcome true or false.
-  // so if a scheduled tasks date is up, then it wont become a history automatically
-
-  //whereas if u store in the scheduled task if its completed, then you want have to create a history
-  //also, you could set that you cannot change its completed field, if its due date is up.
-
-  const createHistoryData = {
-    //   "scheduledTaskId": 0,
-    completedAt: new Date().toISOString(),
-    //   "completedByUserId": "string",
-    outcome: true,
-    //   "householdId": 0
-  };
-
   return (
     <div style={{ height: "40rem", width: "100%", padding: "20px" }}>
       <Calendar
         selectable
-        eventPropGetter={getEventStyle}
+        eventPropGetter={(event) => {
+          const backgroundColor = event.isCompleted ? '#28a745' : '#dc3545';
+          return {
+            style: {
+              backgroundColor,
+              color: 'white',
+              borderRadius: '4px',
+              border: 'none',
+            },
+          };
+        }}
         localizer={localizer}
         onSelectEvent={(e) =>
-          alert(`Description: ${e.description}\nTask name: ${e.title}`)
+          handleCompleteTask(e)
         }
         events={events}
         startAccessor="start"
@@ -136,6 +137,23 @@ export default function CalendarPage() {
           boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
         }}
       />
+
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>{selectedTask.title}</h2>
+            <p>Description: <br />{selectedTask.description ? selectedTask.description : "no description"}</p>
+            <div className="modal-buttons">
+              <button onClick={() => setIsModalOpen(false)} className="btn btn-success">
+                Complete
+              </button>
+              <button onClick={() => setIsModalOpen(false)} className="btn btn-secondary">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
