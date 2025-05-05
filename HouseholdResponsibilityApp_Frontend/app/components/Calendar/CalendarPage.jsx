@@ -27,6 +27,7 @@ export default function CalendarPage() {
   const [currentView, setCurrentView] = useState(Views.WEEK);
   const [reFetchEvents, setReFetchEvents] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  const TODAY = new Date();
 
   useEffect(() => {
     async function fetchHouseholdEvents() {
@@ -72,6 +73,10 @@ export default function CalendarPage() {
   };
 
 
+  function normalizeDate(dateString) {
+    const date = new Date(dateString);
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
   function closeModal() {
     setErrorMsg(null);
     setIsModalOpen(false);
@@ -92,13 +97,12 @@ export default function CalendarPage() {
       setErrorMsg(e);
     }
   }
-
   return (
     <div style={{ height: "40rem", width: "100%", padding: "20px" }}>
       <Calendar
         selectable
         eventPropGetter={(event) => {
-          const backgroundColor = event.isCompleted ? '#28a745' : '#dc3545';
+          const backgroundColor = event.isCompleted ? '#28a745' : normalizeDate(event.eventDate) < TODAY ? '#dc3545' : "#808080";
           return {
             style: {
               backgroundColor,
