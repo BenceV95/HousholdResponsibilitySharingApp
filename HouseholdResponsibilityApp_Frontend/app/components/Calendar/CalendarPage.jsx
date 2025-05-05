@@ -89,8 +89,7 @@ export default function CalendarPage() {
       setReFetchEvents((prev) => !prev)
       setIsModalOpen(false);
     } catch (e) {
-      //for some reason i cannot display the error msg
-      setErrorMsg("something went wrong!");
+      setErrorMsg(e);
     }
   }
 

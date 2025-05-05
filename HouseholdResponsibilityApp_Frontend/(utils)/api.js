@@ -6,7 +6,7 @@ const BACKEND_URL = "/api";
 async function handleResponse(response) {
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.Message); 
+    throw errorData.message;
   }
   if (response.status === 204) return null;
   return await response.json();

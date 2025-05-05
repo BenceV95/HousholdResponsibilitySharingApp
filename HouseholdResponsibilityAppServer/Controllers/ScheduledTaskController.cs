@@ -104,9 +104,13 @@ namespace HouseholdResponsibilityAppServer.Controllers
         {
             try
             {
-                 await _scheduledTaskService.MarkScheduledTaskAsCompleteAsync(taskId);
+                await _scheduledTaskService.MarkScheduledTaskAsCompleteAsync(taskId);
                 return NoContent();
 
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { ex.Message });
             }
             catch (Exception ex)
             {
