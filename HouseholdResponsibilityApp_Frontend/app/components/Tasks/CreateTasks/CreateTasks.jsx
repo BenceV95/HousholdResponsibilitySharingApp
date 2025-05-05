@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { apiFetch, apiPost } from "../../../../(utils)/api";
 import "./CreateTasks.css";
 import { useAuth } from "../../AuthContext/AuthProvider"; //módosítás
+import CreateGroup from "../../Groups/CreateGroup/CreateGroup";
 
 
 export default function CreateTasks() {
@@ -12,6 +13,7 @@ export default function CreateTasks() {
   const [isError, setIsError] = useState(false);
   const [groups, setGroups] = useState([]);
   const { user } = useAuth();
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -26,7 +28,7 @@ export default function CreateTasks() {
       }
     }
     if (user) fetchData();
-  }, [user]);
+  }, [user, isGroupModalOpen]);
 
   /*
   useEffect(() => {
@@ -63,62 +65,73 @@ export default function CreateTasks() {
   };
 
   return (
-    <div className="create-task-container">
+    <>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="create-task-form">
-        
-        <div className="form-group">
-          <label htmlFor="title">Task Title</label>
-          <input
-            type="text"
-            id="title"
-            placeholder="Enter a task title..."
-            {...register("title", { required: "Title is required" })}
-          />
-          {errors.title && <span className="error">{errors.title.message}</span>}
-        </div>
+      <div className="create-task-container">
 
-        <div className="form-group">
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            placeholder="Enter task details..."
-            {...register("description")}
-          />
-        </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="create-task-form">
 
-        <div className="form-group">
-          <label htmlFor="groupId">Group</label>
-          <select
-            id="groupId"
-            defaultValue=""
-            {...register("groupId", { required: "Group ID is required" })}
-          >
-            <option value="" disabled>Select group</option>
-            {groups.map((g) => (
-              <option key={g.groupResponseDtoId} value={g.groupResponseDtoId}>
-                {g.name}
-              </option>
-            ))}
-          </select>
-          {errors.groupId && <span className="error">{errors.groupId.message}</span>}
-        </div>
+          <div className="form-group">
+            <label htmlFor="title">Task Title</label>
+            <input
+              type="text"
+              id="title"
+              placeholder="Enter a task title..."
+              {...register("title", { required: "Title is required" })}
+            />
+            {errors.title && <span className="error">{errors.title.message}</span>}
+          </div>
 
-        <div className="form-group checkbox-group">
-          <label className="checkbox-label" htmlFor="priority">
-            <input type="checkbox" id="priority" {...register("priority")} />
-            Priority
-          </label>
-        </div>
+          <div className="form-group">
+            <label htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              placeholder="Enter task details..."
+              {...register("description")}
+            />
+          </div>
 
-        <div className="form-group submit-group">
-          <button type="submit" className="btn btn-success">Submit</button>
-        </div>
+          <div className="form-group">
+            <label htmlFor="groupId">Group</label>
+            <div className="groupDiv">
+              <select
+                id="groupId"
+                defaultValue=""
+                {...register("groupId", { required: "Group ID is required" })}
+              >
+                <option value="" disabled>Select group</option>
+                {groups.map((g) => (
+                  <option key={g.groupResponseDtoId} value={g.groupResponseDtoId}>
+                    {g.name}
+                  </option>
+                ))}
+              </select>
+              <button type="button" className="btn btn-primary" onClick={() => setIsGroupModalOpen(!isGroupModalOpen)}>+</button>
+            </div>
+            {errors.groupId && <span className="error">{errors.groupId.message}</span>}
+          </div>
 
-        {responseMessage && (
-          <p className={isError ? "error" : "success"}>{responseMessage}</p>
-        )}
-      </form>
-    </div>
+          <div className="form-group checkbox-group">
+            <label className="checkbox-label" htmlFor="priority">
+              <input type="checkbox" id="priority" {...register("priority")} />
+              Priority
+            </label>
+          </div>
+
+          <div className="form-group submit-group">
+            <button type="submit" className="btn btn-success">Submit</button>
+          </div>
+
+          {responseMessage && (
+            <p className={isError ? "error" : "success"}>{responseMessage}</p>
+          )}
+        </form>
+      </div>
+
+      <CreateGroup
+        isOpen={isGroupModalOpen}
+        onClose={() => setIsGroupModalOpen(false)}
+      />
+    </>
   );
 }

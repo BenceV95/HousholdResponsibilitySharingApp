@@ -4,9 +4,9 @@ const BACKEND_URL = "/api";
 //also, not just saying API request failed, cause we wont know what exactly went wrong
 
 async function handleResponse(response) {
-  if (!response.ok) {
+  if (!response.ok) {    
     const errorData = await response.json();
-    throw new Error(errorData.Message); 
+    throw errorData.message; 
   }
   if (response.status === 204) return null;
   return await response.json();

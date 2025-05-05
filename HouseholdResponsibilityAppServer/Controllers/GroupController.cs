@@ -63,7 +63,7 @@ public class GroupController : ControllerBase
             UserClaims userClaims = _authService.GetClaimsFromHttpContext(HttpContext);
 
             await _groupService.CreateGroupAsync(postGroupDto, userClaims);
-            return Ok(new { message = "Group created successfully" });
+            return Ok(new { message = $"Group '{postGroupDto.GroupName}' created successfully" });
         }
         catch (ArgumentException ex)
         {

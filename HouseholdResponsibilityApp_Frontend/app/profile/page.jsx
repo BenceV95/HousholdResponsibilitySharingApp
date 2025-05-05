@@ -90,8 +90,8 @@ export default function Profile() {
       return;
     }
     try {
-      console.log("user:", user );
-      
+      console.log("user:", user);
+
       await apiPut(`/user/leave-household`, {});
       setUser({ ...user, householdId: null });
       setHousehold(null);
@@ -101,7 +101,7 @@ export default function Profile() {
       setResponseMessage(error.message || "Error leaving household.");
     }
   };
-  
+
 
   return (
     <div className="profile-page">
@@ -119,7 +119,7 @@ export default function Profile() {
                 <Household dataEntry={household} />
 
                 {household.createdByUsername === user?.userName ? (
-                  <>                    
+                  <>
                     <button
                       className="btn btn-warning"
                       onClick={() => setIsHouseholdModalOpen(true)}

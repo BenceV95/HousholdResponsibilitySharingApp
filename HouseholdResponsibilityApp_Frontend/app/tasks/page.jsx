@@ -23,12 +23,6 @@ const TaskForm = () => {
     }
   };
 
-  /* 
-    Once the proper backend is in place,
-    massive rewrite is required,
-    this is just for Sprint 2,
-    so that we can demo our progress.
-  */
   return (
     <div className='tasks'>
       <div className='taskButtons'>
@@ -44,14 +38,10 @@ const TaskForm = () => {
         <button className='btn btn-warning' onClick={viewAction} name='view_assigned'>
           Get Assigned Tasks
         </button>
-
-        <button className='btn btn-warning' onClick={viewAction} name='create_group'>
-          Create Group
-        </button>
       </div>
 
       <div className='taskAction'>
-        {taskActionVisible && (
+        {taskActionVisible ? (
           taskAction === "create" ? (
             <>
               <h1>Create Tasks</h1>
@@ -67,20 +57,13 @@ const TaskForm = () => {
               <h1>Assign Tasks</h1>
               <AssignTasks />
             </>
-          ) : taskAction === "view_assigned" ? (
+          ) : taskAction === "view_assigned" && (
             <>
               <h1>View Assigned Tasks</h1>
               <AssignedTask />
             </>
-          ) : (
-            taskAction === "create_group" && (
-              <>
-                <h1>Create Group</h1>
-                <CreateGroup />
-              </>
-            )
           )
-        )}
+        ) : (<h1>Instructions here</h1>)}
       </div>
     </div>
   );
