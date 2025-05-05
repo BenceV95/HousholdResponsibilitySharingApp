@@ -1,31 +1,38 @@
 .tasks {
     display: flex;
     flex-direction: column;
-    width: 80%;
     justify-self: center;
     align-items: center;
     text-align: center;
-    border: solid white 2px;
-    border-radius: 10px;
-    padding: 1rem;
+    /* border: solid white 2px;
+    border-radius: 10px;*/
+    margin: 1rem; 
     min-height: 80dvh;
+    width: 100%;
 }
 
 .taskButtons {
     display: flex;
-    /* align-self: center; */
+    flex-wrap: wrap;
     gap: 1rem;
-    border: solid white 2px;
-    border-radius: 10px;
-    padding: 1rem;
-    width: fit-content;
-    overflow-x: auto;
+    padding-bottom: 2rem;
+}
+
+.taskButtons .btn {
+    flex: 1;
+    min-width: fit-content;
 }
 
 .taskAction {
-    margin-top: 2rem;
-    border: solid white 2px; /* border is here for testing purposes */
+    border: solid white 2px;
+    /* border is here for testing purposes */
     border-radius: 10px;
-    padding: 1rem;
-    
+    padding: 1rem 0;
+    width: 90%;
+}
+
+.instructions ol {
+    padding-left: 2rem;
+    margin-top: 2rem;
+    text-align: left;
 }

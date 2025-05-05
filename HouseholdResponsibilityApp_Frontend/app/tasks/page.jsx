@@ -25,6 +25,7 @@ const TaskForm = () => {
 
   return (
     <div className='tasks'>
+
       <div className='taskButtons'>
         <button className='btn btn-warning' onClick={viewAction} name='create'>
           Create Tasks
@@ -63,7 +64,18 @@ const TaskForm = () => {
               <AssignedTask />
             </>
           )
-        ) : (<h1>Instructions here</h1>)}
+        ) : (
+          <div className='instructions'>          
+        <h1>
+          Create a Task and Assign it here
+        </h1>
+        <br />
+        <ol>
+          <li>Create a Task</li>
+          <li>Assign it to someone within your household</li>
+        </ol>
+        </div>
+        )}
       </div>
     </div>
   );
