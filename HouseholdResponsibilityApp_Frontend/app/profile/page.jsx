@@ -10,6 +10,7 @@ import "./Profile.css";
 
 import EditProfileModal from "../components/Profile/EditProfileModal";
 import ChangeHouseholdNameModal from "../components/Households/ChangeHouseholdNameModal/ChangeHouseholdNameModal";
+import Link from "next/link";
 
 export default function Profile() {
   const { user, logout, setUser } = useAuth();
@@ -135,6 +136,7 @@ export default function Profile() {
                     Leave Household
                   </button>
                 )}
+                <Link href="/groups" className="btn btn-primary">Manage Groups</Link>
               </>
             ) : (
               loading && <Loading />

@@ -1,47 +1,60 @@
 "use client";
-import { useState } from 'react';
-import CreateGroup from '../components/Groups/CreateGroup/CreateGroup';
+import { useEffect, useState } from 'react';
+import "./groups.css";
+import { apiDelete, apiFetch } from '../../(utils)/api';
+import Loading from '../../(utils)/Loading';
 
 export default function GroupsPage() {
-  const [groupActionVisible, setGroupActionVisible] = useState(false);
-  const [groupAction, setGroupAction] = useState("");
 
-  const viewAction = (e) => {
-    const action = e.target.name;
-    if (groupActionVisible && groupAction === action) {
-      setGroupActionVisible(false);
-      setGroupAction("");
-    } else {
-      setGroupAction(action);
-      setGroupActionVisible(true);
+  const [groups, setGroups] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const data = await apiFetch("/groups/my-household");
+        setGroups(data);
+      }
+      catch (e) {
+        console.error(e);
+      }
+    };
+
+    setLoading(true);
+    fetchGroups();
+    setLoading(false);
+
+  }, []);
+
+  const deleteGroup = async (id) => {
+    try {
+      await apiDelete(`/group/${id}`);
+      setGroups(groups.filter(group => group.groupResponseDtoId !== id));
+    } catch (error) {
+      console.error('Error deleting group:', error);
+      alert('Failed to delete group');
     }
-  };
+  }
 
   return (
-    <div className="groups">
-      <div className="groupButtons">
-        <button
-          className="btn btn-warning"
-          onClick={viewAction}
-          name="create"
-        >
-          Create Group
-        </button>
-       
-      </div>
-
-      <div className="groupAction">
-        {groupActionVisible && (
-          groupAction === "create" ? (
-            <>
-              <h1>Create Group</h1>
-              <CreateGroup />
-            </>
-          ) : groupAction === "get" ? (
-            <>
-              <h1>Get Groups</h1>
-            </>
-          ) : null
+    <div className='groupsPage'>
+      <h1>
+        Here you can manage your household's groups.
+      </h1>
+      <div className='groupList'>
+        {loading ? <Loading /> : (
+          groups.map(g => {
+            return (
+              <div key={g.groupResponseDtoId} className='groupName'>
+                <h1>{g.name}</h1>
+                <button 
+                  className='btn btn-danger' 
+                  onClick={() => deleteGroup(g.groupResponseDtoId)}
+                >
+                  Delete
+                </button>
+              </div>)
+          })
         )}
       </div>
     </div>
