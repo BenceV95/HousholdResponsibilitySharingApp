@@ -1,0 +1,103 @@
+.contact-container {
+  background: linear-gradient(135deg, #1f1f1f, #262626);
+  color: #ffffff;
+  padding: 2rem;
+  max-width: 800px;
+  max-height: 60vh;
+  overflow-y: auto;
+  margin: 3rem auto 0rem auto;
+  border-left: 6px solid #ffd700;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+  line-height: 1.8;
+  animation: fadeIn 0.6s ease-in-out;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contact-container h1::after {
+  content: "";
+  display: block;
+  width: 600px;            
+  height: 3px;
+  background-color: #ffd700;
+  margin: 1.5rem auto 0 auto;
+  border-radius: 2px;
+}
+
+.contact-container h1 {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #ffd700;
+}
+
+.contact-container h2 {
+  font-size: 1.8rem;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  color: #facc15;
+  text-align: center;
+}
+
+.contact-container p {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.contact-container ul {
+  padding-left: 1.5rem;
+  list-style: none;
+  margin-bottom: 1rem;
+}
+
+.contact-container li {
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.contact-container li::before {
+  content: '🔗';
+  position: absolute;
+  left: 0;
+}
+
+.contact-container a {
+  color: #ffd700;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.contact-container a:hover {
+  color: #ffcc00;
+}
+
+.project-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.contact-container::-webkit-scrollbar {
+  width: 8px;
+}
+.contact-container::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+.contact-container::-webkit-scrollbar-track {
+  background: #2a2a2a;
+}
