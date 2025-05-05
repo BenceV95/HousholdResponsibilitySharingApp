@@ -26,6 +26,7 @@ export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState(Views.WEEK);
   const [reFetchEvents, setReFetchEvents] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
     async function fetchHouseholdEvents() {
@@ -71,6 +72,10 @@ export default function CalendarPage() {
   };
 
 
+  function closeModal() {
+    setErrorMsg(null);
+    setIsModalOpen(false);
+  }
 
   function openTaskModal(e) {
     setSelectedTask({ ...e })
@@ -81,10 +86,11 @@ export default function CalendarPage() {
     try {
       await apiPatch(`/scheduled/${selectedTask.scheduledTaskId
         }/complete`)
-        setReFetchEvents((prev) => !prev)
-        setIsModalOpen(false);
+      setReFetchEvents((prev) => !prev)
+      setIsModalOpen(false);
     } catch (e) {
-alert(e);
+      //for some reason i cannot display the error msg
+      setErrorMsg("something went wrong!");
     }
   }
 
@@ -132,16 +138,30 @@ alert(e);
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
-            <h2>{selectedTask.title}</h2>
-            <p>Description: <br />{selectedTask.description ? selectedTask.description : "no description"}</p>
-            <div className="modal-buttons">
-              <button onClick={() => completeTask()} className="btn btn-success">
-                Complete
-              </button>
-              <button onClick={() => setIsModalOpen(false)} className="btn btn-secondary">
-                Close
-              </button>
-            </div>
+            {!errorMsg ?
+              <>
+                <h2>{selectedTask.title}</h2>
+                <p>Description: <br />{selectedTask.description ? selectedTask.description : "no description"}</p>
+                <div className="modal-buttons">
+                  <button onClick={() => completeTask()} className="btn btn-success">
+                    Complete
+                  </button>
+                  <button onClick={closeModal} className="btn btn-secondary">
+                    Close
+                  </button>
+                </div>
+              </> :
+              <>
+                <h2>Error!</h2>
+                <p>Description: <br />{errorMsg}</p>
+                <div className="modal-buttons">
+                  <button onClick={closeModal} className="btn btn-secondary">
+                    Close
+                  </button>
+                </div>
+              </>
+            }
+
           </div>
         </div>
       )}
