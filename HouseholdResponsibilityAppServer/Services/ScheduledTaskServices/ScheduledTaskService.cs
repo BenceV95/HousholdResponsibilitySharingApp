@@ -126,6 +126,7 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
                 CreatedAt = scheduledTaskModel.CreatedAt,
                 AtSpecificTime = scheduledTaskModel.AtSpecificTime,
                 Repeat = scheduledTaskModel.Repeat,
+                IsCompleted = scheduledTaskModel.IsCompleted,
             };
         }
 
