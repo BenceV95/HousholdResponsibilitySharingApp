@@ -59,3 +59,12 @@ export async function apiDelete(endpoint) {
   });
   return handleResponse(response);
 }
+
+export async function apiPatch(endpoint, data = "") {
+  const response = await fetch(`${BACKEND_URL}${endpoint}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return handleResponse(response);
+}

@@ -105,7 +105,8 @@ namespace HouseholdResponsibilityAppServer.Controllers
             try
             {
                  await _scheduledTaskService.MarkScheduledTaskAsCompleteAsync(taskId);
-                return Ok();
+                return NoContent();
+
             }
             catch (Exception ex)
             {

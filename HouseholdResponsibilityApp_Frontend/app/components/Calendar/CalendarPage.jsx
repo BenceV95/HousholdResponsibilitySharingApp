@@ -6,7 +6,7 @@ import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { apiFetch, apiPost } from "../../../(utils)/api";
+import { apiFetch, apiPatch, apiPost } from "../../../(utils)/api";
 import { addHours } from "date-fns";
 import { useAuth } from "../AuthContext/AuthProvider";
 import "./calendar.css";
@@ -25,6 +25,7 @@ export default function CalendarPage() {
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState(Views.WEEK);
+  const [reFetchEvents, setReFetchEvents] = useState(false);
 
   useEffect(() => {
     async function fetchHouseholdEvents() {
@@ -38,7 +39,7 @@ export default function CalendarPage() {
       }
     }
     fetchHouseholdEvents();
-  }, [user]);
+  }, [user, reFetchEvents]);
 
   useEffect(() => {
     setTasksToDisplay(fetchTasks());
@@ -69,33 +70,23 @@ export default function CalendarPage() {
       .filter((task) => task !== null);
   };
 
-  const getEventStyle = (event) => {
-    const colors = {
-      "0086ad72-5f23-497f-b183-5bc00158628c": "#FF5733",
-      "195731ee-d2f9-430a-9792-06f573cd754d": "#33FF57",
-      "666ae7c3-582f-4707-9938-27580f0cde18": "#3357FF",
-    };
 
-    return {
-      style: {
-        backgroundColor: colors[event.assignedTo] || "#999999",
-        color: "white",
-        borderRadius: "5px",
-        padding: "5px",
-        border: "none",
-      },
-    };
-  };
 
-  async function handleCompleteTask(e) {
+  function openTaskModal(e) {
     setSelectedTask({ ...e })
-    console.log("clicked", e)
     setIsModalOpen(true);
-    // await apiPost("/history",);
-    //create new history
-    //delete scheduled task?
   }
 
+  async function completeTask() {
+    try {
+      await apiPatch(`/scheduled/${selectedTask.scheduledTaskId
+        }/complete`)
+        setReFetchEvents((prev) => !prev)
+        setIsModalOpen(false);
+    } catch (e) {
+alert(e);
+    }
+  }
 
   return (
     <div style={{ height: "40rem", width: "100%", padding: "20px" }}>
@@ -114,7 +105,7 @@ export default function CalendarPage() {
         }}
         localizer={localizer}
         onSelectEvent={(e) =>
-          handleCompleteTask(e)
+          openTaskModal(e)
         }
         events={events}
         startAccessor="start"
@@ -144,7 +135,7 @@ export default function CalendarPage() {
             <h2>{selectedTask.title}</h2>
             <p>Description: <br />{selectedTask.description ? selectedTask.description : "no description"}</p>
             <div className="modal-buttons">
-              <button onClick={() => setIsModalOpen(false)} className="btn btn-success">
+              <button onClick={() => completeTask()} className="btn btn-success">
                 Complete
               </button>
               <button onClick={() => setIsModalOpen(false)} className="btn btn-secondary">
