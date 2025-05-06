@@ -28,6 +28,7 @@ export default function CalendarPage() {
   const [reFetchEvents, setReFetchEvents] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const TODAY = new Date();
+  
 
   useEffect(() => {
     async function fetchHouseholdEvents() {
@@ -75,8 +76,10 @@ export default function CalendarPage() {
 
   function normalizeDate(dateString) {
     const date = new Date(dateString);
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const addOneHour = new Date(date.setHours(date.getHours()+1));    
+    return addOneHour;
   }
+
   function closeModal() {
     setErrorMsg(null);
     setIsModalOpen(false);
@@ -97,6 +100,7 @@ export default function CalendarPage() {
       setErrorMsg(e);
     }
   }
+  
   return (
     <div style={{ height: "40rem", width: "100%", padding: "20px" }}>
       <Calendar

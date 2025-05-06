@@ -42,7 +42,7 @@ export default function GroupsPage() {
         Here you can manage your household's groups.
       </h1>
       <div className='groupList'>
-        {loading ? <Loading /> : (
+        {loading ? <Loading /> : ( groups.length < 1 ? <h1>No groups yet</h1> :
           groups.map(g => {
             return (
               <div key={g.groupResponseDtoId} className='groupName'>
