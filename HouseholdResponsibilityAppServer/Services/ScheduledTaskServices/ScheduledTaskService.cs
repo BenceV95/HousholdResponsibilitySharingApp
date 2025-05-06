@@ -11,11 +11,13 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
         private readonly IHouseholdTasksRepository _householdTaskRepository;
         private readonly IScheduledTasksRepository _scheduledTasksRepository;
         private readonly IUserRepository _userRepository;
-        public ScheduledTaskService(IScheduledTasksRepository scheduledTasksRepository, IHouseholdTasksRepository householdTaskRepository, IUserRepository userRepository)
+        private readonly ILogger<GroupController> _iLogger;
+        public ScheduledTaskService(ILogger<GroupController> iLogger, IScheduledTasksRepository scheduledTasksRepository, IHouseholdTasksRepository householdTaskRepository, IUserRepository userRepository)
         {
             _householdTaskRepository = householdTaskRepository;
             _scheduledTasksRepository = scheduledTasksRepository;
             _userRepository = userRepository;
+            _iLogger = iLogger;
         }
 
         public async Task<IEnumerable<ScheduledTaskDTO>> GetAllScheduledByHouseholdIdAsync(UserClaims userClaims)
@@ -126,8 +128,26 @@ namespace HouseholdResponsibilityAppServer.Services.ScheduledTaskServices
                 CreatedAt = scheduledTaskModel.CreatedAt,
                 AtSpecificTime = scheduledTaskModel.AtSpecificTime,
                 Repeat = scheduledTaskModel.Repeat,
+                IsCompleted = scheduledTaskModel.IsCompleted,
             };
         }
 
+        public async Task MarkScheduledTaskAsCompleteAsync(int taskId)
+        {
+            var task = await _scheduledTasksRepository.GetByIdAsync(taskId);
+            
+
+            TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
+            DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(task.EventDate, localTimeZone);
+            _iLogger.LogInformation(0, $"{localTime < DateTime.Now.AddHours(1)}, {localTime.AddHours(1)} - {DateTime.Now}");
+
+            if (localTime.AddHours(1) < DateTime.Now)
+            {
+                throw new InvalidOperationException("Cannot complete task now, since its due date has passed!");
+            }
+
+            await _scheduledTasksRepository.MarkScheduledTaskAsCompletedAsync(taskId);
+
+        }
     }
 }

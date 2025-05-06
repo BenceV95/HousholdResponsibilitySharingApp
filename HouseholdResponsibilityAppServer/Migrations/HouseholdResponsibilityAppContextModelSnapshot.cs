@@ -167,6 +167,9 @@ namespace HouseholdResponsibilityAppServer.Migrations
                     b.Property<int>("HouseholdTaskTaskId")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Repeat")
                         .IsRequired()
                         .HasColumnType("text");

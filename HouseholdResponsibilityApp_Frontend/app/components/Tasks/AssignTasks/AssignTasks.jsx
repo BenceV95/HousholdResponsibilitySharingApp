@@ -136,19 +136,22 @@ export default function AssignTasks() {
         </div>
 
         <div className="form-group repeat-frequency">
+          <div className="wip-content">
+            WIP: <br /> For now, all tasks are assigned as no-repeat!
+          </div>
           <label>Repeat Frequency:</label>
           <div className="repeatRadios">
             <label>
-              <input type="radio" value="0" {...register("repeat")} /> Daily
+              <input disabled type="radio" value="0" {...register("repeat")} /> Daily
             </label>
             <label>
-              <input type="radio" value="1" {...register("repeat")} /> Weekly
+              <input disabled type="radio" value="1" {...register("repeat")} /> Weekly
             </label>
             <label>
-              <input type="radio" value="2" {...register("repeat")} /> Monthly
+              <input disabled type="radio" value="2" {...register("repeat")} /> Monthly
             </label>
             <label>
-              <input type="radio" value="3" {...register("repeat")} /> No Repeat
+              <input defaultChecked type="radio" value="3" {...register("repeat")} /> No Repeat
             </label>
           </div>
           {errors.repeat && <p className="error">{errors.repeat.message}</p>}

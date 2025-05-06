@@ -7,7 +7,7 @@
     background-color: #242424;
     border-radius: 10px;
     padding: 1rem;
-    width: 80%;
+    width: 90%;
     gap: 1rem;
 }
 
@@ -49,3 +49,10 @@
     border-radius: 10px;
     padding: 1rem;
 }
+
+@media screen and (max-width: 768px) {
+    .user-actions {
+        flex-direction: column;
+    }
+}
+

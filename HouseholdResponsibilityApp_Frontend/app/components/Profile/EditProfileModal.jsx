@@ -18,6 +18,7 @@ export default function EditProfileModal({ isOpen, onClose, onProfileUpdated }) 
       setValue("lastName", user.lastName);
       setValue("password", "");
     }
+    
   }, [user, setValue]);
 
   if (!isOpen) return null; 

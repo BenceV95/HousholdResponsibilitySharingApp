@@ -23,35 +23,26 @@ const TaskForm = () => {
     }
   };
 
-  /* 
-    Once the proper backend is in place,
-    massive rewrite is required,
-    this is just for Sprint 2,
-    so that we can demo our progress.
-  */
   return (
     <div className='tasks'>
+
       <div className='taskButtons'>
-        <button className='btn btn-warning' onClick={viewAction} name='create'>
+        <button className={`btn btn-warning ${taskAction === 'create' ? 'selected' : ''}`} onClick={viewAction} name='create'>
           Create Tasks
         </button>
-        <button className='btn btn-warning' onClick={viewAction} name='get'>
+        <button className={`btn btn-warning ${taskAction === 'get' ? 'selected' : ''}`} onClick={viewAction} name='get'>
           Get Tasks
         </button>
-        <button className='btn btn-warning' onClick={viewAction} name='assign'>
+        <button className={`btn btn-warning ${taskAction === 'assign' ? 'selected' : ''}`} onClick={viewAction} name='assign'>
           Assign Tasks
         </button>
-        <button className='btn btn-warning' onClick={viewAction} name='view_assigned'>
+        <button className={`btn btn-warning ${taskAction === 'view_assigned' ? 'selected' : ''}`} onClick={viewAction} name='view_assigned'>
           Get Assigned Tasks
-        </button>
-
-        <button className='btn btn-warning' onClick={viewAction} name='create_group'>
-          Create Group
         </button>
       </div>
 
       <div className='taskAction'>
-        {taskActionVisible && (
+        {taskActionVisible ? (
           taskAction === "create" ? (
             <>
               <h1>Create Tasks</h1>
@@ -67,19 +58,36 @@ const TaskForm = () => {
               <h1>Assign Tasks</h1>
               <AssignTasks />
             </>
-          ) : taskAction === "view_assigned" ? (
+          ) : taskAction === "view_assigned" && (
             <>
               <h1>View Assigned Tasks</h1>
               <AssignedTask />
             </>
-          ) : (
-            taskAction === "create_group" && (
-              <>
-                <h1>Create Group</h1>
-                <CreateGroup />
-              </>
-            )
           )
+        ) : (
+          <div className='instructions'>          
+        <h1>
+          Create a Task and Assign it here
+        </h1>
+        <br />
+        <ol className='mainList'>
+          <li>Create a Task</li>
+          <ol className='subList'>
+            <li>Add a title</li>
+            <li>Add a description</li>
+            <li>Add a Group</li>
+            <li>Priority means that task should be done ASAP</li>
+          </ol>
+          <li>Assign it to someone within your household</li>
+          <ol className='subList'>
+            <li>Select the appropiate task</li>
+            <li>Assign it to someone within your household</li>
+            <li>Choose the repeat frequency (WIP)</li>
+            <li>Choose the date and time</li>
+          </ol>
+          <li>Once you have created a task and assigned it to someone you can check under calendar and manage it.</li>
+        </ol>
+        </div>
         )}
       </div>
     </div>

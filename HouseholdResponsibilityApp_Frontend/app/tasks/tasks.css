@@ -1,31 +1,50 @@
 .tasks {
     display: flex;
     flex-direction: column;
-    width: 80%;
     justify-self: center;
     align-items: center;
     text-align: center;
-    border: solid white 2px;
-    border-radius: 10px;
-    padding: 1rem;
+    /* border: solid white 2px;
+    border-radius: 10px;*/
+    margin: 1rem; 
     min-height: 80dvh;
+    width: 100%;
 }
 
 .taskButtons {
     display: flex;
-    /* align-self: center; */
+    flex-wrap: wrap;
     gap: 1rem;
-    border: solid white 2px;
-    border-radius: 10px;
-    padding: 1rem;
-    width: fit-content;
-    overflow-x: auto;
+    padding-bottom: 2rem;
+}
+
+.taskButtons .btn {
+    flex: 1;
+    min-width: fit-content;
+}
+
+.taskButtons .btn.selected {
+    background-color: #c17d10;
+    border-color: #c17d10;
+    box-shadow: 0 0 0 0.2rem rgba(193, 125, 16, 0.5);
 }
 
 .taskAction {
-    margin-top: 2rem;
-    border: solid white 2px; /* border is here for testing purposes */
+    border: solid white 2px;
+    /* border is here for testing purposes */
     border-radius: 10px;
-    padding: 1rem;
-    
+    padding: 1rem 0;
+    width: 90%;
+}
+
+.mainList {
+    padding-left: 2rem;
+    margin-top: 2rem;
+    text-align: left;
+    font-weight: bolder;
+}
+
+.subList {
+    padding-left: 3rem;
+    margin: 1rem 0;
 }

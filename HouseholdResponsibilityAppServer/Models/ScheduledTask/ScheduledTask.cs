@@ -14,6 +14,7 @@ namespace HouseholdResponsibilityAppServer.Models.ScheduledTasks
         public bool AtSpecificTime { get; set; } //if true, we can get the time from the EventDate
         //for sprint 1 it can be only assigned to 1 person
         public User AssignedTo { get; set; }
+        public bool IsCompleted { get; set; } = false;
 
     }
 }

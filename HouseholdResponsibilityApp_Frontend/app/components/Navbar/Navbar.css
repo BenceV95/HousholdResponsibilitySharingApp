@@ -4,14 +4,62 @@
     width: 100%;
     border-bottom: solid white 2px;
     background-color: #343434;
-    overflow-x: auto;
 }
 
 .navbar {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
-    gap: 1rem;
+    align-items: center;
     padding: 1rem;
+    position: relative;
+}
 
+.nav-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.hamburger span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    transition: all 0.3s ease-in-out;
+}
+
+@media screen and (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background-color: #343434;
+        padding: 1rem;
+        gap: 1rem;
+        border-top: 1px solid white;
+    }
+
+    .nav-links.active {
+        display: flex;
+        z-index: 1000;
+    }
+
+    .nav-links button {
+        width: 100%;
+    }
 }

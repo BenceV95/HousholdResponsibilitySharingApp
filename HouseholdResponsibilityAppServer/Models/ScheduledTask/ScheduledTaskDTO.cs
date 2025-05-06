@@ -10,5 +10,6 @@
         public DateTime EventDate { get; set; }
         public bool AtSpecificTime { get; set; }
         public string AssignedToUserId { get; set; }
+        public bool IsCompleted { get; set; }
     }
 }

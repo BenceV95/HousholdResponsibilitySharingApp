@@ -3,58 +3,68 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { apiPost } from "../../../../(utils)/api";
 import { useAuth } from "../../AuthContext/AuthProvider";
-import "./CreateGroup.css"; 
+import "./CreateGroup.css";
 
-export default function CreateGroup() {
+export default function CreateGroup({ isOpen, onClose }) {
+  if (!isOpen) {
+    return null;
+  }
+
   const { register, handleSubmit, setValue, formState: { errors } } = useForm();
   const [responseMessage, setResponseMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
 
   const onSubmit = async (formData) => {
-    console.log("asd");
-    
+    setLoading(true);
     setResponseMessage("");
     setIsError(false);
-    
+
     const groupData = {
-      GroupName: formData.name,
-      
+      GroupName: formData.name
     };
 
     try {
-      await apiPost("/group", groupData);
-      setResponseMessage(`Successfully created group: ${formData.name}`);
+      const group = await apiPost("/group", groupData);
+      setResponseMessage(group.message);
     } catch (error) {
-      console.error(error);
       setIsError(true);
-      setResponseMessage(error.message);
+      setResponseMessage(error);
+    }
+    finally {
+      setLoading(false);
     }
   };
 
-  
+
 
   return (
-    <div className="create-group-container">
-      <form onSubmit={handleSubmit(onSubmit)} className="create-group-form">
-        <div className="form-group">
+    <div className="modal-overlay">
+        <form onSubmit={handleSubmit(onSubmit)} className="create-group-form">
+        
           <label htmlFor="name">Group Name:</label>
           <input
             placeholder="Enter group name..."
             {...register("name", { required: "Group name is required" })}
-          />
+            disabled={loading}
+            minLength={1}
+            maxLength={20}
+            id="name"
+          />          
           {errors.name && <span className="error">{errors.name.message}</span>}
-        </div>
 
-        <button type="submit" className="btn btn-success">
-          Create Group
-        </button>
+          {responseMessage && (
+            <p className={isError ? "error" : "success"}>{responseMessage}</p>
+          )}
 
-        {responseMessage && (
-          <p className={isError ? "error" : "success"}>{responseMessage}</p>
-        )}
-      </form>
-    </div>
+          <button type="submit" className="btn btn-success" disabled={loading}>
+            {loading ? "Creating Group..." : "Create Group"}
+          </button>
+
+          <button onClick={() => onClose()} className="btn btn-danger" disabled={loading}>Close</button>
+        </form>
+      </div>
   );
 }
