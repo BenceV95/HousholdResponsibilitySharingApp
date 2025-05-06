@@ -23,6 +23,12 @@
     min-width: fit-content;
 }
 
+.taskButtons .btn.selected {
+    background-color: #c17d10;
+    border-color: #c17d10;
+    box-shadow: 0 0 0 0.2rem rgba(193, 125, 16, 0.5);
+}
+
 .taskAction {
     border: solid white 2px;
     /* border is here for testing purposes */
@@ -31,8 +37,14 @@
     width: 90%;
 }
 
-.instructions ol {
+.mainList {
     padding-left: 2rem;
     margin-top: 2rem;
     text-align: left;
+    font-weight: bolder;
+}
+
+.subList {
+    padding-left: 3rem;
+    margin: 1rem 0;
 }

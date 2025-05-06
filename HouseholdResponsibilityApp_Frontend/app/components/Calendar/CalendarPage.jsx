@@ -28,7 +28,7 @@ export default function CalendarPage() {
   const [reFetchEvents, setReFetchEvents] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const TODAY = new Date();
-  
+
 
   useEffect(() => {
     async function fetchHouseholdEvents() {
@@ -76,7 +76,7 @@ export default function CalendarPage() {
 
   function normalizeDate(dateString) {
     const date = new Date(dateString);
-    const addOneHour = new Date(date.setHours(date.getHours()+1));    
+    const addOneHour = new Date(date.setHours(date.getHours() + 1));
     return addOneHour;
   }
 
@@ -100,7 +100,7 @@ export default function CalendarPage() {
       setErrorMsg(e);
     }
   }
-  
+
   return (
     <div style={{ height: "40rem", width: "100%", padding: "20px" }}>
       <Calendar
@@ -150,9 +150,12 @@ export default function CalendarPage() {
                 <h2>{selectedTask.title}</h2>
                 <p>Description: <br />{selectedTask.description ? selectedTask.description : "no description"}</p>
                 <div className="modal-buttons">
-                  <button onClick={() => completeTask()} className="btn btn-success">
-                    Complete
-                  </button>
+                  {!selectedTask.isCompleted && (
+                    <button onClick={() => completeTask()} className="btn btn-success">
+                      Complete
+                    </button>
+                  )}
+
                   <button onClick={closeModal} className="btn btn-secondary">
                     Close
                   </button>

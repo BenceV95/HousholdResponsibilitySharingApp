@@ -27,16 +27,16 @@ const TaskForm = () => {
     <div className='tasks'>
 
       <div className='taskButtons'>
-        <button className='btn btn-warning' onClick={viewAction} name='create'>
+        <button className={`btn btn-warning ${taskAction === 'create' ? 'selected' : ''}`} onClick={viewAction} name='create'>
           Create Tasks
         </button>
-        <button className='btn btn-warning' onClick={viewAction} name='get'>
+        <button className={`btn btn-warning ${taskAction === 'get' ? 'selected' : ''}`} onClick={viewAction} name='get'>
           Get Tasks
         </button>
-        <button className='btn btn-warning' onClick={viewAction} name='assign'>
+        <button className={`btn btn-warning ${taskAction === 'assign' ? 'selected' : ''}`} onClick={viewAction} name='assign'>
           Assign Tasks
         </button>
-        <button className='btn btn-warning' onClick={viewAction} name='view_assigned'>
+        <button className={`btn btn-warning ${taskAction === 'view_assigned' ? 'selected' : ''}`} onClick={viewAction} name='view_assigned'>
           Get Assigned Tasks
         </button>
       </div>
@@ -70,9 +70,22 @@ const TaskForm = () => {
           Create a Task and Assign it here
         </h1>
         <br />
-        <ol>
+        <ol className='mainList'>
           <li>Create a Task</li>
+          <ol className='subList'>
+            <li>Add a title</li>
+            <li>Add a description</li>
+            <li>Add a Group</li>
+            <li>Priority means that task should be done ASAP</li>
+          </ol>
           <li>Assign it to someone within your household</li>
+          <ol className='subList'>
+            <li>Select the appropiate task</li>
+            <li>Assign it to someone within your household</li>
+            <li>Choose the repeat frequency (WIP)</li>
+            <li>Choose the date and time</li>
+          </ol>
+          <li>Once you have created a task and assigned it to someone you can check under calendar and manage it.</li>
         </ol>
         </div>
         )}
