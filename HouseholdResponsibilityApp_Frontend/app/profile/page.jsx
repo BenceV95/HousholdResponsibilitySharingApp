@@ -10,6 +10,7 @@ import "./Profile.css";
 
 import EditProfileModal from "../components/Profile/EditProfileModal";
 import ChangeHouseholdNameModal from "../components/Households/ChangeHouseholdNameModal/ChangeHouseholdNameModal";
+import Link from "next/link";
 
 export default function Profile() {
   const { user, logout, setUser } = useAuth();
@@ -90,8 +91,8 @@ export default function Profile() {
       return;
     }
     try {
-      console.log("user:", user );
-      
+      console.log("user:", user);
+
       await apiPut(`/user/leave-household`, {});
       setUser({ ...user, householdId: null });
       setHousehold(null);
@@ -101,7 +102,7 @@ export default function Profile() {
       setResponseMessage(error.message || "Error leaving household.");
     }
   };
-  
+
 
   return (
     <div className="profile-page">
@@ -119,7 +120,7 @@ export default function Profile() {
                 <Household dataEntry={household} />
 
                 {household.createdByUsername === user?.userName ? (
-                  <>                    
+                  <>
                     <button
                       className="btn btn-warning"
                       onClick={() => setIsHouseholdModalOpen(true)}
@@ -135,6 +136,7 @@ export default function Profile() {
                     Leave Household
                   </button>
                 )}
+                <Link href="/groups" className="btn btn-primary">Manage Groups</Link>
               </>
             ) : (
               loading && <Loading />
