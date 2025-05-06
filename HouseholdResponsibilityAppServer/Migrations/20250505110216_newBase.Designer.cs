@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HouseholdResponsibilityAppServer.Migrations
 {
     [DbContext(typeof(HouseholdResponsibilityAppContext))]
-    [Migration("20250307070258_Sprint4")]
-    partial class Sprint4
+    [Migration("20250505110216_newBase")]
+    partial class newBase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -169,6 +169,9 @@ namespace HouseholdResponsibilityAppServer.Migrations
 
                     b.Property<int>("HouseholdTaskTaskId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Repeat")
                         .IsRequired()

@@ -6,7 +6,7 @@ const BACKEND_URL = "/api";
 async function handleResponse(response) {
   if (!response.ok) {    
     const errorData = await response.json();
-    throw errorData.message; 
+    throw errorData.message;
   }
   if (response.status === 204) return null;
   return await response.json();
@@ -56,6 +56,15 @@ export async function apiDelete(endpoint) {
   console.log(`DELETE: ${BACKEND_URL}${endpoint}`);
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {
     method: "DELETE",
+  });
+  return handleResponse(response);
+}
+
+export async function apiPatch(endpoint, data = "") {
+  const response = await fetch(`${BACKEND_URL}${endpoint}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
   });
   return handleResponse(response);
 }

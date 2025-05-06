@@ -3,6 +3,7 @@ using HouseholdResponsibilityAppServer.Services.Authentication;
 using HouseholdResponsibilityAppServer.Services.ScheduledTaskServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HouseholdResponsibilityAppServer.Controllers
 {
@@ -94,6 +95,27 @@ namespace HouseholdResponsibilityAppServer.Controllers
                 _logger.LogError(ex.Message);
 
                 return StatusCode(500, new { Message = "An error occurred while updating Scheduled Task." });
+            }
+        }
+
+
+        [HttpPatch("/scheduled/{taskId}/complete")]
+        public async Task<IActionResult> MarkTaskAsComplete(int taskId)
+        {
+            try
+            {
+                await _scheduledTaskService.MarkScheduledTaskAsCompleteAsync(taskId);
+                return NoContent();
+
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new { Message = "An error occurred while marking Scheduled Task as complete." });
             }
         }
 
